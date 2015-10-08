@@ -1,0 +1,90 @@
+{
+    "core": {
+        "properties": {
+            "lox": {
+                "index": "not_analyzed",
+                "type": "string",
+                "store": true
+            },
+            "inOf": {
+                "index": "not_analyzed",
+                "type": "string",
+                "store": true
+            },
+            "_ver": {
+                "index": "not_analyzed",
+                "type": "string",
+                "store": true
+            },
+            "srtDt": {
+                "index": "not_analyzed",
+                "type": "long",
+                "store": true
+            },
+            "tpC": {
+                "index": "not_analyzed",
+                "type": "long",
+                "store": true
+            },
+            "url": {
+                "index": "not_analyzed",
+                "type": "string",
+                "store": true
+            },
+            "isPrv": {
+                "index": "not_analyzed",
+                "type": "boolean",
+                "store": true
+            },
+            "isFdrtd": {
+                "index": "not_analyzed",
+                "type": "boolean",
+                "store": true
+            },
+            "isLiv": {
+                "index": "not_analyzed",
+                "type": "boolean",
+                "store": true
+            },
+            "isVrt": {
+                "index": "not_analyzed",
+                "type": "boolean",
+                "store": true
+            },
+            "lists": {
+                "properties": {
+                    "sbOf": {
+                        "index": "not_analyzed",
+                        "type": "string",
+                        "store": true
+                    },
+                    "label": {
+                        "index": "analyzed",
+                        "type": "string",
+                        "store": true
+                    },
+                    "details": {
+                        "index": "analyzed",
+                        "type": "string",
+                        "store": true
+                    },
+                    "subj": {
+                        "index": "analyzed",
+                        "type": "string",
+                        "store": true
+                    },
+                    "body": {
+                        "index": "analyzed",
+                        "type": "string",
+                        "store": true
+                    },
+                    "psi": {
+                        "index": "not_analyzed",
+                        "type": "string",
+                        "store": true
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<!-- TextHarvesterCore properties
+	These properties configure an "ecosystem"
+	-->
+
+<properties>
+	<parameter name="MyDatabaseUser" value = "nexistw" /> <!-- CHANGEME -->
+	<parameter name="MyDatabasePwd"  value = "foo" />		  <!-- CHANGEME -->
+	<parameter name="UserDatabase" value="backsideusers" /> <!-- CHANGEME -->
+	<parameter name="UserDatabasePath" value="c:/data/backside/" /> <!-- CHANGEME -->
+	<parameter name="InviteDatabase" value="backsideinvites" /> <!-- CHANGEME -->
+	
+	<parameter name="ServerURL" value="localhost" />  <!--  ??? CHANGEME -->
+	<parameter name="ServerPort" value="8080" /> <!-- ??? CHANGEME -->
+	
+	<!-- Server needs a default Administrator
+		These values should be changed.
+		Once an Admin logs in, should change the password again -->
+	<parameter name="DefaultAdminEmail" value="TestUser@foo.org" /> <!-- CHANGEME -->
+	<parameter name="DefaultAdminPwd" value="testing!" /> <!-- CHANGEME -->
+</properties>
+

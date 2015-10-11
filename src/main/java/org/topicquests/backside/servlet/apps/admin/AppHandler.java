@@ -161,9 +161,10 @@ public class AppHandler  extends BaseHandler {
 		int code = 0;
 		IResult r;
 		String username, userrole, useremail;
-		if (verb.equals(IAdminMicroformat.REMOVE_USER)) {
+		if (verb.equals(IAdminMicroformat.REMOVE_USER)) { 
 			//TODO
 		} else if (verb.equals(IAdminMicroformat.UPDATE_USER_EMAIL)) {
+			//TODO: really, this belongs to User app, not admin
 			username=(String)jsonObject.get(ICredentialsMicroformat.USER_NAME);
 			useremail=(String)jsonObject.get(ICredentialsMicroformat.USER_EMAIL);
 			r = model.updateUserEmail(username, useremail);
@@ -193,6 +194,7 @@ public class AppHandler  extends BaseHandler {
 				code = BaseHandler.RESPONSE_OK;
 				message = "ok";
 			}
+			
 		} else {
 			String x = IErrorMessages.BAD_VERB+"-AdminServletPost-"+verb;
 			environment.logError(x, null);

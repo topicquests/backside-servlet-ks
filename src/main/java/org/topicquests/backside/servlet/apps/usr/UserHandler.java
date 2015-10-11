@@ -29,6 +29,7 @@ import org.topicquests.backside.servlet.api.ICredentialsMicroformat;
 import org.topicquests.backside.servlet.api.IErrorMessages;
 import org.topicquests.backside.servlet.api.ISecurity;
 import org.topicquests.backside.servlet.apps.BaseHandler;
+import org.topicquests.backside.servlet.apps.admin.api.IAdminMicroformat;
 import org.topicquests.backside.servlet.apps.usr.api.IUserMicroformat;
 import org.topicquests.backside.servlet.apps.usr.api.IUserModel;
 import org.topicquests.backside.servlet.apps.usr.api.IUserSchema;
@@ -132,7 +133,7 @@ public class UserHandler  extends BaseHandler {
 		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
 		int code = 0;
 		IResult r;
-		System.out.println("NEWUSER-");
+		System.out.println("NEWUSER- "+verb);
 		if (verb.equals(IUserMicroformat.NEW_USER)) {
 			String email = (String)jsonObject.get(IUserMicroformat.USER_EMAIL);
 			//TODO sanity check
@@ -160,6 +161,21 @@ public class UserHandler  extends BaseHandler {
 			}
 			returnMessage.put(ICredentialsMicroformat.RESP_TOKEN, rtoken);
 			returnMessage.put(ICredentialsMicroformat.RESP_MESSAGE, message);
+		} else if (verb.equals(IAdminMicroformat.UPDATE_USER_PASSWORD)) {
+			String userName = (String)jsonObject.get(IUserMicroformat.USER_NAME);
+			String password = (String)jsonObject.get(IUserMicroformat.USER_PWD);
+			byte [] foo = BaseEncoding.base64().decode(password);
+			String creds = new String(foo);
+		//	System.out.println("FFFF "+creds);
+			r = model.changeUserPassword(userName, creds);
+			if (r.hasError()) {
+				code = BaseHandler.RESPONSE_INTERNAL_SERVER_ERROR;
+				message = r.getErrorString();
+			} else {
+				message = "ok";
+				code = BaseHandler.RESPONSE_OK;
+			}
+			
 		} else {
 			String x = IErrorMessages.BAD_VERB+"-UserServletPost-"+verb;
 			environment.logError(x, null);

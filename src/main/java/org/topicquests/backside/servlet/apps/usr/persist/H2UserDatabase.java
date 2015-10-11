@@ -410,8 +410,9 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 		IResult result = new ResultPojo();
 		PreparedStatement s = null;
 		try {
+			String pwd = sha1(newPassword);
 			s = con.prepareStatement(IUserSchema.updateUserPwd);
-			s.setString(1, newPassword);
+			s.setString(1, pwd);
 			s.setString(2, userName);
 			boolean x = s.execute();
 		} catch (Exception e) {

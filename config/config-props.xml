@@ -18,5 +18,14 @@
 		Once an Admin logs in, should change the password again -->
 	<parameter name="DefaultAdminEmail" value="TestUser@foo.org" /> <!-- CHANGEME -->
 	<parameter name="DefaultAdminPwd" value="testing!" /> <!-- CHANGEME -->
+	
+		<!-- A list of external (plugin) servlet packages, which must include
+		their APIs, models, and handlers and any other supporting code.
+		"name" is the servlet's URL fragment, e.g. "/test"
+	 -->
+	<list name="Servlets">
+<!--  		<parameter name="<some url fragment>" value="<servlet classpath" /> -->
+	</list>
+
 </properties>
 

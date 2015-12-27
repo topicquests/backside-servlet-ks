@@ -73,6 +73,7 @@ public class TopicMapHandler  extends BaseHandler {
 		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
 		int code = 0;
 		IResult r;
+		System.out.println("TopicMapHandler.handleGet "+verb);
 		if (verb.equals(IUserMicroformat.LIST_USERS)) {
 			String startS = notNullString((String)jsonObject.get(ICredentialsMicroformat.ITEM_FROM));
 			String countS = notNullString((String)jsonObject.get(ICredentialsMicroformat.ITEM_COUNT));
@@ -206,6 +207,7 @@ public class TopicMapHandler  extends BaseHandler {
 		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
 		int code = 0;
 		IResult r;
+		System.out.println("TopicMapHandler.handlePost "+verb);
 		if (verb.equals(ITopicMapMicroformat.PUT_TOPIC)) {
 			//TODO
 		} else if (verb.equals(ITopicMapMicroformat.NEW_INSTANCE_TOPIC)) {

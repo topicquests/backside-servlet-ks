@@ -15,14 +15,16 @@
  */
 package org.topicquests.backside.servlet;
 
-import java.util.Map;
+import java.util.*;
 
 import org.nex.config.ConfigPullParser;
+import org.topicquests.backside.servlet.api.IStoppable;
 import org.topicquests.backside.servlet.apps.CredentialCache;
 import org.topicquests.backside.servlet.apps.tm.StructuredConversationModel;
 import org.topicquests.backside.servlet.apps.tm.api.IStructuredConversationModel;
 import org.topicquests.backside.servlet.apps.usr.UserModel;
 import org.topicquests.backside.servlet.apps.usr.api.IUserModel;
+import org.topicquests.backside.servlet.apps.util.ElasticQueryDSL;
 import org.topicquests.ks.StatisticsUtility;
 import org.topicquests.ks.SystemEnvironment;
 import org.topicquests.util.LoggingPlatform;
@@ -40,6 +42,8 @@ public class ServletEnvironment {
 	private CredentialCache cache;
 	private IUserModel userModel;
 	private IStructuredConversationModel conversationModel;
+	private ElasticQueryDSL queryDSL;
+	private List<IStoppable>stoppables;
 	private boolean isShutDown = false;
 	
 	
@@ -49,12 +53,14 @@ public class ServletEnvironment {
 	public ServletEnvironment(boolean isConsole) throws Exception { 
 		log = LoggingPlatform.getInstance("logger.properties"); 
 		System.out.println("xServletEnvironment- "+(log==null));
+		stoppables = new ArrayList<IStoppable>();
 		logDebug("xxServletEnvironment-");
 		ConfigPullParser p = new ConfigPullParser("config-props.xml");
 		properties = p.getProperties();
 		System.out.println("PROPS "+properties);
 		cache = new CredentialCache(this);
 		tmEnvironment = new SystemEnvironment();
+		queryDSL = new ElasticQueryDSL(this);
 		stats = tmEnvironment.getStats();
 		System.out.println("STARTING USER");
 		userModel = new UserModel(this);
@@ -70,6 +76,15 @@ public class ServletEnvironment {
 
 	public static ServletEnvironment getInstance() {
 		return instance;
+	}
+	
+	public void addStoppable(IStoppable s) {
+		synchronized(stoppables) {
+			stoppables.add(s);
+		}
+	}
+	public ElasticQueryDSL getQueryDSL() {
+		return queryDSL;
 	}
 	
 	public IStructuredConversationModel getConversationModel() {
@@ -94,6 +109,9 @@ public class ServletEnvironment {
 			log.shutDown();
 			if (tmEnvironment != null)
 				tmEnvironment.shutDown();
+			Iterator<IStoppable>itr = stoppables.iterator();
+			while (itr.hasNext())
+				itr.next().shutDown();
 			isShutDown = true;
 		}
 	}

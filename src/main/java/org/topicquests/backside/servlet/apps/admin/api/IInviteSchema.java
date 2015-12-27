@@ -37,5 +37,5 @@ public interface IInviteSchema {
 		  "SELECT email FROM invites ";
 
 	  public final String listInvitesLimited =
-			  "SELECT email FROM invites OFFSET=? LIMIT=?";
+			  "SELECT email FROM invites LIMIT ? OFFSET ?";
 }

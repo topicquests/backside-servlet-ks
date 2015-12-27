@@ -39,10 +39,11 @@ public interface ITopicMapModel {
 	/**
 	 * Store this <code>topic</code> to the topicmap
 	 * @param topic
-	 * @param checkVersion <code>true</code> if version sensitive
 	 * @return
 	 */
-	IResult putTopic(JSONObject topic, boolean checkVersion);
+	IResult putTopic(JSONObject topic);
+	
+	IResult updateTopic(JSONObject topic, boolean checkVersion);
 	
 	IResult getTopic(String topicLocator, ITicket credentials);
 	
@@ -70,6 +71,14 @@ public interface ITopicMapModel {
 	
 	IResult listTopicsByKeyValue(String propertyKey, String value, int start, int count, ITicket credentials);
 	
+    /////////////////////////////////
+    // DSL for creating topics
+    // The idea is that JSONObject theTopicShell allows
+    // for a full specification of the entire topic
+    // Start  with the regular features
+	//  ADD section called "features": [ list of {} which specify key/value pairs]
+    /////////////////////////////////
+
 	/**
 	 * <p>Allow for a simple shell topic, crafted at web clients, to be filled out to a full topic and persisted
 	 * and returned.</p>
@@ -90,6 +99,8 @@ public interface ITopicMapModel {
 	 * @param cargo
 	 * @param credentials
 	 * @return
+	 * @deprecated  in favor of FEATURES in <code>newInstanceNode</code>
+	 * and <code>newSubclassNode</code>
 	 */
 	IResult addFeaturesToNode(JSONObject cargo, ITicket credentials);
 	

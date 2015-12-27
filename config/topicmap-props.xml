@@ -18,7 +18,12 @@
 			bootstrap process at the same time is not nil.
 	 -->
 	<parameter name="ShouldBootstrap" value="Yes" /> 
-	
+
+	<!-- MergeListener uses a ServerSocket which is blocking.
+		If there are no listeners, it will block listening.
+		Use 'No' if no listeners are engages, otherwise, 'Yes' -->
+	<parameter name="MergeListenerPropagate" value="No" /> 
+
 	<!-- 
 		Allows for a plug-in dataprovider
 		 -->

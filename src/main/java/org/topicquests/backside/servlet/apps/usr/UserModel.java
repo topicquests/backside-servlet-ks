@@ -134,7 +134,7 @@ public class UserModel implements IUserModel {
 				s = userName;
 			ISubjectProxy n = nodeModel.newInstanceNode(userName, ITQCoreOntology.USER_TYPE, s, "", "en", 
 					ITQCoreOntology.SYSTEM_USER, ICoreIcons.PERSON_ICON_SM, ICoreIcons.PERSON_ICON, false);
-			result = topicMap.putNode(n, false);
+			result = topicMap.putNode(n);
 		}
 		IResult x = database.insertUser(con, email, userName, password, userFullName, avatar, role, homepage, geolocation);
 		if (x.hasError())

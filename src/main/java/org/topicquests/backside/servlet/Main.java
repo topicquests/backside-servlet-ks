@@ -15,10 +15,16 @@
  */
 package org.topicquests.backside.servlet;
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.util.EnumSet;
-import java.util.logging.Handler;
+import java.util.List;
+//import java.util.logging.Handler;
+
 
 import javax.servlet.DispatcherType;
+import javax.servlet.Servlet;
+//import javax.servlet.http.HttpServlet;
+
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -32,7 +38,10 @@ import org.topicquests.backside.servlet.apps.admin.AdminServlet;
 import org.topicquests.backside.servlet.apps.administrator.AdministratorServlet;
 import org.topicquests.backside.servlet.apps.auth.AuthenticationServlet;
 import org.topicquests.backside.servlet.apps.base.BaseServlet;
+import org.topicquests.backside.servlet.apps.gui.GUIServlet;
+import org.topicquests.backside.servlet.apps.stat.StaticFileServlet;
 import org.topicquests.backside.servlet.apps.tm.TopicMapServlet;
+import org.topicquests.backside.servlet.apps.upload.UploadServlet;
 import org.topicquests.backside.servlet.apps.usr.UserServlet;
 import org.topicquests.util.LoggingPlatform;
 /**
@@ -102,11 +111,43 @@ public class Main {
         context.addServlet(new ServletHolder(new AuthenticationServlet(environment, basePath)),"/auth/*");
         context.addServlet(new ServletHolder(new UserServlet(environment, basePath)),"/user/*");
         context.addServlet(new ServletHolder(new TopicMapServlet(environment, basePath)), "/tm/*");
-              
-        context.addServlet(new ServletHolder(new BaseServlet(environment, basePath)),"/*");
-        
+        context.addServlet(new ServletHolder(new StaticFileServlet(environment, basePath)),"/static/*");
 
+        context.addServlet(new ServletHolder(new UploadServlet(environment, basePath)),"/upload/*");
+        context.addServlet(new ServletHolder(new GUIServlet(environment, basePath)),"/gui/*");
         
+        /////////////////////////
+        // Boot any plugin servlets
+        /////////////////////////
+        List<List<String>> cps = (List<List<String>>)environment.getProperty("Servlets");
+        if (cps != null && !cps.isEmpty()) {
+        	int len = cps.size();
+        	Servlet s;
+        	Class cl;
+        	Constructor co;
+        	String classpath, urlFragment;
+        	List<String> x;
+        	for (int i=0;i<len;i++) {
+        		x = cps.get(i);
+        		urlFragment = x.get(0);
+        		classpath = x.get(1);
+        		try {
+        			System.out.println("Main booting: "+urlFragment+" | "+classpath);
+        			cl = Class.forName(classpath);
+        			co = cl.getConstructor(ServletEnvironment.class, String.class);
+        			s = (Servlet)co.newInstance(environment, basePath);
+        			context.addServlet(new ServletHolder(s), urlFragment);
+        		} catch (Exception e) {
+        			environment.logError(e.getMessage(), e);
+        			//this is a show stopper
+        			throw new RuntimeException(e);
+        		}
+        	}
+        }
+        
+        //Boot the catchall servlet
+        context.addServlet(new ServletHolder(new BaseServlet(environment, basePath)),"/*");
+      
         HandlerList handlers = new HandlerList();
         handlers.addHandler(handler);
         handlers.addHandler(context);
@@ -128,6 +169,7 @@ public class Main {
         	environment.logError(e.getMessage(), e);
         	e.printStackTrace();
         }
+        System.out.println("BacksideServletKS Ready");
 	}
 
 	/**

@@ -85,6 +85,7 @@ public class H2InviteDatabase extends H2DatabaseDriver implements
 		ResultSet rs = null;
 		Boolean x;
 		try {
+			System.out.println("H2InviteDatabase.existsInvite "+userEmail);
 			s = con.prepareStatement(IInviteSchema.getInvite);
 			s.setString(1, userEmail);
 			rs = s.executeQuery();
@@ -158,8 +159,8 @@ public class H2InviteDatabase extends H2DatabaseDriver implements
 			result.setResultObject(users);
 			s = con.prepareStatement(sql);
 			if (count > -1) {
-				s.setInt(1, start);
-				s.setInt(2, count);
+				s.setInt(1, count);
+				s.setInt(2, start);
 			}
 			rs = s.executeQuery();
 			while (rs.next()) {

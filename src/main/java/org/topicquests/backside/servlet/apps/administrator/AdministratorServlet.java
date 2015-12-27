@@ -32,11 +32,11 @@ import org.topicquests.backside.servlet.ServletEnvironment;
  */
 public class AdministratorServlet extends HttpServlet {
 	private ServletEnvironment environment;
-	private AdminHandler handler;
+	private AdministratorHandler handler;
     
 	public AdministratorServlet(ServletEnvironment env, String basePath) {
 		environment = env;
-		handler = new AdminHandler(environment,basePath);
+		handler = new AdministratorHandler(environment,basePath);
 	}
 		
 	

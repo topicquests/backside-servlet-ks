@@ -63,6 +63,7 @@ public class UserHandler  extends BaseHandler {
 		JSONObject returnMessage = newJSONObject();
 		String message = "", rtoken="";
 		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
+		System.out.println("UserHandler.get verb: "+verb);
 		int code = 0;
 		IResult r;
 		if (verb.equals(IUserMicroformat.LIST_USERS)) {
@@ -88,6 +89,7 @@ public class UserHandler  extends BaseHandler {
 				message = r.getErrorString();
 			} else {
 				//Time to take that list apart
+				System.out.println("UserHandler.ListUsers "+r.getResultObject());
 				if (r.getResultObject() != null) {
 					List<ITicket> usrs = (List<ITicket>)r.getResultObject();
 					Iterator<ITicket>itr = usrs.iterator();
@@ -133,7 +135,7 @@ public class UserHandler  extends BaseHandler {
 		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
 		int code = 0;
 		IResult r;
-		System.out.println("NEWUSER- "+verb);
+		System.out.println("UserHandler.post verb: "+verb);
 		if (verb.equals(IUserMicroformat.NEW_USER)) {
 			String email = (String)jsonObject.get(IUserMicroformat.USER_EMAIL);
 			//TODO sanity check
@@ -175,7 +177,29 @@ public class UserHandler  extends BaseHandler {
 				message = "ok";
 				code = BaseHandler.RESPONSE_OK;
 			}
-			
+		} else if (verb.equals(IAdminMicroformat.REMOVE_USER)) {
+			String userName = (String)jsonObject.get(IUserMicroformat.USER_NAME);
+			System.out.println("UserHandler.removeUser "+userName);
+			r = model.removeUser(userName);
+			if (r.hasError()) {
+				code = BaseHandler.RESPONSE_OK;
+				message = r.getErrorString();
+			} else {
+				message = "ok";
+				code = BaseHandler.RESPONSE_OK;
+			}
+		} else if (verb.equals(IAdminMicroformat.UPDATE_USER_DATA)) {
+			String userName = (String)jsonObject.get(IUserMicroformat.USER_NAME);
+			String key = (String)jsonObject.get(IUserMicroformat.PROP_KEY);
+			String val = (String)jsonObject.get(IUserMicroformat.PROP_VAL);
+			r = model.updateUserData(userName, key, val);
+			if (r.hasError()) {
+				code = BaseHandler.RESPONSE_OK;
+				message = r.getErrorString();
+			} else {
+				message = "ok";
+				code = BaseHandler.RESPONSE_OK;
+			}
 		} else {
 			String x = IErrorMessages.BAD_VERB+"-UserServletPost-"+verb;
 			environment.logError(x, null);

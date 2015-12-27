@@ -74,7 +74,7 @@ public class TagModel implements ITagModel {
 				System.out.println("TagModel.addTagToNode-1 "+lox+" "+userId);
 				tag = nodeModel.newInstanceNode(lox, INodeTypes.TAG_TYPE, name, "", "en", userId, 
 						ICoreIcons.TAG_SM, ICoreIcons.TAG, false);
-				r = topicMap.putNode(tag, false);
+				r = topicMap.putNode(tag);
 				if (r.hasError())
 					result.addErrorString(r.getErrorString());
 			}

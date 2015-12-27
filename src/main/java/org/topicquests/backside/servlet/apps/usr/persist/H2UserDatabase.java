@@ -430,21 +430,8 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 	@Override
 	public IResult updateUserRole(Connection con, String userName, String newRole) {
 		return updateUserData(con, userName, IUserSchema.USER_ROLE, newRole);
-/*		IResult result = new ResultPojo();
-		PreparedStatement s = null;
-		try {
-			s = con.prepareStatement(IUserSchema.updateUserRole);
-			s.setString(1, newRole);
-			s.setString(2, userName);
-			boolean x = s.execute();
-		} catch (Exception e) {
-			environment.logError(e.getMessage(), e);
-			result.addErrorString(e.getMessage());
-		} finally {
-			closePreparedStatement(s,result);
-		}
-		return result; */
 	}
+	
 	@Override
 	public IResult updateUserEmail(Connection con, String userName,
 			String newEmail) {
@@ -493,6 +480,7 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 
 	@Override
 	public IResult listUsers(Connection con, int start, int count) {
+		System.out.println("H2UserDatabase.listUsers "+start+" | "+count);
 		IResult result = new ResultPojo();
 		PreparedStatement s = null;
 		PreparedStatement s2 = null;
@@ -507,8 +495,8 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 			result.setResultObject(users);
 			s = con.prepareStatement(sql);
 			if (count > -1) {
-				s.setInt(1, start);
-				s.setInt(2, count);
+				s.setInt(1, count);
+				s.setInt(2, start);
 			}
 			rs = s.executeQuery();
 			String name, key,val, ava;

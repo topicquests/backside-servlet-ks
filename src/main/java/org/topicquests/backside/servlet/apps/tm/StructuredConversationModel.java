@@ -120,7 +120,7 @@ public class StructuredConversationModel implements IStructuredConversationModel
 				//TODO this is a really bad situation -- missing parent
 			}
 		}
-		r = topicMap.putNode(n, false);
+		r = topicMap.putNode(n);
 		if (r.hasError()) {
 			result.addErrorString(r.getErrorString());
 		}

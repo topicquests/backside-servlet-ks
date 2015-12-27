@@ -69,10 +69,15 @@ public class TopicMapModel implements ITopicMapModel {
 	 * @see org.topicquests.backside.servlet.apps.tm.api.ITopicMapModel#putTopic(net.minidev.json.JSONObject, org.topicquests.model.api.ITicket)
 	 */
 	@Override
-	public IResult putTopic(JSONObject topic, boolean checkVersion) {
+	public IResult putTopic(JSONObject topic) {
 		ISubjectProxy n = new SubjectProxy(topic);
-		IResult result = topicMap.putNode(n, checkVersion);
+		IResult result = topicMap.putNode(n);
 		return result;
+	}
+
+	@Override
+	public IResult updateTopic(JSONObject topic, boolean checkVersion) {
+		return topicMap.updateProxyFromJSON(topic, checkVersion);
 	}
 
 	/* (non-Javadoc)
@@ -177,7 +182,7 @@ public class TopicMapModel implements ITopicMapModel {
 				environment.logError("Missing lox for "+typeLocator+" | "+label, null);
 			}
 			environment.logDebug("TopicMapModel.newInstance-1 "+n.toJSONString());
-			r = topicMap.putNode(n, false);
+			r = topicMap.putNode(n);
 			if (r.hasError())
 				result.addErrorString(r.getErrorString());
 		}
@@ -242,7 +247,7 @@ public class TopicMapModel implements ITopicMapModel {
 		} else
 			n = nodeModel.newSubclassNode(superClassLocator, label, description, lang, userId, smallImagePath, largeImagePath, isPrivate);
 			
-		IResult result = topicMap.putNode(n, false);
+		IResult result = topicMap.putNode(n);
 		result.setResultObject(n.getData());
 		r = relateNodeToUser(n, superClassLocator, userId, credentials);
 		if (r.hasError())
@@ -273,6 +278,9 @@ public class TopicMapModel implements ITopicMapModel {
 					}
 				}
 			}
+			n.doUpdate();
+			result = topicMap.updateNode(n, true);
+			//Pay attention to OptimisticLock
 			
 		} else {
 			result.addErrorString("Missing Node "+lox);
@@ -381,5 +389,6 @@ public class TopicMapModel implements ITopicMapModel {
 		System.out.println("FindOrCreateBookmark-3 "+result.getErrorString());
 		return result;
 	}
+
 
 }

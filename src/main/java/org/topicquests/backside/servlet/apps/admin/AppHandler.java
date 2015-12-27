@@ -61,6 +61,7 @@ public class AppHandler  extends BaseHandler {
 		JSONObject returnMessage = newJSONObject();
 		String message = "", rtoken="";
 		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
+		System.out.println("AdminHandler.get "+verb+" "+jsonObject.toJSONString());
 		int code = 0;
 		IResult r;
 		String startS, countS;
@@ -103,6 +104,7 @@ public class AppHandler  extends BaseHandler {
 			}
 		} else if (verb.equals(IAdminMicroformat.EXISTS_INVITE)) {
 			String email = (String)jsonObject.get(ICredentialsMicroformat.USER_EMAIL);
+			System.out.println("AdminHandler.existsInvite "+email);
 			r = model.existsInvite(email);
 			Boolean b = (Boolean)r.getResultObject();
 			if (b.booleanValue() == true) {
@@ -128,16 +130,16 @@ public class AppHandler  extends BaseHandler {
 				} catch (Exception e2) {}
 			}
 			//TODO: note: we are ignoring any SORT modifiers
-			//This really returns some live cargo in the form of a list of user objects in JSON format
-			// We are restricting this to: name, email, avatar, homepage, geolocation, role
+			//This really returns some live cargo in the form of a list of emails in JSON format
 			r = model.listInvites(start, count);
 			if (r.hasError()) {
 				code = BaseHandler.RESPONSE_INTERNAL_SERVER_ERROR;
 				message = r.getErrorString();
 			} else {
-				//Time to take that list apart
+
 				if (r.getResultObject() != null) {
 					List<String> invites = (List<String>)r.getResultObject();
+					
 					returnMessage.put(ICredentialsMicroformat.CARGO, invites);
 				}
 				code = BaseHandler.RESPONSE_OK;
@@ -158,6 +160,7 @@ public class AppHandler  extends BaseHandler {
 		JSONObject returnMessage = newJSONObject();
 		String message = "", rtoken="";
 		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
+		System.out.println("AdminHandler.post verb: "+verb);
 		int code = 0;
 		IResult r;
 		String username, userrole, useremail;

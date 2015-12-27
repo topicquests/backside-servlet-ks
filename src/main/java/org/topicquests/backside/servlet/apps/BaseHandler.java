@@ -15,6 +15,9 @@
  */
 package org.topicquests.backside.servlet.apps;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -22,6 +25,7 @@ import java.net.URLDecoder;
 import java.util.*;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -79,6 +83,7 @@ public abstract class BaseHandler {
 	protected SystemEnvironment tmEnvironment=null;
 	protected String _basePath;
 	private ITicket guestCredentials;
+//	private ITicket systemUserCredentials; //don't really need this
 	protected CredentialCache credentialCache;
 
 	/**
@@ -90,6 +95,7 @@ public abstract class BaseHandler {
 		tmEnvironment = environment.getTopicMapEnvironment();
 		guestCredentials = new TicketPojo();
 		guestCredentials.setUserLocator(ITQCoreOntology.GUEST_USER);
+//		systemUserCredentials = new TicketPojo();
 		credentialCache = environment.getCredentialCache();
 		//caller MUST send in "guest" as token if not authenticated
 		credentialCache.putTicket(ITQCoreOntology.GUEST_USER, guestCredentials);
@@ -139,10 +145,13 @@ public abstract class BaseHandler {
 		result.setResultObjectA(jo);
 		String x = (String)jo.get(ICredentialsMicroformat.USER_IP);
 		System.out.println("GET IP "+x);
+		//IP is the user's ip address -- it can be null
 		String verb = (String)jo.get(ICredentialsMicroformat.VERB);
 		if (!verb.equals(IAuthMicroformat.AUTHENTICATE)) {
+			//IF THIS IS NOT AN AUTHENTICATE: look up this user
 			String token = (String)jo.get(ICredentialsMicroformat.SESSION_TOKEN);
-			if (token != null) {
+			// can send in either null, or an empty string
+			if (token != null && !token.equals("")) {
 				t = credentialCache.getTicket(token);
 				if (t == null) {
 					x = IErrorMessages.TOKEN_NO_USER+token;
@@ -151,7 +160,8 @@ public abstract class BaseHandler {
 					environment.logError(x, null);
 					throw new ServletException(x);
 				} 
-			} 
+			}
+			//otherwise, there is no token on this transaction
 		}
 		result.setResultObject(t);
 		return result;
@@ -291,6 +301,41 @@ public abstract class BaseHandler {
     	out.write(html);
     	out.close();
 	}
+	
+	/**
+	 * Send a PDF file to the browser
+	 * @see http://stackoverflow.com/questions/14202892/display-pdf-in-browser-with-a-servlet
+	 * @param pdfPath
+	 * @param response
+	 * @throws IOException
+	 */
+	public void sendPDF(String pdfPath, HttpServletResponse response) throws IOException {
+		File f = new File(pdfPath);
+		System.out.println("SENDPDF "+pdfPath);
+		if (!f.exists())
+			throw new IOException("NoFILE "+pdfPath);
+		ServletOutputStream stream = null;
+	    BufferedInputStream buf = null;
+	    try 
+	    {
+	        stream = response.getOutputStream();
+	        response.setContentType("application/pdf");
+	        response.setHeader("Content-Disposition", "inline; filename='" + f.getName() + "'");
+	        FileInputStream input = new FileInputStream(f);
+	        response.setContentLength((int) f.length());
+	        buf = new BufferedInputStream(input);
+	        int readBytes = 0;
+	        while ((readBytes = buf.read()) != -1)
+	            stream.write(readBytes);
+	    } 
+	    finally 
+	    {
+	        if (stream != null)
+	            stream.close();
+	        if (buf != null)
+	            buf.close();
+	    }
+	}
 
 	public String getClientIpAddr(HttpServletRequest request) {  
         String ip = request.getHeader("X-Forwarded-For");  
@@ -369,6 +414,9 @@ public abstract class BaseHandler {
 	 * @throws ServletException
 	 */
 	public JSONObject jsonFromString(String jsonString) throws ServletException {
+		//environment.logDebug("JSONFROMSTRING "+jsonString);
+		//NOTE: there are edge conditions:
+		//  jsonString == ""  can happen
 		JSONParser p = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
 		try {
 			return (JSONObject)p.parse(jsonString);

@@ -32,7 +32,9 @@ public class TestHarness1 {
 		//new InviteTest();
 		//new UserTest();
 		//new DecodeTest();
-		new ConversationTest1();
+		//new ConversationTest1();
+		//new FullTextSearchTest1();
+		new FullTextSearchTest2();
 		System.out.println("TestHarness Did");
 	}
 

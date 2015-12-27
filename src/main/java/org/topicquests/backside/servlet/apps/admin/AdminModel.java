@@ -61,6 +61,7 @@ public class AdminModel implements IAdminModel {
 	 */
 	@Override
 	public IResult existsInvite(String userEmail) {
+		System.out.println("AdminModel.existsInvite "+userEmail);
 		Connection con = null;
 		IResult r = getMapConnection();
 		if (r.hasError())

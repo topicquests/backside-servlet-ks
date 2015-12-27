@@ -79,7 +79,7 @@ public interface IUserSchema {
 			  "SELECT * FROM users ";
 
 	  public final String listUsersLimited =
-			  "SELECT * FROM users OFFSET=? LIMIT=?";
+			  "SELECT * FROM users LIMIT ? OFFSET ?";
 
 	//TODO more
 	public static final String authenticate =

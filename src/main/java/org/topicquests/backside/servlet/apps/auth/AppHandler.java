@@ -123,7 +123,7 @@ public class AppHandler  extends BaseHandler {
 			} else {
 				//missing auth
 				System.out.println("WE ARE MISSING AUTH");
-				environment.logError("Auth AppHandler:WeAreMissingAuth", null);
+				environment.logError("Auth TMAHandler:WeAreMissingAuth", null);
 			}
 		} else if (verb.equals(IAuthMicroformat.LOGOUT)) {
 			String token = (String)jsonObject.get(ICredentialsMicroformat.SESSION_TOKEN);

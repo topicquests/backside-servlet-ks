@@ -27,7 +27,9 @@ public interface ITopicMapMicroformat extends ICredentialsMicroformat {
 	public static final String
 		//GET
 		GET_TOPIC				= "GetTopic",
-		FULL_TEXT_SEARCH		= "FullTextSearch",
+		FULL_TEXT_SEARCH		= "ftSrch",
+		FULL_TEXT_PHRASE_SEARCH	= "ftPhrSrch",  
+
 		PUT_TOPIC				= "PutTopic",
 		//POST
 		REMOVE_TOPIC			= "RemTopic",
@@ -78,5 +80,7 @@ public interface ITopicMapMicroformat extends ICredentialsMicroformat {
 		SMALL_IMAGE_PATh	= ITQCoreOntology.SMALL_IMAGE_PATH,
 		// "t" or "f" case insensitive
 		IS_PRIVATE			= ITQCoreOntology.IS_PRIVATE_PROPERTY,
-		TAG_NAMES			= "TagNames";
+		TAG_NAMES			= "TagNames",
+		//FEATURES creates a space for additional key/value pairs
+		FEATURES			= "Features";
 }

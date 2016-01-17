@@ -131,6 +131,7 @@ public class TopicMapHandler  extends BaseHandler {
 			String startS = notNullString((String)jsonObject.get(ICredentialsMicroformat.ITEM_FROM));
 			String countS = notNullString((String)jsonObject.get(ICredentialsMicroformat.ITEM_COUNT));
 			String typeLocator = notNullString((String)jsonObject.get(ITQCoreOntology.INSTANCE_OF_PROPERTY_TYPE));
+			environment.logDebug("TopicMapHandler.listInstanceTopics "+typeLocator);
 			int start = 0, count = -1;
 			if (!startS.equals("")) {
 				try {
@@ -214,7 +215,7 @@ public class TopicMapHandler  extends BaseHandler {
 			if (cargo != null) {
 				System.out.println("CARGO "+cargo.toJSONString());
 				r = model.newInstanceNode(cargo, credentials);
-				returnMessage.put(ICredentialsMicroformat.CARGO, (JSONObject)r.getResultObject());
+				returnMessage.put(ICredentialsMicroformat.CARGO, ((ISubjectProxy)r.getResultObject()).getData());
 				code = BaseHandler.RESPONSE_OK;
 				message = "ok";
 			} else {
@@ -225,7 +226,7 @@ public class TopicMapHandler  extends BaseHandler {
 		} else if (verb.equals(ITopicMapMicroformat.NEW_SUBCLASS_TOPIC)) {
 			if (cargo != null) {
 				r = model.newSubclassNode(cargo, credentials);
-				returnMessage.put(ICredentialsMicroformat.CARGO, (JSONObject)r.getResultObject());
+				returnMessage.put(ICredentialsMicroformat.CARGO, ((ISubjectProxy)r.getResultObject()).getData());
 				code = BaseHandler.RESPONSE_OK;
 				message = "ok";
 			} else {
@@ -257,7 +258,7 @@ public class TopicMapHandler  extends BaseHandler {
 				if (r.getResultObject() != null) {
 					ISubjectProxy n = (ISubjectProxy)r.getResultObject();
 					System.out.println("GETTOPICBYURL "+n);
-					returnMessage.put(ICredentialsMicroformat.CARGO, (JSONObject)n.getData());
+					returnMessage.put(ICredentialsMicroformat.CARGO, n.getData());
 					code = BaseHandler.RESPONSE_OK;
 					message = "ok";
 				} else {
@@ -281,11 +282,16 @@ public class TopicMapHandler  extends BaseHandler {
 				throw new ServletException(x);
 			}
 		} else if (verb.equals(ITopicMapMicroformat.FIND_OR_CREATE_BOOKMARK)) {
+			System.out.println("FIND_OR_CREATE_BOOKMARK "+jsonObject.toJSONString());
+			//FIND_OR_CREATE_BOOKMARK {"ListProperty":{"tag1":"Transclusion","tag4":"","tag2":
+			//"Ted Nelson","tag3":"Wikipedia"},"uName":"jackpark","sToken":"419e24cc-22dc-404b-b0d1-a987d9a9cbc8",
+			//"verb":"FindProcessBookmark","Lang":"en","label":"Transclusion - Wikipedia, the free encyclopedia","uIP":"",
+			//"url":"https:\/\/en.wikipedia.org\/wiki\/Transclusion"}
 			String url = notNullString((String)jsonObject.get(ITQCoreOntology.RESOURCE_URL_PROPERTY));
 			String title = notNullString((String)jsonObject.get(ITopicMapMicroformat.TOPIC_LABEL));
 			String language  = notNullString((String)jsonObject.get(ITopicMapMicroformat.LANGUAGE));
 			String userId  = notNullString((String)jsonObject.get(ICredentialsMicroformat.USER_NAME));
-			List<String> tagLabels = ((List<String>)jsonObject.get(ITopicMapMicroformat.LIST_PROPERTY));
+			JSONObject tagLabels = (JSONObject)jsonObject.get(ITopicMapMicroformat.LIST_PROPERTY);
 			r = model.findOrCreateBookmark(url, title, language, userId, tagLabels, credentials);
 			environment.logDebug("TopicMapHandler.FindOrCreateBookmark "+r.getErrorString()+" | "+r.getResultObject());
 			if (!r.hasError()) {

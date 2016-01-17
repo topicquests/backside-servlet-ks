@@ -146,6 +146,10 @@ public class TopicMapModel implements ITopicMapModel {
 		//{"uName":"joe","isPrv":"F","sIco":"\/images\/bookmark_sm.png","Lang":"en",
 		//"label":"Tech Reports | Knowledge Media Institute | The Open University",
 		//"lIco":"\/images\/bookmark.png","inOf":"BookmarkNodeType","url":"http:\/\/kmi.open.ac.uk\/publications\/techreport\/kmi-10-01"}
+		
+		//{"crtr":"jackpark","sIco":"\/images\/publication_sm.png","isPrv":"F",
+		//"Lang":"en","details":"Modified TQElasticKnowledgeSystem","label":"Another try after fixes to the topic map",
+		//"lIco":"\/images\/publication.png","inOf":"BlogNodeType"}
 		String locator = (String)theTopicShell.get(ITopicMapMicroformat.TOPIC_LOCATOR);
 		String typeLocator =  (String)theTopicShell.get(ITopicMapMicroformat.PARENT_LOCATOR);
 		String lang = (String)theTopicShell.get(ITopicMapMicroformat.LANGUAGE);
@@ -156,8 +160,9 @@ public class TopicMapModel implements ITopicMapModel {
 		String largeImagePath = (String)theTopicShell.get(ITopicMapMicroformat.LARGE_IMAGE_PATH);
 		String isp = (String)theTopicShell.get(ITopicMapMicroformat.IS_PRIVATE);
 		//Added feature
-		String url = (String)theTopicShell.get(ITopicMapMicroformat.URL);
-		System.out.println("NEWINSTANCE "+url);
+		JSONObject extras = (JSONObject)theTopicShell.get(ITopicMapMicroformat.EXTRAS);
+		if (extras != null)
+			System.out.println("NEWINSTANCE "+extras.toJSONString());
 		boolean isPrivate = false;
 		IResult r;
 		if (isp.equalsIgnoreCase("t"))
@@ -176,8 +181,46 @@ public class TopicMapModel implements ITopicMapModel {
 			//n = nodeModel.newInstanceNode(locator, typeLocator, label, description, lang, userId, smallImagePath, largeImagePath, isPrivate);
 		} else {
 			n = nodeModel.newInstanceNode(typeLocator, label, description, lang, userId, smallImagePath, largeImagePath, isPrivate);
-			if (url != null)
-				n.setURL(url);
+			if (extras != null) {
+				JSONObject jo = n.getData();
+				Iterator<String>itr = extras.keySet().iterator();
+				String key;
+				while (itr.hasNext()) {
+					key = itr.next();
+					if (key.equals(ITopicMapMicroformat.ADD_CHILD_NODE)) {
+						//THIS is a partial IChildStruct
+						// We must fetch its locator (parent)
+						// and finish the IChildStruct
+						//TODO
+						JSONObject kid = (JSONObject)extras.get(key);
+						String parent = (String)kid.get("locator");
+						String context = (String)kid.get("contextLocator");
+						String transclude = (String)kid.get("transcluder");
+						String icon, subject;
+						r = topicMap.getNode(parent, credentials);
+						if (r.hasError())
+							result.addErrorString(r.getErrorString());
+						ISubjectProxy pnt = (ISubjectProxy)r.getResultObject();
+						icon = pnt.getSmallImage();
+						subject = pnt.getLabel(lang);
+						//Add a child to the parent
+						pnt.addChildNode(context, smallImagePath, n.getLocator(), label, transclude);
+						pnt.setLastEditDate(new Date());
+						r = topicMap.putNode(pnt);
+						if (r.hasError())
+							result.addErrorString(r.getErrorString());
+						// add parent to new node
+						n.addParentNode(context, icon, parent, subject);
+						
+					} else {
+						//////////////////////////////
+						//NOTE: we are putting values
+						// BIG ISSUE: overwriting old values
+						//////////////////////////////
+						jo.put(key, extras.get(key));
+					}
+				}
+			}
 			if (n.getLocator() == null) {
 				environment.logError("Missing lox for "+typeLocator+" | "+label, null);
 			}
@@ -196,15 +239,24 @@ public class TopicMapModel implements ITopicMapModel {
 		
 	}
 	
+	/**
+	 * ONLY called when the document was created by some user, regardless
+	 * of the document's type
+	 * @param node
+	 * @param superTypeLocator
+	 * @param userId
+	 * @param credentials
+	 * @return
+	 */
 	IResult relateNodeToUser(ISubjectProxy node, String superTypeLocator, String userId, ITicket credentials) {
 		IResult result = new ResultPojo();
 		//NOW, relate this puppy
-		String relation = null;
+		String relation = "DocumentCreatorRelationType";
 		IResult r;
-		if (superTypeLocator.equals("BookmarkNodeType") || //TODO add more types
-				superTypeLocator.equals("TagNodeType"))
-			relation = "DocumentCreatorRelationType";
-		if (relation != null) {
+		//if (superTypeLocator.equals("BookmarkNodeType") || //TODO add more types
+		//		superTypeLocator.equals("TagNodeType"))
+		//	relation = "DocumentCreatorRelationType";
+		//if (relation != null) {
 			r = topicMap.getNode(userId, credentials);
 			if (r.hasError())
 				result.addErrorString(r.getErrorString());
@@ -218,7 +270,7 @@ public class TopicMapModel implements ITopicMapModel {
 					result.addErrorString(r.getErrorString());
 			} else
 				result.addErrorString("Missing User "+userId);
-		}
+		//}
 		return result;
 	}
 
@@ -353,8 +405,8 @@ public class TopicMapModel implements ITopicMapModel {
 
 	@Override
 	public IResult findOrCreateBookmark(String url, String title,
-			String language, String userId, List<String> tagLabels, ITicket credentials) {
-		environment.logDebug("TopicMapModel.findOrDreateBookmark- "+url+" | "+userId);
+			String language, String userId, JSONObject tagLabels, ITicket credentials) {
+		environment.logDebug("TopicMapModel.findOrCreateBookmark- "+url+" | "+userId);
 		IResult result = this.getTopicByURL(url, credentials);
 		ISubjectProxy bkmk = (ISubjectProxy)result.getResultObject();
 		System.out.println("FindOrCreateBookmark-1 "+bkmk);
@@ -366,11 +418,14 @@ public class TopicMapModel implements ITopicMapModel {
 			jo.put(ITQCoreOntology.INSTANCE_OF_PROPERTY_TYPE, INodeTypes.BOOKMARK_TYPE);
 			jo.put(ITopicMapMicroformat.IS_PRIVATE, "F");
 			jo.put(ITopicMapMicroformat.TOPIC_LABEL, title);
-			jo.put(ITQCoreOntology.RESOURCE_URL_PROPERTY, url);
+			
 			jo.put(ICredentialsMicroformat.USER_NAME, credentials.getUserLocator());
 			jo.put(ITQCoreOntology.SMALL_IMAGE_PATH, ICoreIcons.BOOKMARK_SM);
 			jo.put(ITQCoreOntology.LARGE_IMAGE_PATH, ICoreIcons.BOOKMARK);
 			jo.put(ITopicMapMicroformat.LANGUAGE, language);
+			JSONObject extras = new JSONObject();
+			extras.put(ITQCoreOntology.RESOURCE_URL_PROPERTY, url);
+			jo.put("extras", extras);
 			result = this.newInstanceNode(jo, credentials);
 			bkmk = (ISubjectProxy)result.getResultObject();
 		}
@@ -383,8 +438,25 @@ public class TopicMapModel implements ITopicMapModel {
 			}
 		}
 		System.out.println("FindOrCreateBookmark-2 "+bkmk+" "+tagLabels);
-		if (bkmk != null && tagLabels != null && tagLabels.size() > 0) {
-			result = this.findOrProcessTags(bkmk.getLocator(), tagLabels, language, credentials);
+		if (bkmk != null && tagLabels != null && !tagLabels.isEmpty()) {
+			
+				List<String>tls = new ArrayList<String>();
+				//We use a fixed set of keys: "tag1" "tag2" "tag3" "tag4"
+				String label = (String)tagLabels.get("tag1");
+				if (label != null && !label.equals(""))
+					tls.add(label);
+				label = (String)tagLabels.get("tag2");
+				if (label != null && !label.equals(""))
+					tls.add(label);
+				label = (String)tagLabels.get("tag3");
+				if (label != null && !label.equals(""))
+					tls.add(label);
+				label = (String)tagLabels.get("tag4");
+				if (label != null && !label.equals(""))
+					tls.add(label);
+				result = this.findOrProcessTags(bkmk.getLocator(), tls, language, credentials);
+			
+			
 		}
 		System.out.println("FindOrCreateBookmark-3 "+result.getErrorString());
 		return result;

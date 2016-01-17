@@ -82,7 +82,12 @@ public interface ITopicMapModel {
 	/**
 	 * <p>Allow for a simple shell topic, crafted at web clients, to be filled out to a full topic and persisted
 	 * and returned.</p>
-	 * <p>Also looks for a <em>url</em> property.
+	 * <p>Also looks for a <em>extras</em> property.</p>
+	 * <p><code>extras</code> field is a JSON object which an add known
+	 * key/value pairs such as url, and dealing with parent and child nodes</p>
+	 * <p><em>WARNING</em> key/value pairs will overwrite any existing
+	 * key/value pairs in the node. It is wise to choose key/value pairs
+	 * which do not already exist in an otherwise empty node.</p>
 	 * @param theTopicShell
 	 * @param credentials
 	 * @return returns the node's JSONObject
@@ -133,7 +138,7 @@ public interface ITopicMapModel {
 	 * @param credentials
 	 * @return
 	 */
-	IResult findOrCreateBookmark(String url, String title, String language, String userId, List<String> tagLabels, ITicket credentials);
+	IResult findOrCreateBookmark(String url, String title, String language, String userId, JSONObject tagLabels, ITicket credentials);
 	
     /**
      * List users in the TopicMap

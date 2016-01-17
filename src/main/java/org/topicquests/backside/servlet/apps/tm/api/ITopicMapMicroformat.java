@@ -57,6 +57,7 @@ public interface ITopicMapMicroformat extends ICredentialsMicroformat {
 		GET_TOPIC_BY_URL		= "GetByURL",
 		ADD_PIVOT				= "AddPivot",	//post
 		ADD_RELATION			= "AddRelation",	//post
+		ADD_CHILD_NODE			= "AddChildNode", // inside EXTRAS
 		FIND_OR_PROCESS_TAG		= "FindProcessTag", //post
 		FIND_OR_CREATE_BOOKMARK	= "FindProcessBookmark"; //post
 		
@@ -75,6 +76,8 @@ public interface ITopicMapMicroformat extends ICredentialsMicroformat {
 		//2-character code, e.g. "en"
 		LANGUAGE			= "Lang",
 		URL					= ITQCoreOntology.RESOURCE_URL_PROPERTY,
+		// will be a tiny JSON object with added key/value pairs
+		EXTRAS				= "extras",
 		//nodes get images
 		LARGE_IMAGE_PATH	= ITQCoreOntology.LARGE_IMAGE_PATH,
 		SMALL_IMAGE_PATh	= ITQCoreOntology.SMALL_IMAGE_PATH,

@@ -28,6 +28,11 @@ import org.topicquests.ks.api.ITicket;
  */
 public interface ITopicMapModel {
 	////////////////
+	// Additinoal Keys
+	////////////////
+	public static final String
+		MY_CONVERSATIONS_LIST		= "myCons";
+	////////////////
 	// General TopicMap handlers
 	//NOTE about <em>version</em>
 	//  If checking version, the system will issue
@@ -70,6 +75,16 @@ public interface ITopicMapModel {
 	IResult listInstanceTopics(String typeLocator, int start, int count, ITicket credentials);
 	
 	IResult listTopicsByKeyValue(String propertyKey, String value, int start, int count, ITicket credentials);
+	
+	/**
+	 * <p>Performs a <em>MultiGet</em> on a list of tree child nodes contained by the topic
+	 * identified by <code>rootNodeLocator</code>.</p>
+	 * <p>Returns a JSONObject as a map: locator:JSONnode</p>
+	 * @param rootNodeLocator
+	 * @param credentials
+	 * @return
+	 */
+	IResult listTreeChildNodesJSON(String rootNodeLocator, ITicket credentials);
 	
     /////////////////////////////////
     // DSL for creating topics

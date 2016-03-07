@@ -115,7 +115,8 @@ public class StructuredConversationModel implements IStructuredConversationModel
 			}
 			ISubjectProxy parent = (ISubjectProxy)r.getResultObject();
 			if (parent != null) {
-				n.addParentNode(contextLocator, parent.getSmallImage(), parentLocator, parent.getLabel(language));
+				nodeModel.addParentNode(n, contextLocator, parent.getSmallImage(), parentLocator,  parent.getLabel(language));
+				//n.addParentNode(contextLocator, parent.getSmallImage(), parentLocator, parent.getLabel(language));
 			} else {
 				//TODO this is a really bad situation -- missing parent
 			}

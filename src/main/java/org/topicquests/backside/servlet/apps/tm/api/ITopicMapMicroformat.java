@@ -54,6 +54,7 @@ public interface ITopicMapMicroformat extends ICredentialsMicroformat {
 		LIST_INSTANCE_TOPICS	= "ListInstances",
 		LIST_SUBCLASS_TOPICS	= "ListSubclasses",
 		LOAD_TREE				= "LoadTree",
+		LIST_TREE_CHILD_NODES	= "ListTreeNodes", //multiget from a rootLocator
 		GET_TOPIC_BY_URL		= "GetByURL",
 		ADD_PIVOT				= "AddPivot",	//post
 		ADD_RELATION			= "AddRelation",	//post

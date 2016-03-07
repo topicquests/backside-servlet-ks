@@ -73,7 +73,7 @@ public class TopicMapHandler  extends BaseHandler {
 		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
 		int code = 0;
 		IResult r;
-		System.out.println("TopicMapHandler.handleGet "+verb);
+		System.out.println("CondoHandler.handleGet "+verb);
 		if (verb.equals(IUserMicroformat.LIST_USERS)) {
 			String startS = notNullString((String)jsonObject.get(ICredentialsMicroformat.ITEM_FROM));
 			String countS = notNullString((String)jsonObject.get(ICredentialsMicroformat.ITEM_COUNT));
@@ -131,7 +131,7 @@ public class TopicMapHandler  extends BaseHandler {
 			String startS = notNullString((String)jsonObject.get(ICredentialsMicroformat.ITEM_FROM));
 			String countS = notNullString((String)jsonObject.get(ICredentialsMicroformat.ITEM_COUNT));
 			String typeLocator = notNullString((String)jsonObject.get(ITQCoreOntology.INSTANCE_OF_PROPERTY_TYPE));
-			environment.logDebug("TopicMapHandler.listInstanceTopics "+typeLocator);
+			environment.logDebug("CondoHandler.listInstanceTopics "+typeLocator);
 			int start = 0, count = -1;
 			if (!startS.equals("")) {
 				try {
@@ -173,6 +173,20 @@ public class TopicMapHandler  extends BaseHandler {
 			//TODO
 		} else if (verb.equals(ITopicMapMicroformat.LOAD_TREE)) {
 			//TODO
+		} else if (verb.equals(ITopicMapMicroformat.LIST_TREE_CHILD_NODES)) {
+			String locator = notNullString((String)jsonObject.get(ITopicMapMicroformat.TOPIC_LOCATOR));
+			r = model.listTreeChildNodesJSON(locator, credentials);
+			System.out.println("LIST_TREE_CHILD_NODES "+r.getResultObject());
+			if (r.getResultObject() != null) {
+				JSONObject n = (JSONObject)r.getResultObject();
+				System.out.println("GETTOPIC "+n);
+				returnMessage.put(ICredentialsMicroformat.CARGO, n);
+				code = BaseHandler.RESPONSE_OK;
+				message = "ok";
+			} else {
+				message = "Not found";
+				code = BaseHandler.RESPONSE_OK;
+			}
 		} else if (verb.equals(ITopicMapMicroformat.GET_TOPIC_BY_URL)) {
 			String url = (String)jsonObject.get(ITQCoreOntology.RESOURCE_URL_PROPERTY);
 			if (url != null) {
@@ -208,7 +222,7 @@ public class TopicMapHandler  extends BaseHandler {
 		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
 		int code = 0;
 		IResult r;
-		System.out.println("TopicMapHandler.handlePost "+verb);
+		System.out.println("CondoHandler.handlePost "+verb);
 		if (verb.equals(ITopicMapMicroformat.PUT_TOPIC)) {
 			//TODO
 		} else if (verb.equals(ITopicMapMicroformat.NEW_INSTANCE_TOPIC)) {
@@ -293,7 +307,7 @@ public class TopicMapHandler  extends BaseHandler {
 			String userId  = notNullString((String)jsonObject.get(ICredentialsMicroformat.USER_NAME));
 			JSONObject tagLabels = (JSONObject)jsonObject.get(ITopicMapMicroformat.LIST_PROPERTY);
 			r = model.findOrCreateBookmark(url, title, language, userId, tagLabels, credentials);
-			environment.logDebug("TopicMapHandler.FindOrCreateBookmark "+r.getErrorString()+" | "+r.getResultObject());
+			environment.logDebug("CondoHandler.FindOrCreateBookmark "+r.getErrorString()+" | "+r.getResultObject());
 			if (!r.hasError()) {
 				code = BaseHandler.RESPONSE_OK;
 				message = "ok";
@@ -307,7 +321,7 @@ public class TopicMapHandler  extends BaseHandler {
 			List<String> tagLabels = ((List<String>)jsonObject.get(ITopicMapMicroformat.LIST_PROPERTY));
 			String language  = notNullString((String)jsonObject.get(ITopicMapMicroformat.LANGUAGE));
 			r = model.findOrProcessTags(bookmarkLocator, tagLabels, language, credentials);
-			environment.logDebug("TopicMapHandler.FindOrProcessTag "+r.getErrorString()+" | "+r.getResultObject());
+			environment.logDebug("CondoHandler.FindOrProcessTag "+r.getErrorString()+" | "+r.getResultObject());
 			if (r.hasError()) {
 				message = r.getErrorString();
 				code = BaseHandler.RESPONSE_INTERNAL_SERVER_ERROR;

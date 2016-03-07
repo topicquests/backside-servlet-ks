@@ -50,7 +50,7 @@ public class UserHandler  extends BaseHandler {
 	 */
 	public UserHandler(ServletEnvironment env, String basePath) {
 		super(env,basePath);
-		System.out.println("User TopicMapHandler");
+		System.out.println("User CondoHandler");
 		try {
 			model = new UserModel(environment);
 		} catch (Exception e) {

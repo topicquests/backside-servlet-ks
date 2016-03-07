@@ -127,13 +127,40 @@ public class TopicMapModel implements ITopicMapModel {
 	@Override
 	public IResult listTopicsByKeyValue(String propertyKey, String value,
 			int start, int count, ITicket credentials) {
-		IResult result = null; //
+		IResult result = new ResultPojo(); //
+		//TODO
 		return result;
 	}
 
 	@Override
 	public IResult listUserTopics(int start, int count, ITicket credentials) {
 		IResult result = topicMap.listInstanceNodes(ITQCoreOntology.USER_TYPE, start, count, credentials);
+		return result;
+	}
+
+	@Override
+	public IResult listTreeChildNodesJSON(String rootNodeLocator,
+			ITicket credentials) {
+		IResult result = new ResultPojo();
+		JSONObject map = new JSONObject();
+		result.setResultObject(map);
+		IResult r = topicMap.getNode(rootNodeLocator, credentials);
+		if (r.hasError())
+			result.addErrorString(r.getErrorString());
+		ISubjectProxy root = (ISubjectProxy)r.getResultObject();
+		List<String> kids = root.listParentChildTree();
+		if (kids != null) {
+			r = topicMap.multiGetNodes(kids, credentials);
+			if (r.hasError())
+				result.addErrorString(r.getErrorString());
+			List<JSONObject> snappers = (List<JSONObject>)r.getResultObject();
+			int len = snappers.size();
+			JSONObject jo;
+			for (int i=0;i<len;i++) {
+				jo = snappers.get(i);
+				map.put((String)jo.get("lox"), jo);
+			}
+		}
 		return result;
 	}
 
@@ -204,13 +231,15 @@ public class TopicMapModel implements ITopicMapModel {
 						icon = pnt.getSmallImage();
 						subject = pnt.getLabel(lang);
 						//Add a child to the parent
-						pnt.addChildNode(context, smallImagePath, n.getLocator(), label, transclude);
+						nodeModel.addChildNode(pnt,context, smallImagePath, n.getLocator(), label, transclude);
+						//pnt.addChildNode(context, smallImagePath, n.getLocator(), label, transclude);
 						pnt.setLastEditDate(new Date());
 						r = topicMap.putNode(pnt);
 						if (r.hasError())
 							result.addErrorString(r.getErrorString());
 						// add parent to new node
-						n.addParentNode(context, icon, parent, subject);
+						nodeModel.addParentNode(n, context, icon, parent, subject);
+						//n.addParentNode(context, icon, parent, subject);
 						
 					} else {
 						//////////////////////////////
@@ -430,8 +459,21 @@ public class TopicMapModel implements ITopicMapModel {
 			bkmk = (ISubjectProxy)result.getResultObject();
 		}
 		if (!isNew) {
-			List<String> pivs = bkmk.listPivotsByRelationType(ISocialBookmarkLegend.USER_BOOKMARK_RELATIONTYPE);
-			if(pivs.indexOf(userId)<0) {
+			//It's an existing object; should we add this user to it?
+			List<JSONObject> pivs = bkmk.listPivotsByRelationType(ISocialBookmarkLegend.USER_BOOKMARK_RELATIONTYPE);
+			Iterator<JSONObject>itr = pivs.iterator();
+			JSONObject jo;
+			boolean isFound = false;
+			while (itr.hasNext()) {
+				jo = itr.next();
+				//user topic goes in as target on bookmark tuple
+				if (jo.get("documentLocator").equals(userId)) {
+					isFound = true;
+					//this user already bookmarked this document
+					break;
+				}
+			}
+			if(!isFound) {
 				IResult r = this.relateNodeToUser(bkmk, "BookmarkNodeType", userId, credentials);
 				if (r.hasError())
 					result.addErrorString(r.getErrorString());
@@ -461,6 +503,7 @@ public class TopicMapModel implements ITopicMapModel {
 		System.out.println("FindOrCreateBookmark-3 "+result.getErrorString());
 		return result;
 	}
+
 
 
 }

@@ -66,6 +66,20 @@ public class AppHandler  extends BaseHandler {
 			String name = (String)jsonObject.get(ICredentialsMicroformat.USER_NAME);
 			IResult r = model.existsUsername(name);
 			Boolean x = (Boolean)r.getResultObject();
+			//returns ok only if this username does not exist
+			if (!x.booleanValue()) {
+				message = "ok";
+				code = BaseHandler.RESPONSE_OK;
+			} else {
+				code = BaseHandler.RESPONSE_OK;
+				message = "not found";
+			}
+		} else if (verb.equals(IAuthMicroformat.EXISTS_EMAIL)) {
+			String email = (String)jsonObject.get(ICredentialsMicroformat.USER_EMAIL);
+			IResult r = model.existsUserEmail(email);
+			Boolean x = (Boolean)r.getResultObject();
+			System.out.println("EXISTSEMAIL "+x);
+			//returns OK only if this email exists
 			if (x.booleanValue()) {
 				message = "ok";
 				code = BaseHandler.RESPONSE_OK;

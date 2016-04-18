@@ -39,6 +39,11 @@ public interface IUserModel {
      */
 	IResult getTicket(String userName);
 	
+	/**
+	 * Can return <code>null</code> inside Return object
+	 * @param email
+	 * @return
+	 */
 	IResult getTicketByEmail(String email);
 	
     /**
@@ -82,6 +87,14 @@ public interface IUserModel {
      * @return
      */
     IResult existsUsername(String userName);
+    
+    /**
+     * Returns Boolean value as result
+     * @param email
+     * @return
+     */
+    IResult existsUserEmail(String email);
+    
     /**
      * @param userName
      * @return

@@ -195,6 +195,20 @@ public class UserModel implements IUserModel {
 		con = (Connection)r.getResultObject();
 		return database.existsUsername(con, userName);
 	}
+	
+	@Override
+	public IResult existsUserEmail(String email) {
+		IResult result = new ResultPojo();
+		IResult r = this.getTicketByEmail(email);
+		//System.out.println("CHECKEMAIL "+email+" "+r.getResultObject());
+		//return true only if this email exists
+		if (r.getResultObject() == null)
+			result.setResultObject(new Boolean(false));
+		else
+			result.setResultObject(new Boolean(true));
+		return result;
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.topicquests.backside.servlet.apps.usr.api.IUserModel#removeUser(java.lang.String)
@@ -313,6 +327,7 @@ public class UserModel implements IUserModel {
 	public void shutDown() {
 		closeLocalConnection();
 	}
+
 
 
 

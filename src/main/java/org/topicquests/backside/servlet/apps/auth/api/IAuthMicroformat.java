@@ -23,6 +23,7 @@ public interface IAuthMicroformat {
 	
 	public static final String
 		VALIDATE		= "Validate", //GET
+		EXISTS_EMAIL	= "ExstEmail", //GET
 		AUTHENTICATE	= "Auth", 	//POST
 		LOGOUT			= "LogOut"; //POST
 }

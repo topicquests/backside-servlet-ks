@@ -50,9 +50,9 @@ public interface IUserSchema {
 			"CREATE INDEX propindex ON userprops(name)"};
 	
 	public static final String getUserByEmail =
-			"SELECT * FROM users WHERE email=?";
+			"SELECT * FROM users WHERE lower(email)=lower(?)";
 	public static final String getUserByName =
-			"SELECT * FROM users WHERE name=?";
+			"SELECT * FROM users WHERE lower(name)=lower(?)";
 	public static final String removeUser =
 			"DELETE FROM users WHERE name=?";
 	public static final String updateUserPwd = 
@@ -62,8 +62,8 @@ public interface IUserSchema {
 	public static final String updateUserEmail = 
 			"UPDATE users  SET email=? WHERE name=?";
 	
-	public static final String getUserProperties = 
-			"SELECT * FROM userprops WHERE name=?";
+	public static final String getUserProperties =
+			"SELECT * FROM userprops WHERE lower(name)=lower(?)";
 	
 	public static final String updateUserProperty =
 			"UPDATE userprops  SET val=? WHERE prop=? AND name=?";

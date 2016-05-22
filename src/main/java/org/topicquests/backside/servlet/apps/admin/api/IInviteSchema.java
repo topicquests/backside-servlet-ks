@@ -28,7 +28,7 @@ public interface IInviteSchema {
         "CREATE INDEX inviteindex ON invites(email)"};
 	
 	  public final String getInvite =
-	      "SELECT email FROM invites WHERE email=?";
+	      "SELECT email FROM invites WHERE lower(email)=lower(?)";
 	  public final String insertInvite =
 	      "INSERT INTO invites (email) VALUES(?)";
 	  public final String removeInvite =

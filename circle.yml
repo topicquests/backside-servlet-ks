@@ -1,0 +1,20 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  cache_directories:
+    - "~/docker"
+  override:
+    - sed -i.bak 's/localhost/es/' config/provider-config.xml
+    - cat run.sh | sed -e 's/org\.topicquests\.backside\.servlet\.Main/test\.TestHarness1/' > test.sh
+    - chmod +x test.sh
+    - docker info
+    - if [[ -e ~/docker/image.tar ]]; then docker load --input ~/docker/image.tar; fi
+    - docker build -t wenzowski/backside-servlet-ks .
+    - mkdir -p ~/docker; docker save wenzowski/backside-servlet-ks > ~/docker/image.tar
+
+test:
+  override:
+    - docker run -d --name es elasticsearch:2.3.3; sleep 10
+    - docker run --link es:es wenzowski/backside-servlet-ks ./test.sh

@@ -44,15 +44,11 @@ public class ConversationTest1 {
 	 * 
 	 */
 	public ConversationTest1() {
-		try {
-			environment = new ServletEnvironment(false);
-			topicMap = environment.getTopicMapEnvironment().getDatabase();
-			conversationModel = environment.getConversationModel();
-			credentials = new TicketPojo(ITQCoreOntology.SYSTEM_USER);
-			runTest();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		environment = new ServletEnvironment(false);
+		topicMap = environment.getTopicMapEnvironment().getDatabase();
+		conversationModel = environment.getConversationModel();
+		credentials = new TicketPojo(ITQCoreOntology.SYSTEM_USER);
+		runTest();
 	}
 	
 	/**

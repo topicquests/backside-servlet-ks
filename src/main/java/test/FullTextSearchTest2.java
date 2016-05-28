@@ -30,20 +30,12 @@ public class FullTextSearchTest2 {
 	 * 
 	 */
 	public FullTextSearchTest2() {
-		try {
-			environment = new ServletEnvironment(false);
-			tmEnvironment = environment.getTopicMapEnvironment();
-			database = tmEnvironment.getProvider();
-			client = database.getClient();
-			queryDSL = environment.getQueryDSL();
-			runTest();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (environment != null)
-				environment.shutDown();
-		}
-		System.exit(0);	
+		environment = new ServletEnvironment(false);
+		tmEnvironment = environment.getTopicMapEnvironment();
+		database = tmEnvironment.getProvider();
+		client = database.getClient();
+		queryDSL = environment.getQueryDSL();
+		runTest();
 	}
 	void runTest() {
 		List<String>fields = new ArrayList<String>();

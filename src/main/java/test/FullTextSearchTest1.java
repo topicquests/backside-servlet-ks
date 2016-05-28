@@ -29,21 +29,12 @@ public class FullTextSearchTest1 {
 	 * 
 	 */
 	public FullTextSearchTest1() {
-		try {
-			environment = new ServletEnvironment(false);
-			tmEnvironment = environment.getTopicMapEnvironment();
-			database = tmEnvironment.getProvider();
-			client = database.getClient();
-			queryDSL = environment.getQueryDSL();
-			runTest();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (environment != null)
-				environment.shutDown();
-		}
-		System.exit(0);
-		
+		environment = new ServletEnvironment(false);
+		tmEnvironment = environment.getTopicMapEnvironment();
+		database = tmEnvironment.getProvider();
+		client = database.getClient();
+		queryDSL = environment.getQueryDSL();
+		runTest();
 	}
 
 	void runTest() {

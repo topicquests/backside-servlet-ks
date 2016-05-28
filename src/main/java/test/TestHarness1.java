@@ -36,6 +36,7 @@ public class TestHarness1 {
 		new FullTextSearchTest1();
 		new FullTextSearchTest2();
 		System.out.println("TestHarness Did");
+		System.exit(0);
 	}
 
 }

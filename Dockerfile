@@ -1,16 +1,14 @@
 FROM anapsix/alpine-java:jdk8
 WORKDIR /app
 
-ENV GPG_VERSION=2.1.10-r0 \
-    ANT_VERSION=1.9.7 \
-    ANT_HOME=/opt/ant \
-    PATH=${PATH}:/opt/ant/bin
-
-RUN apk add --no-cache gnupg=$GPG_VERSION
-
-RUN wget -q https://www.apache.org/dist/ant/KEYS && \
+ENV GPG_VERSION=2.1.10-r0
+RUN apk add --no-cache gnupg=$GPG_VERSION && \
+    wget -q https://www.apache.org/dist/ant/KEYS && \
     gpg --import KEYS && rm KEYS
 
+ENV ANT_VERSION=1.9.7 \
+    ANT_HOME=/opt/ant \
+    PATH=${PATH}:/opt/ant/bin
 RUN wget -q http://www.us.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz && \
     wget -q http://www.us.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz.asc && \
     gpg --verify apache-ant-${ANT_VERSION}-bin.tar.gz.asc && \

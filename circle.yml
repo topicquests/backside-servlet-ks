@@ -14,13 +14,12 @@ dependencies:
     - docker info
     - if [[ -e ~/docker/image.tar ]]; then docker load --input ~/docker/image.tar; fi
     - if [[ -e ~/docker/es.tar ]]; then docker load --input ~/docker/es.tar; fi
-    - docker pull elasticsearch:2.3.3
+    - docker run -d --name es elasticsearch:2.3.3
     - docker build -t wenzowski/backside-servlet-ks .
     - mkdir -p ~/docker; docker save wenzowski/backside-servlet-ks > ~/docker/image.tar; docker save elasticsearch > ~/docker/es.tar
 
 test:
   override:
-    - docker run -d --name es elasticsearch:2.3.3; sleep 10
     - docker run --link es:es wenzowski/backside-servlet-ks ./test.sh
 
 general:

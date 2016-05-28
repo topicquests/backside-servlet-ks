@@ -29,11 +29,11 @@ public class TestHarness1 {
 		System.out.println("BOO!");
 		LoggingPlatform logger = LoggingPlatform.getInstance("logger.properties");
 		System.out.println("TestHarness Starting");
-		//new InviteTest();
-		//new UserTest();
-		//new DecodeTest();
-		//new ConversationTest1();
-		//new FullTextSearchTest1();
+		new InviteTest();
+		new UserTest();
+		new DecodeTest();
+		new ConversationTest1();
+		new FullTextSearchTest1();
 		new FullTextSearchTest2();
 		System.out.println("TestHarness Did");
 	}

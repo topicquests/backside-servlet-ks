@@ -6,9 +6,9 @@ ENV GPG_VERSION=2.1.10-r0 \
     ANT_HOME=/opt/ant \
     PATH=${PATH}:/opt/ant/bin
 
-RUN cd && apk add --update gnupg=$GPG_VERSION && \
-    rm -rf /var/cache/apk/* && \
-    wget -q https://www.apache.org/dist/ant/KEYS && \
+RUN apk add --no-cache gnupg=$GPG_VERSION
+
+RUN wget -q https://www.apache.org/dist/ant/KEYS && \
     gpg --import KEYS && rm KEYS
 
 RUN cd && wget -q http://www.us.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz && \

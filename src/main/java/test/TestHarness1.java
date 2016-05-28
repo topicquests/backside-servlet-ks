@@ -40,7 +40,7 @@ public class TestHarness1 {
 		} catch (Exception e) {
 			e.printStackTrace();
 			environment.shutDown();
-			System.exit(0);
+			System.exit(1);
 		}
 		new InviteTest(environment, adminModel);
 		new UserTest(environment);

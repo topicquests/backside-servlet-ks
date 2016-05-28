@@ -11,7 +11,7 @@ RUN apk add --no-cache gnupg=$GPG_VERSION
 RUN wget -q https://www.apache.org/dist/ant/KEYS && \
     gpg --import KEYS && rm KEYS
 
-RUN cd && wget -q http://www.us.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz && \
+RUN wget -q http://www.us.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz && \
     wget -q http://www.us.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz.asc && \
     gpg --verify apache-ant-${ANT_VERSION}-bin.tar.gz.asc && \
     tar xzf apache-ant-${ANT_VERSION}-bin.tar.gz && \
@@ -20,8 +20,9 @@ RUN cd && wget -q http://www.us.apache.org/dist/ant/binaries/apache-ant-${ANT_VE
     rm -f apache-ant-${ANT_VERSION}-bin.tar.gz.asc && \
     rm -f apache-ant-${ANT_VERSION}-bin.tar.gz
 
-COPY . /app
-RUN cd /app && ant compile
+ADD lib lib
+ADD . .
+RUN ant compile
 
 VOLUME /app/data/backside
 EXPOSE 8080

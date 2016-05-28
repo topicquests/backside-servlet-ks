@@ -1,4 +1,4 @@
-# BacksideServletKS
+# BacksideServletKS [![CircleCI](https://circleci.com/gh/wenzowski/BacksideServletKS/tree/master.svg?style=svg)](https://circleci.com/gh/wenzowski/BacksideServletKS/tree/master)
 BacksideServlet for the new TQElasticKnowledgeSystem, replaces BacksideServlet
 
 # Try it out

@@ -11,6 +11,7 @@ dependencies:
     - chmod +x test.sh
     - docker info
     - if [[ -e ~/docker/image.tar ]]; then docker load --input ~/docker/image.tar; fi
+    - docker pull elasticsearch:2.3.3
     - docker build -t wenzowski/backside-servlet-ks .
     - mkdir -p ~/docker; docker save wenzowski/backside-servlet-ks > ~/docker/image.tar
 

@@ -20,9 +20,14 @@ RUN wget -q http://www.us.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}
 
 ADD lib lib
 ADD . .
-RUN ant compile
+
+RUN sed -i.bak 's/localhost/es/' config/provider-config.xml && \
+    cat run.sh | sed -e 's/org\.topicquests\.backside\.servlet\.Main/test\.TestHarness1/' > test.sh && \
+    chmod +x test.sh && \
+    ant compile
 
 VOLUME /app/data/backside
 EXPOSE 8080
 
+ENTRYPOINT ["./wait-for-it.sh", "-t", "0", "es:9200", "--"]
 CMD ["./run.sh"]

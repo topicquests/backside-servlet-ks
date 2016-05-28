@@ -8,9 +8,6 @@ dependencies:
   cache_directories:
     - "~/docker"
   override:
-    - sed -i.bak 's/localhost/es/' config/provider-config.xml
-    - cat run.sh | sed -e 's/org\.topicquests\.backside\.servlet\.Main/test\.TestHarness1/' > test.sh
-    - chmod +x test.sh
     - docker info
     - if [[ -e ~/docker/image.tar ]]; then docker load --input ~/docker/image.tar; fi
     - if [[ -e ~/docker/es.tar ]]; then docker load --input ~/docker/es.tar; fi

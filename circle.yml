@@ -21,3 +21,7 @@ test:
   override:
     - docker run -d --name es elasticsearch:2.3.3; sleep 10
     - docker run --link es:es wenzowski/backside-servlet-ks ./test.sh
+
+general:
+  artifacts:
+    - 'logs/logfile.log'

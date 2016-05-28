@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package test;
 
@@ -26,24 +26,15 @@ public class FullTextSearchTest1 {
 		INDEX = "topics";
 
 	/**
-	 * 
+	 *
 	 */
-	public FullTextSearchTest1() {
-		try {
-			environment = new ServletEnvironment(false);
-			tmEnvironment = environment.getTopicMapEnvironment();
-			database = tmEnvironment.getProvider();
-			client = database.getClient();
-			queryDSL = environment.getQueryDSL();
-			runTest();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (environment != null)
-				environment.shutDown();
-		}
-		System.exit(0);
-		
+	public FullTextSearchTest1(ServletEnvironment env) {
+		environment = env;
+		tmEnvironment = environment.getTopicMapEnvironment();
+		database = tmEnvironment.getProvider();
+		client = database.getClient();
+		queryDSL = environment.getQueryDSL();
+		runTest();
 	}
 
 	void runTest() {
@@ -51,6 +42,7 @@ public class FullTextSearchTest1 {
 		System.out.println("AAA "+theQuery);
 		IResult r = client.listObjectsByQuery(theQuery, INDEX );
 		System.out.println("BBB "+r.getErrorString()+" | "+r.getResultObject());
+		if (r.hasError()) System.exit(1);
 	}
 }
 /**

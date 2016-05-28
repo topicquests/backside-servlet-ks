@@ -41,20 +41,16 @@ public class ConversationTest1 {
 		ANSWER_LOC		= "MyFirstAnswer";
 
 	/**
-	 * 
+	 *
 	 */
-	public ConversationTest1() {
-		try {
-			environment = new ServletEnvironment(false);
-			topicMap = environment.getTopicMapEnvironment().getDatabase();
-			conversationModel = environment.getConversationModel();
-			credentials = new TicketPojo(ITQCoreOntology.SYSTEM_USER);
-			runTest();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public ConversationTest1(ServletEnvironment env) {
+		environment = env;
+		topicMap = environment.getTopicMapEnvironment().getDatabase();
+		conversationModel = environment.getConversationModel();
+		credentials = new TicketPojo(ITQCoreOntology.SYSTEM_USER);
+		runTest();
 	}
-	
+
 	/**
 	 * <p>Steps:<br/>
 	 * <li>Create a Map node</li>
@@ -63,19 +59,21 @@ public class ConversationTest1 {
 	 * </p>
 	 */
 	private void runTest() {
-		IResult r = conversationModel.newConversationNode(INodeTypes.CONVERSATION_MAP_TYPE, null, null, 
+		IResult r = conversationModel.newConversationNode(INodeTypes.CONVERSATION_MAP_TYPE, null, null,
 				MAP_LOC, "My first map", null, "en", "joe", false);
 		ISubjectProxy sp = (ISubjectProxy)r.getResultObject();
 		System.out.println("AAA "+r.getErrorString()+" | "+sp.toJSONString());
-		r = conversationModel.newConversationNode(INodeTypes.ISSUE_TYPE, MAP_LOC, MAP_LOC, 
+		if (r.hasError()) System.exit(1);
+		r = conversationModel.newConversationNode(INodeTypes.ISSUE_TYPE, MAP_LOC, MAP_LOC,
 				QUESTION_LOC, "Why is the sky blue?", null, "en", "joe", false);
 		sp = (ISubjectProxy)r.getResultObject();
 		System.out.println("BBB"+r.getErrorString()+" | "+sp.toJSONString());
-		r = conversationModel.newConversationNode(INodeTypes.POSITION_TYPE, QUESTION_LOC, MAP_LOC, 
+		if (r.hasError()) System.exit(1);
+		r = conversationModel.newConversationNode(INodeTypes.POSITION_TYPE, QUESTION_LOC, MAP_LOC,
 				ANSWER_LOC, "Nobody really knows.", null, "en", "joe", false);
 		sp = (ISubjectProxy)r.getResultObject();
 		System.out.println("CCC"+r.getErrorString()+" | "+sp.toJSONString());
-		environment.shutDown();
+		if (r.hasError()) System.exit(1);
 	}
 
 }

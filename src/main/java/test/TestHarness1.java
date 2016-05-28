@@ -14,6 +14,9 @@
  * and limitations under the License.
  */
 package test;
+import org.topicquests.backside.servlet.ServletEnvironment;
+import org.topicquests.backside.servlet.apps.admin.AdminModel;
+import org.topicquests.backside.servlet.apps.admin.api.IAdminModel;
 
 import org.topicquests.util.LoggingPlatform;
 
@@ -22,6 +25,8 @@ import org.topicquests.util.LoggingPlatform;
  * 
  */
 public class TestHarness1 {
+	private static ServletEnvironment environment;
+	private static IAdminModel adminModel;
 	/**
 	 * @param args
 	 */
@@ -29,12 +34,19 @@ public class TestHarness1 {
 		System.out.println("BOO!");
 		LoggingPlatform logger = LoggingPlatform.getInstance("logger.properties");
 		System.out.println("TestHarness Starting");
-		new InviteTest();
-		new UserTest();
+		try {
+			environment = new ServletEnvironment(false);
+			adminModel = new AdminModel(environment);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
+		new InviteTest(environment, adminModel);
+		new UserTest(environment);
 		new DecodeTest();
-		new ConversationTest1();
-		new FullTextSearchTest1();
-		new FullTextSearchTest2();
+		new ConversationTest1(environment);
+		new FullTextSearchTest1(environment);
+		new FullTextSearchTest2(environment);
 		System.out.println("TestHarness Did");
 		System.exit(0);
 	}

@@ -43,8 +43,8 @@ public class ConversationTest1 {
 	/**
 	 * 
 	 */
-	public ConversationTest1() {
-		environment = new ServletEnvironment(false);
+	public ConversationTest1(ServletEnvironment env) {
+		environment = env;
 		topicMap = environment.getTopicMapEnvironment().getDatabase();
 		conversationModel = environment.getConversationModel();
 		credentials = new TicketPojo(ITQCoreOntology.SYSTEM_USER);

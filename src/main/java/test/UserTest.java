@@ -42,8 +42,8 @@ public class UserTest {
 	/**
 	 * 
 	 */
-	public UserTest() {
-		environment = new ServletEnvironment(false);
+	public UserTest(ServletEnvironment env) {
+		environment = env;
 		model = environment.getUserModel();
 
 		//(String email, String userName, String password, String avatar, String role, String homepage, String geolocation)

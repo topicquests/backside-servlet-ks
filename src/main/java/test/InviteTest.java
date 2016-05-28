@@ -37,9 +37,9 @@ public class InviteTest {
 	/**
 	 * 
 	 */
-	public InviteTest() {
-		environment = new ServletEnvironment(false);
-		model = new AdminModel(environment);
+	public InviteTest(ServletEnvironment env, IAdminModel adminModel) {
+		environment = env;
+		model = adminModel;
 		IResult r = model.addInvite(I1);
 		if (r.hasError())
 			System.out.println("A "+r.getErrorString());

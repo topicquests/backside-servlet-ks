@@ -28,8 +28,8 @@ public class FullTextSearchTest1 {
 	/**
 	 * 
 	 */
-	public FullTextSearchTest1() {
-		environment = new ServletEnvironment(false);
+	public FullTextSearchTest1(ServletEnvironment env) {
+		environment = env;
 		tmEnvironment = environment.getTopicMapEnvironment();
 		database = tmEnvironment.getProvider();
 		client = database.getClient();

@@ -35,30 +35,42 @@ public class InviteTest {
 		I3  = "bob@foo.org";
 
 	/**
-	 * 
+	 *
 	 */
 	public InviteTest(ServletEnvironment env, IAdminModel adminModel) {
 		environment = env;
 		model = adminModel;
 		IResult r = model.addInvite(I1);
-		if (r.hasError())
+		if (r.hasError()) {
 			System.out.println("A "+r.getErrorString());
+			System.exit(1);
+		}
 		r = model.addInvite(I2);
-		if (r.hasError())
+		if (r.hasError()) {
 			System.out.println("B "+r.getErrorString());
+			System.exit(1);
+		}
 		r = model.addInvite(I3);
-		if (r.hasError())
+		if (r.hasError()) {
 			System.out.println("C "+r.getErrorString());
+			System.exit(1);
+		}
 		r = model.listInvites(0, -1);
-		if (r.hasError())
+		if (r.hasError()) {
 			System.out.println("D "+r.getErrorString());
+			System.exit(1);
+		}
 		System.out.println("E "+r.getResultObject());
 		r = model.removeInvite(I2);
-		if (r.hasError())
+		if (r.hasError()) {
 			System.out.println("F "+r.getErrorString());
+			System.exit(1);
+		}
 		r = model.listInvites(0, -1);
-		if (r.hasError())
+		if (r.hasError()) {
 			System.out.println("G "+r.getErrorString());
+			System.exit(1);
+		}
 		System.out.println("H "+r.getResultObject());
 	}
 

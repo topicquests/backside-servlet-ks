@@ -22,7 +22,7 @@ import org.topicquests.util.LoggingPlatform;
 
 /**
  * @author park
- * 
+ *
  */
 public class TestHarness1 {
 	private static ServletEnvironment environment;
@@ -39,6 +39,7 @@ public class TestHarness1 {
 			adminModel = new AdminModel(environment);
 		} catch (Exception e) {
 			e.printStackTrace();
+			environment.shutDown();
 			System.exit(0);
 		}
 		new InviteTest(environment, adminModel);
@@ -48,6 +49,7 @@ public class TestHarness1 {
 		new FullTextSearchTest1(environment);
 		new FullTextSearchTest2(environment);
 		System.out.println("TestHarness Did");
+		environment.shutDown();
 		System.exit(0);
 	}
 

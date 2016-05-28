@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package test;
 
@@ -26,7 +26,7 @@ public class FullTextSearchTest1 {
 		INDEX = "topics";
 
 	/**
-	 * 
+	 *
 	 */
 	public FullTextSearchTest1(ServletEnvironment env) {
 		environment = env;
@@ -42,6 +42,7 @@ public class FullTextSearchTest1 {
 		System.out.println("AAA "+theQuery);
 		IResult r = client.listObjectsByQuery(theQuery, INDEX );
 		System.out.println("BBB "+r.getErrorString()+" | "+r.getResultObject());
+		if (r.hasError()) System.exit(1);
 	}
 }
 /**

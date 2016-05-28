@@ -37,10 +37,10 @@ public class UserTest {
 		P2	= "sara!",
 		N3  = "bob",
 		P3  = "bob#";
-	
+
 
 	/**
-	 * 
+	 *
 	 */
 	public UserTest(ServletEnvironment env) {
 		environment = env;
@@ -48,21 +48,31 @@ public class UserTest {
 
 		//(String email, String userName, String password, String avatar, String role, String homepage, String geolocation)
 		IResult r = model.insertUser(I1, N1, P1, "Sam Slow", "", ISecurity.USER_ROLE, "", "", true);
-		if (r.hasError())
+		if (r.hasError()) {
 			System.out.println("A "+r.getErrorString());
+			System.exit(1);
+		}
 		r =  model.insertUser(I2, N2, P2, "Sara Slow", "", ISecurity.ADMINISTRATOR_ROLE, "", "", true);
-		if (r.hasError())
+		if (r.hasError()) {
 			System.out.println("B "+r.getErrorString());
+			System.exit(1);
+		}
 		r =  model.insertUser(I3, N3, P3, "Bob Foo", "bobobo", ISecurity.USER_ROLE, "http://google.com/", "101,125", true);
-		if (r.hasError())
+		if (r.hasError()) {
 			System.out.println("C "+r.getErrorString());
+			System.exit(1);
+		}
 		r = model.listUserLocators();
-		if (r.hasError())
+		if (r.hasError()) {
 			System.out.println("D "+r.getErrorString());
+			System.exit(1);
+		}
 		System.out.println("E "+r.getResultObject());
 		r = model.authenticate(I1, P1);
-		if (r.hasError())
+		if (r.hasError()) {
 			System.out.println("F "+r.getErrorString());
+			System.exit(1);
+		}
 		System.out.println("G "+r.getErrorString());
 	}
 

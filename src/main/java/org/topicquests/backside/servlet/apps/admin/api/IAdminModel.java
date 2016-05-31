@@ -46,7 +46,9 @@ public interface IAdminModel extends IInviteModel {
      * @param newRole
      * @return
      */    
-    IResult updateUserRole(String userName, String newRole);
+    IResult addUserRole(String userName, String newRole);
+    
+    IResult removeUserRole(String userName, String oldRole);
         
     IResult updateUserEmail(String userName, String newEmail);
 

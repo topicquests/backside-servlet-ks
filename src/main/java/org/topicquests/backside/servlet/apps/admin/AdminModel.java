@@ -23,6 +23,7 @@ import org.topicquests.backside.servlet.apps.admin.api.IAdminModel;
 import org.topicquests.backside.servlet.apps.admin.api.IInviteDatabase;
 import org.topicquests.backside.servlet.apps.admin.persist.H2InviteDatabase;
 import org.topicquests.backside.servlet.apps.usr.api.IUserModel;
+import org.topicquests.backside.servlet.apps.usr.api.IUserSchema;
 import org.topicquests.common.ResultPojo;
 import org.topicquests.common.api.IResult;
 
@@ -117,10 +118,17 @@ public class AdminModel implements IAdminModel {
 	 * @see org.topicquests.backside.servlet.apps.admin.api.IAdminModel#updateUserRole(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public IResult updateUserRole(String userName, String newRole) {
+	public IResult addUserRole(String userName, String newRole) {
 		System.out.println("UpdateUserRole "+userName+" "+newRole);
-		return userModel.updateUserRole(userName, newRole);
+		return userModel.addUserRole(userName, newRole);
 	}
+	
+	@Override
+	public IResult removeUserRole(String userName, String oldRole) {
+		System.out.println("RemoveUserRole "+userName+" "+oldRole);
+		return userModel.removeUserData(userName, IUserSchema.USER_ROLE, oldRole);
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.topicquests.backside.servlet.apps.admin.api.IAdminModel#updateUserEmail(java.lang.String, java.lang.String)
@@ -185,5 +193,6 @@ public class AdminModel implements IAdminModel {
 	public void shutDown() {
 		closeLocalConnection();
 	}
+
 
 }

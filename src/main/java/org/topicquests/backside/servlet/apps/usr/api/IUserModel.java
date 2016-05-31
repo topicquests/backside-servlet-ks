@@ -79,7 +79,9 @@ public interface IUserModel {
     
     IResult insertUserData(String userName, String propertyType, String propertyValue);
     
-    IResult updateUserData(String userName, String propertyType, String newValue);
+    IResult removeUserData(String userName, String propertyType, String propertyValue);
+    
+   // IResult addUserData(String userName, String propertyType, String newValue);
     
     /**
      * Returns Boolean value as result
@@ -109,15 +111,16 @@ public interface IUserModel {
     IResult changeUserPassword(String userName, String newPassword);
         
     /**
-     * <p>NOTE: <em>role</em> is really a string of comma-delimited roles
+     * <p>OLD: <em>role</em> is really a string of comma-delimited roles
      *  up to 255 characters in length</p>
+     * <p>NEW: <em>roles</em> are collections 
      * <p>At the UI, an Admin will insert or delete a role code from that string.</p>
      * <p>What is returned here is that revised role string.</p>
      * @param userName
      * @param newRole
      * @return
      */
-    IResult updateUserRole(String userName, String newRole);
+    IResult addUserRole(String userName, String newRole);
     
     IResult updateUserEmail(String userName, String newEmail);
 

@@ -74,8 +74,7 @@ public class UserModel implements IUserModel {
 		if (r.getResultObject() == null) {
 			r = this.insertUser(admin, "defaultadmin", pwd, "Default Admin", "", ISecurity.ADMINISTRATOR_ROLE, "", "", false);
 			//This user is far more than an Admin
-			StringBuilder buf = new StringBuilder(ISecurity.ADMINISTRATOR_ROLE).append(", ").append(ISecurity.OWNER_ROLE);
-			r = this.updateUserRole("defaultadmin", buf.toString());
+			r = this.addUserRole("defaultadmin", ISecurity.OWNER_ROLE);
 		}
 	}
 	/* (non-Javadoc)
@@ -168,19 +167,31 @@ public class UserModel implements IUserModel {
 
 		return database.insertUserData(con, userName, propertyType, propertyValue);
 	}
+	
+	@Override
+	public IResult removeUserData(String userName, String propertyType, String propertyValue) {
+		Connection con = null;
+		IResult r = getMapConnection();
+		if (r.hasError())
+			return r;
+		con = (Connection)r.getResultObject();
+
+		return database.removeUserData(con, userName, propertyType, propertyValue);
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.topicquests.backside.servlet.apps.usr.api.IUserModel#updateUserData(java.lang.String, java.lang.String, java.lang.String)
-	 */
+	 * /
 	@Override
-	public IResult updateUserData(String userName, String propertyType,
+	public IResult addUserData(String userName, String propertyType,
 			String newValue) {
 		Connection con = null;
 		IResult r = getMapConnection();
 		if (r.hasError())
 			return r;
 		con = (Connection)r.getResultObject();
-		return database.updateUserData(con, userName, propertyType, newValue);
+		return database.insertUserData(con, userName, propertyType, newValue);
 	}
 
 	/* (non-Javadoc)
@@ -240,13 +251,13 @@ public class UserModel implements IUserModel {
 	 * @see org.topicquests.backside.servlet.apps.usr.api.IUserModel#addUserRole(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public IResult updateUserRole(String userName, String newRole) {
+	public IResult addUserRole(String userName, String newRole) {
 		Connection con = null;
 		IResult r = getMapConnection();
 		if (r.hasError())
 			return r;
 		con = (Connection)r.getResultObject();
-		return database.updateUserRole(con, userName, newRole);
+		return database.addUserRole(con, userName, newRole);
 	}
 	
 	@Override
@@ -327,6 +338,7 @@ public class UserModel implements IUserModel {
 	public void shutDown() {
 		closeLocalConnection();
 	}
+
 
 
 

@@ -22,6 +22,7 @@ import java.util.*;
 import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.api.IRDBMSDatabase;
 import org.topicquests.backside.servlet.apps.admin.api.IInviteSchema;
+import org.topicquests.backside.servlet.apps.usr.api.IUserMicroformat;
 import org.topicquests.backside.servlet.apps.usr.api.IUserPersist;
 import org.topicquests.backside.servlet.apps.usr.api.IUserSchema;
 import org.topicquests.backside.servlet.persist.rdbms.H2DatabaseDriver;
@@ -170,12 +171,18 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 				s2 = con.prepareStatement(IUserSchema.getUserProperties);
 				s2.setString(1, userName);
 				rs2 = s2.executeQuery();
+				List<String>roles = new ArrayList<String>();
 				while (rs2.next()) {
 					key = rs2.getString("prop");
-					val = rs2.getString("val");
+					if (key.equals(IUserSchema.USER_ROLE)) 
+						roles.add(rs2.getString("val"));
+					else {
+						val = rs2.getString("val");
 				//	System.out.println("GETPROP "+userName+" "+key+" | "+val);
-					t.setProperty(key, val);
+						t.setProperty(key, val);
+					}
 				}
+				t.setProperty(IUserMicroformat.USER_ROLE, roles);
 				result.setResultObject(t);
 			}
 			//otherwise return null
@@ -217,12 +224,18 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 				s2 = con.prepareStatement(IUserSchema.getUserProperties);
 				s2.setString(1, userName);
 				rs2 = s2.executeQuery();
+				List<String>roles = new ArrayList<String>();
 				while (rs2.next()) {
 					key = rs2.getString("prop");
-					val = rs2.getString("val");
+					if (key.equals(IUserSchema.USER_ROLE)) 
+						roles.add(rs2.getString("val"));
+					else {
+						val = rs2.getString("val");
 				//	System.out.println("GETPROP "+userName+" "+key+" | "+val);
-					t.setProperty(key, val);
+						t.setProperty(key, val);
+					}
 				}
+				t.setProperty(IUserMicroformat.USER_ROLE, roles);
 				result.setResultObject(t);
 			}
 			//otherwise return null
@@ -314,12 +327,30 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 		System.out.println("INSERTUSERDATA "+userName+" "+propertyType+" "+propertyValue);
 		IResult result = new ResultPojo();
 		PreparedStatement s = null;
-		ResultSet rs = null;
 		try {
 			s = con.prepareStatement(IUserSchema.putUserProperty);
 			s.setString(1, userName);
 			s.setString(2, propertyType);
 			s.setString(3, propertyValue);
+			s.execute();
+		} catch (Exception e) {
+			environment.logError(e.getMessage(), e);
+		} finally {
+			closePreparedStatement(s,result);
+		}
+		return result;
+	}
+	
+	@Override
+	public IResult removeUserData(Connection con, String userName, String propertyType, String oldValue) {
+		System.out.println("INSERTUSERDATA "+userName+" "+propertyType+" "+oldValue);
+		IResult result = new ResultPojo();
+		PreparedStatement s = null;
+		try {
+			s = con.prepareStatement(IUserSchema.removeUserProperty);
+			s.setString(1, userName);
+			s.setString(2, propertyType);
+			s.setString(3, oldValue);
 			s.execute();
 		} catch (Exception e) {
 			environment.logError(e.getMessage(), e);
@@ -428,10 +459,15 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 	 * @see org.topicquests.backside.servlet.api.IUserPersist#addUserRole(java.sql.Connection, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public IResult updateUserRole(Connection con, String userName, String newRole) {
+	public IResult addUserRole(Connection con, String userName, String newRole) {
 		return updateUserData(con, userName, IUserSchema.USER_ROLE, newRole);
 	}
 	
+	@Override
+	public IResult removeUserRole(Connection con, String userName, String oldRole) {
+		return removeUserData(con, userName, IUserSchema.USER_ROLE, oldRole);
+	}
+
 	@Override
 	public IResult updateUserEmail(Connection con, String userName,
 			String newEmail) {

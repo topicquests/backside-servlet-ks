@@ -87,6 +87,7 @@ public interface IUserPersist extends IRDBMSDatabase {
     
     IResult updateUserData(Connection con, String userName, String propertyType, String newValue);
     
+    IResult removeUserData(Connection con, String userName, String propertyType, String oldValue);
     /**
      * Returns Boolean value as result
      * @param con
@@ -114,8 +115,9 @@ public interface IUserPersist extends IRDBMSDatabase {
  //   void changeUserGrant(Connection con, String userName, String newGrant)
 //		throws TopicSpacesException;
     
-    IResult updateUserRole(Connection con, String userName, String newRole);
+    IResult addUserRole(Connection con, String userName, String newRole);
     
+    IResult removeUserRole(Connection con, String userName, String oldRole);
 
     IResult updateUserEmail(Connection con, String userName, String newEmail);
 

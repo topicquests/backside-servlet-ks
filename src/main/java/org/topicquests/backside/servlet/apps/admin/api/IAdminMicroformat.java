@@ -27,9 +27,11 @@ public interface IAdminMicroformat extends ICredentialsMicroformat {
 	public static final String
 		REMOVE_USER				= "RemUser",  //POST
 		UPDATE_USER_ROLE		= "UpdUsRol", //POST
+		REMOVE_USER_ROLE		= "RemUsRol", //POST
 		UPDATE_USER_EMAIL		= "UpdUsEma", //POST user
 		UPDATE_USER_PASSWORD	= "UpdUsPwd", //POST user
 		UPDATE_USER_DATA		= "UpdUsDat", //POST user
+		REMOVE_USER_DATA		= "RemUsDat", //POST user
 		/** subject to common modifiers */
 		LIST_USERS				= "ListUsers",	//GET
 		LIST_INVITES			= "ListInvites", //GET

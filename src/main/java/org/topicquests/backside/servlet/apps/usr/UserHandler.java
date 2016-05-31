@@ -192,7 +192,7 @@ public class UserHandler  extends BaseHandler {
 			String userName = (String)jsonObject.get(IUserMicroformat.USER_NAME);
 			String key = (String)jsonObject.get(IUserMicroformat.PROP_KEY);
 			String val = (String)jsonObject.get(IUserMicroformat.PROP_VAL);
-			r = model.updateUserData(userName, key, val);
+			r = model.insertUserData(userName, key, val);
 			if (r.hasError()) {
 				code = BaseHandler.RESPONSE_OK;
 				message = r.getErrorString();

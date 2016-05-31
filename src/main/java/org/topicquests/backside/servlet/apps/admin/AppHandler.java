@@ -178,12 +178,19 @@ public class AppHandler  extends BaseHandler {
 		} else if (verb.equals(IAdminMicroformat.UPDATE_USER_ROLE)) {
 			username=(String)jsonObject.get(ICredentialsMicroformat.USER_NAME);
 			userrole=(String)jsonObject.get(IUserMicroformat.USER_ROLE);
-			r = model.updateUserRole(username, userrole);
+			r = model.addUserRole(username, userrole);
 			if (!r.hasError()) {
 				code = BaseHandler.RESPONSE_OK;
 				message = "ok";
 			}
-		} else if (verb.equals(IAdminMicroformat.NEW_INVITE)) {
+		} else if (verb.equals(IAdminMicroformat.REMOVE_USER_ROLE)) {
+			username=(String)jsonObject.get(ICredentialsMicroformat.USER_NAME);
+			userrole=(String)jsonObject.get(IUserMicroformat.USER_ROLE);
+			r = model.addUserRole(username, userrole);
+			if (!r.hasError()) {
+				code = BaseHandler.RESPONSE_OK;
+				message = "ok";
+			}		} else if (verb.equals(IAdminMicroformat.NEW_INVITE)) {
 			useremail=(String)jsonObject.get(ICredentialsMicroformat.USER_EMAIL);
 			r = model.addInvite(useremail);
 			if (!r.hasError()) {

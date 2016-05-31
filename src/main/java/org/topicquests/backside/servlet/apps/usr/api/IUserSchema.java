@@ -26,7 +26,7 @@ public interface IUserSchema {
 		USER_FULLNAME	= "fullName",
 		USER_PASSWORD	= "pwd",
 		USER_AVATAR		= "avatar",
-		USER_ROLE		= "role",
+		USER_ROLE		= "role", // a collection
 		USER_GEOLOC		= "geoloc",
 		USER_HOMEPAGE	= "homepage";
 	
@@ -57,8 +57,9 @@ public interface IUserSchema {
 			"DELETE FROM users WHERE name=?";
 	public static final String updateUserPwd = 
 			"UPDATE users  SET pwd=? WHERE name=?";
-	public static final String updateUserRole = 
-			"UPDATE users  SET role=? WHERE name=?";
+	
+//	public static final String updateUserRole = 
+//			"UPDATE users  SET role=? WHERE name=?";
 	public static final String updateUserEmail = 
 			"UPDATE users  SET email=? WHERE name=?";
 	
@@ -67,10 +68,14 @@ public interface IUserSchema {
 	
 	public static final String updateUserProperty =
 			"UPDATE userprops  SET val=? WHERE prop=? AND name=?";
-	public static final String putUser =
-			"INSERT INTO users values(?, ?, ?, ?)";
+	public static final String removeUserProperty=
+			"DELETE FROM userprops WHERE name=? AND prop=? AND val=?";
 	public static final String putUserProperty=
 			"INSERT INTO userprops values(?,?,?)";
+
+	public static final String putUser =
+			"INSERT INTO users values(?, ?, ?, ?)";
+	
 	
 	public static final String listUserNames =
 			"SELECT name FROM users";

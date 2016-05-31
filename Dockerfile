@@ -24,6 +24,7 @@ ADD . .
 RUN sed -i.bak 's/localhost/es/' config/provider-config.xml && \
     cat run.sh | sed -e 's/org\.topicquests\.backside\.servlet\.Main/test\.TestHarness1/' > test.sh && \
     chmod +x test.sh && \
+    mkdir -p /app/classes && \
     ant compile
 
 VOLUME /app/data/backside

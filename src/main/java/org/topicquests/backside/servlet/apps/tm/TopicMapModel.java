@@ -186,6 +186,7 @@ public class TopicMapModel implements ITopicMapModel {
 		String smallImagePath = (String)theTopicShell.get(ITopicMapMicroformat.SMALL_IMAGE_PATh);
 		String largeImagePath = (String)theTopicShell.get(ITopicMapMicroformat.LARGE_IMAGE_PATH);
 		String isp = (String)theTopicShell.get(ITopicMapMicroformat.IS_PRIVATE);
+		String url = (String)theTopicShell.get(ITopicMapMicroformat.URL);
 		//Added feature
 		JSONObject extras = (JSONObject)theTopicShell.get(ITopicMapMicroformat.EXTRAS);
 		if (extras != null)
@@ -208,6 +209,8 @@ public class TopicMapModel implements ITopicMapModel {
 			//n = nodeModel.newInstanceNode(locator, typeLocator, label, description, lang, userId, smallImagePath, largeImagePath, isPrivate);
 		} else {
 			n = nodeModel.newInstanceNode(typeLocator, label, description, lang, userId, smallImagePath, largeImagePath, isPrivate);
+			if (url != null && !url.equals(""))
+				n.setURL(url);
 			if (extras != null) {
 				JSONObject jo = n.getData();
 				Iterator<String>itr = extras.keySet().iterator();

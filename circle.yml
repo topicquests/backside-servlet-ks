@@ -1,6 +1,7 @@
 machine:
   pre:
     - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
+    - sudo curl -L -o /usr/local/bin/docker-compose https://github.com/docker/compose/releases/download/1.7.1/docker-compose-`uname -s`-`uname -m`
   services:
     - docker
 
@@ -9,16 +10,24 @@ dependencies:
     - "~/docker"
   override:
     - docker info
-    - if [[ -e ~/docker/image.tar ]]; then docker load --input ~/docker/image.tar; fi
-    - if [[ -e ~/docker/es.tar ]]; then docker load --input ~/docker/es.tar; fi
-    - docker run -d --name es elasticsearch:2.3.3
-    - docker build -t wenzowski/backside-servlet-ks .
-    - mkdir -p ~/docker; docker save wenzowski/backside-servlet-ks > ~/docker/image.tar; docker save elasticsearch > ~/docker/es.tar
+    - if [[ -e ~/docker/backside-servlet-ks.tar ]]; then docker load --input ~/docker/backside-servlet-ks.tar; fi
+    - if [[ -e ~/docker/elasticsearch.tar ]]; then docker load --input ~/docker/elasticsearch.tar; fi
+    - docker-compose up --build -d
+    - mkdir -p ~/docker
+    - docker save wenzowski/backside-servlet-ks > ~/docker/backside-servlet-ks.tar
+    - docker save elasticsearch > ~/docker/elasticsearch.tar
 
 test:
   override:
-    - docker run --link es:es wenzowski/backside-servlet-ks ./test.sh
+    - docker-compose run web ./test.sh
 
-general:
-  artifacts:
-    - 'logs/logfile.log'
+deployment:
+  release:
+    tag: /^\d+\.\d+\.\d+$/
+    owner: wenzowski
+    commands:
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - docker pull wenzowski/backside-servlet-ks
+      - docker build -t wenzowski/backside-servlet-ks:$CIRCLE_TAG -t wenzowski/backside-servlet-ks .
+      - docker push wenzowski/backside-servlet-ks:$CIRCLE_TAG
+      - docker push wenzowski/backside-servlet-ks:latest

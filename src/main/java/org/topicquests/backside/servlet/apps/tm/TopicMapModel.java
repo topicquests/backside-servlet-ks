@@ -256,10 +256,10 @@ public class TopicMapModel implements ITopicMapModel {
 			if (n.getLocator() == null) {
 				environment.logError("Missing lox for "+typeLocator+" | "+label, null);
 			}
-			environment.logDebug("TopicMapModel.newInstance-1 "+n.toJSONString());
 			r = topicMap.putNode(n);
 			if (r.hasError())
 				result.addErrorString(r.getErrorString());
+			environment.logDebug("TopicMapModel.newInstance-1 "+r.getErrorString()+" | "+n.toJSONString());
 		}
 		
 		environment.logDebug("TopicMapModel.newInstance-2 "+n.toJSONString());

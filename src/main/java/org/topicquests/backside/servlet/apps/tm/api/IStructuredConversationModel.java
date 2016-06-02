@@ -33,11 +33,12 @@ public interface IStructuredConversationModel {
 	 * @param label
 	 * @param details
 	 * @param language
+	 * @param url
 	 * @param userId
 	 * @param isPrivate
 	 * @return can return an error message "BadNodeType"
 	 */
-	IResult newConversationNode(String nodeType, String parentLocator, String contextLocator, String locator, String label, String details, String language,
-								String userId, boolean isPrivate);
+	IResult newConversationNode(String nodeType, String parentLocator, String contextLocator, String locator,
+			String label, String details, String language, String url, String userId, boolean isPrivate);
 
 }

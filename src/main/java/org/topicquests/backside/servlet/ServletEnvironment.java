@@ -46,7 +46,6 @@ public class ServletEnvironment {
 	private List<IStoppable>stoppables;
 	private boolean isShutDown = false;
 	
-	
 	/**
 	 * @param isConsole <code>true</code> means boot JSONTopicMap console
 	 */
@@ -77,7 +76,7 @@ public class ServletEnvironment {
 	public static ServletEnvironment getInstance() {
 		return instance;
 	}
-	
+		
 	public void addStoppable(IStoppable s) {
 		synchronized(stoppables) {
 			stoppables.add(s);

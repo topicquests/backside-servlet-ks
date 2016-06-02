@@ -24,6 +24,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.api.ICredentialsMicroformat;
+import org.topicquests.backside.servlet.apps.BaseModel;
 import org.topicquests.backside.servlet.apps.tm.api.ISocialBookmarkLegend;
 import org.topicquests.backside.servlet.apps.tm.api.ITagModel;
 import org.topicquests.backside.servlet.apps.tm.api.ITopicMapMicroformat;
@@ -45,11 +46,7 @@ import org.topicquests.ks.tm.api.ISubjectProxyModel;
  * @author park
  *
  */
-public class TopicMapModel implements ITopicMapModel {
-	private ServletEnvironment environment;
-	private SystemEnvironment tmEnvironment;
-	private ITQDataProvider topicMap;
-	private ISubjectProxyModel nodeModel;
+public class TopicMapModel extends BaseModel implements ITopicMapModel {
 	private ITagModel tagModel;
 	private ITicket systemCredentials;
 
@@ -57,10 +54,7 @@ public class TopicMapModel implements ITopicMapModel {
 	 * 
 	 */
 	public TopicMapModel(ServletEnvironment env) {
-		environment = env;
-		tmEnvironment = environment.getTopicMapEnvironment();
-		topicMap = tmEnvironment.getDatabase();
-		nodeModel = topicMap.getSubjectProxyModel();
+		super(env);
 		tagModel = new TagModel(environment);
 		systemCredentials = new TicketPojo(ITQCoreOntology.SYSTEM_USER);
 	}
@@ -263,7 +257,7 @@ public class TopicMapModel implements ITopicMapModel {
 		}
 		
 		environment.logDebug("TopicMapModel.newInstance-2 "+n.toJSONString());
-		r = relateNodeToUser(n, typeLocator, userId, credentials);
+		r = relateNodeToUser(n, userId, credentials);
 		if (r.hasError())
 			result.addErrorString(r.getErrorString());
 		result.setResultObject(n);
@@ -271,40 +265,7 @@ public class TopicMapModel implements ITopicMapModel {
 		
 	}
 	
-	/**
-	 * ONLY called when the document was created by some user, regardless
-	 * of the document's type
-	 * @param node
-	 * @param superTypeLocator
-	 * @param userId
-	 * @param credentials
-	 * @return
-	 */
-	IResult relateNodeToUser(ISubjectProxy node, String superTypeLocator, String userId, ITicket credentials) {
-		IResult result = new ResultPojo();
-		//NOW, relate this puppy
-		String relation = "DocumentCreatorRelationType";
-		IResult r;
-		//if (superTypeLocator.equals("BookmarkNodeType") || //TODO add more types
-		//		superTypeLocator.equals("TagNodeType"))
-		//	relation = "DocumentCreatorRelationType";
-		//if (relation != null) {
-			r = topicMap.getNode(userId, credentials);
-			if (r.hasError())
-				result.addErrorString(r.getErrorString());
-			ISubjectProxy user = (ISubjectProxy)r.getResultObject();
-			if (user != null) {
-				//ISubjectProxy sourceNode,ISubjectProxy targetNode, String relationTypeLocator, String userId,
-				//String smallImagePath, String largeImagePath, boolean isTransclude,boolean isPrivate
-				r = nodeModel.relateExistingNodesAsPivots(user, node, ISocialBookmarkLegend.USER_BOOKMARK_RELATIONTYPE, userId, 
-						ICoreIcons.RELATION_ICON_SM, ICoreIcons.RELATION_ICON, false, false);
-				if (r.hasError())
-					result.addErrorString(r.getErrorString());
-			} else
-				result.addErrorString("Missing User "+userId);
-		//}
-		return result;
-	}
+
 
 	@Override
 	public IResult newSubclassNode(JSONObject theTopicShell, ITicket credentials) {
@@ -333,7 +294,7 @@ public class TopicMapModel implements ITopicMapModel {
 			
 		IResult result = topicMap.putNode(n);
 		result.setResultObject(n.getData());
-		r = relateNodeToUser(n, superClassLocator, userId, credentials);
+		r = relateNodeToUser(n, userId, credentials);
 		if (r.hasError())
 			result.addErrorString(r.getErrorString());
 		return result;
@@ -463,7 +424,7 @@ public class TopicMapModel implements ITopicMapModel {
 		}
 		if (!isNew) {
 			//It's an existing object; should we add this user to it?
-			List<JSONObject> pivs = bkmk.listPivotsByRelationType(ISocialBookmarkLegend.USER_BOOKMARK_RELATIONTYPE);
+			List<JSONObject> pivs = bkmk.listPivotsByRelationType(ISocialBookmarkLegend.BOOKMARK_USER_RELATIONTYPE);
 			Iterator<JSONObject>itr = pivs.iterator();
 			JSONObject jo;
 			boolean isFound = false;
@@ -477,7 +438,7 @@ public class TopicMapModel implements ITopicMapModel {
 				}
 			}
 			if(!isFound) {
-				IResult r = this.relateNodeToUser(bkmk, "BookmarkNodeType", userId, credentials);
+				IResult r = this.relateNodeToUser(bkmk, userId, credentials);
 				if (r.hasError())
 					result.addErrorString(r.getErrorString());
 			}

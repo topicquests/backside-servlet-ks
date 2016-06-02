@@ -45,7 +45,6 @@ public class TagModel implements ITagModel {
 		environment = env;
 		topicMap = environment.getTopicMapEnvironment().getDatabase();
 		nodeModel = topicMap.getSubjectProxyModel();
-
 	}
 
 	/* (non-Javadoc)

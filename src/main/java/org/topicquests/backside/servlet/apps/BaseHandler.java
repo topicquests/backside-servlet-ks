@@ -158,7 +158,10 @@ public abstract class BaseHandler {
 					//CASE: someone sent in a token, but we don't know who it is: big error
 					// could be that the same platform logged out before
 					environment.logError(x, null);
-					throw new ServletException(x);
+					//This can happen if the server goes down, then is
+					//restarted followed by someone logging out.
+					//We will not toss an exception anymore.
+					//throw new ServletException(x);
 				} 
 			}
 			//otherwise, there is no token on this transaction

@@ -56,7 +56,7 @@ public class TopicMapHandler  extends BaseHandler {
 		super(env,basePath);
 		model = new TopicMapModel(environment);
 		instance = this;
-		conModel = new StructuredConversationModel(environment);
+		conModel = environment.getConversationModel();
 	}
 	
 	/**
@@ -255,10 +255,11 @@ public class TopicMapHandler  extends BaseHandler {
 				String parentLoc = (String)cargo.get(ITopicMapMicroformat.CONVERSATION_PARENT_LOCATOR);
 				String contextLoc = (String)cargo.get(ITopicMapMicroformat.CONTEXT_LOCATOR);
 				String userId = (String)cargo.get("uName");
-				String pvt = (String)cargo.get("isPvt");
+				String pvt = (String)cargo.get(ITopicMapMicroformat.IS_PRIVATE);
 				String label = (String)cargo.get("label");
 				String details = (String)cargo.get("details");
 				String language = (String)cargo.get("Lang");
+				String url = (String)cargo.get("url");
 				boolean isPrivate = false;
 				if (pvt.equalsIgnoreCase("T"))
 					isPrivate = true;
@@ -268,7 +269,7 @@ public class TopicMapHandler  extends BaseHandler {
 				String lox = null;
 				if (locator != null && !locator.equals(""))
 					lox = locator;
-				r = conModel.newConversationNode(nodeType, parentLoc, contextLoc, lox, label, det, language, userId, isPrivate);
+				r = conModel.newConversationNode(nodeType, parentLoc, contextLoc, lox, label, det, language, url, userId, isPrivate);
 				if (r.getResultObject() != null) {
 					ISubjectProxy n = (ISubjectProxy)r.getResultObject();
 					System.out.println("GETTOPICBYURL "+n);

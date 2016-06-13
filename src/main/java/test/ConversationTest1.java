@@ -60,17 +60,17 @@ public class ConversationTest1 {
 	 */
 	private void runTest() {
 		IResult r = conversationModel.newConversationNode(INodeTypes.CONVERSATION_MAP_TYPE, null, null,
-				MAP_LOC, "My first map", null, "en", "joe", false);
+				MAP_LOC, "My first map", null, "en", "", "joe", false);
 		ISubjectProxy sp = (ISubjectProxy)r.getResultObject();
 		System.out.println("AAA "+r.getErrorString()+" | "+sp.toJSONString());
 		if (r.hasError()) System.exit(1);
 		r = conversationModel.newConversationNode(INodeTypes.ISSUE_TYPE, MAP_LOC, MAP_LOC,
-				QUESTION_LOC, "Why is the sky blue?", null, "en", "joe", false);
+				QUESTION_LOC, "Why is the sky blue?", null, "en", "", "joe", false);
 		sp = (ISubjectProxy)r.getResultObject();
 		System.out.println("BBB"+r.getErrorString()+" | "+sp.toJSONString());
 		if (r.hasError()) System.exit(1);
 		r = conversationModel.newConversationNode(INodeTypes.POSITION_TYPE, QUESTION_LOC, MAP_LOC,
-				ANSWER_LOC, "Nobody really knows.", null, "en", "joe", false);
+				ANSWER_LOC, "Nobody really knows.", null, "en", "", "joe", false);
 		sp = (ISubjectProxy)r.getResultObject();
 		System.out.println("CCC"+r.getErrorString()+" | "+sp.toJSONString());
 		if (r.hasError()) System.exit(1);

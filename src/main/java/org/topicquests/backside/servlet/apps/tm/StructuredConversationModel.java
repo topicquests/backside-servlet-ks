@@ -19,6 +19,8 @@ import java.util.UUID;
 
 import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.api.IErrorMessages;
+import org.topicquests.backside.servlet.apps.BaseModel;
+import org.topicquests.backside.servlet.apps.tm.api.ISocialBookmarkLegend;
 import org.topicquests.backside.servlet.apps.tm.api.IStructuredConversationModel;
 import org.topicquests.common.ResultPojo;
 import org.topicquests.common.api.IResult;
@@ -35,28 +37,24 @@ import org.topicquests.ks.tm.api.ISubjectProxyModel;
  * @author jackpark
  *
  */
-public class StructuredConversationModel implements IStructuredConversationModel {
-	private ServletEnvironment environment;
-	private ITQDataProvider topicMap;
-	private ISubjectProxyModel nodeModel;
+public class StructuredConversationModel extends BaseModel implements IStructuredConversationModel {
 	private ITicket credentials;
 
 	/**
 	 * 
 	 */
 	public StructuredConversationModel(ServletEnvironment env) {
-		environment = env;
-		topicMap = environment.getTopicMapEnvironment().getDatabase();
-		nodeModel = topicMap.getSubjectProxyModel();
+		super(env);
 		credentials = new TicketPojo(ITQCoreOntology.SYSTEM_USER);
 	}
+
 
 	/* (non-Javadoc)
 	 * @see org.topicquests.backside.servlet.apps.tm.api.IStructuredConversationModel#newConversationNode(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
 	public IResult newConversationNode(String nodeType, String parentLocator, String contextLocator, String locator, String label, String details,
-			String language, String userId, boolean isPrivate) {
+			String language, String url, String userId, boolean isPrivate) {
 		String lox = locator;
 		if (lox == null) 
 			lox = UUID.randomUUID().toString();
@@ -92,11 +90,11 @@ public class StructuredConversationModel implements IStructuredConversationModel
 			return result;
 		}
 		return createNode(nodeType, lox, parentLocator, contextLocator, label, details, language,
-							smallIcon, largeIcon, userId, isPrivate);
+							smallIcon, largeIcon, url, userId, isPrivate);
 	}
 
 	private IResult createNode(String nodeType, String locator, String parentLocator, String contextLocator,
-					String label, String details, String language, String smallIcon, String largeIcon,
+					String label, String details, String language, String smallIcon, String largeIcon, String url,
 					String userLocator, boolean isPrivate) {
 		IResult result = new ResultPojo();
 		IResult r = null;
@@ -121,10 +119,15 @@ public class StructuredConversationModel implements IStructuredConversationModel
 				//TODO this is a really bad situation -- missing parent
 			}
 		}
+		if (url != null && !url.equals(""))
+			n.setURL(url);
 		r = topicMap.putNode(n);
 		if (r.hasError()) {
 			result.addErrorString(r.getErrorString());
 		}
+		r = relateNodeToUser(n, userLocator, credentials);
+		if (r.hasError())
+			result.addErrorString(r.getErrorString());
 		result.setResultObject(n);
 		return result;
 	}

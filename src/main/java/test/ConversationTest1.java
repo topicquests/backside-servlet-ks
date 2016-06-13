@@ -17,6 +17,8 @@ package test;
 
 import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.apps.tm.api.IStructuredConversationModel;
+import org.topicquests.backside.servlet.api.ISecurity;
+import org.topicquests.backside.servlet.apps.usr.api.IUserModel;
 import org.topicquests.common.api.IResult;
 import org.topicquests.ks.TicketPojo;
 import org.topicquests.ks.api.ITQCoreOntology;
@@ -32,6 +34,7 @@ import org.topicquests.ks.tm.api.ISubjectProxyModel;
  */
 public class ConversationTest1 {
 	private ServletEnvironment environment;
+	private IUserModel model;
 	private ITQDataProvider topicMap;
 	private IStructuredConversationModel conversationModel;
 	private ITicket credentials;
@@ -45,6 +48,8 @@ public class ConversationTest1 {
 	 */
 	public ConversationTest1(ServletEnvironment env) {
 		environment = env;
+		model = environment.getUserModel();
+		IResult r = model.insertUser("joe@example.com", "joe", "joe!", "Joe Joe", "", ISecurity.USER_ROLE, "", "", true);
 		topicMap = environment.getTopicMapEnvironment().getDatabase();
 		conversationModel = environment.getConversationModel();
 		credentials = new TicketPojo(ITQCoreOntology.SYSTEM_USER);

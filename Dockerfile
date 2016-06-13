@@ -1,8 +1,10 @@
 FROM anapsix/alpine-java:jdk8
 WORKDIR /app
 
-ENV GPG_VERSION=2.1.10-r0
-RUN apk add --no-cache gnupg=$GPG_VERSION && \
+ENV GPG_VERSION=2.1.12-r0
+ENV OPENSSL_VERSION=1.0.2h-r0
+
+RUN apk add --no-cache gnupg=$GPG_VERSION openssl=$OPENSSL_VERSION && \
     wget -q https://www.apache.org/dist/ant/KEYS && \
     gpg --import KEYS && rm KEYS
 

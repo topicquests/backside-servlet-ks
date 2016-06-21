@@ -450,7 +450,7 @@ public abstract class BaseHandler {
 			ava = avas.get(0); //FOR NOW, just show first one
 		result.put(IUserMicroformat.USER_AVATAR, ava);
 		result.put(IUserMicroformat.USER_HOMEPAGE, notNullString((String)t.getProperty(IUserSchema.USER_HOMEPAGE)));
-		result.put(IUserMicroformat.USER_ROLE, t.getProperty(IUserSchema.USER_ROLE));
+		result.put(IUserMicroformat.USER_ROLE, t.getProperty(IUserMicroformat.USER_ROLE));
 		result.put(IUserMicroformat.USER_GEOLOC, t.getProperty(IUserSchema.USER_GEOLOC));
 		result.put(IUserMicroformat.USER_FULLNAME, t.getProperty(IUserSchema.USER_FULLNAME));
 		return result;

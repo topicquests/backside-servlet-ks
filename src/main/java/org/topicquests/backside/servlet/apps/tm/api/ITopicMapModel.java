@@ -147,13 +147,14 @@ public interface ITopicMapModel {
 	 * Find bookmark node for <code>url</code> or otherwise make it and pivot to <code>userId</code>
 	 * @param url
 	 * @param title 
+	 * @param details TODO
 	 * @param language 
 	 * @param userId
 	 * @param tagLabels can be <code>null</code>
 	 * @param credentials
 	 * @return
 	 */
-	IResult findOrCreateBookmark(String url, String title, String language, String userId, JSONObject tagLabels, ITicket credentials);
+	IResult findOrCreateBookmark(String url, String title, String details, String language, String userId, JSONObject tagLabels, ITicket credentials);
 	
     /**
      * List users in the TopicMap

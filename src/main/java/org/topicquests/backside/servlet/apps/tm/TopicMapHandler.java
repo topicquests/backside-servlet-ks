@@ -295,7 +295,7 @@ public class TopicMapHandler  extends BaseHandler {
 				String x = IErrorMessages.MISSING_CARGO+"-TMServletPost-"+verb;
 				environment.logError(x, null);
 				throw new ServletException(x);
-			}
+			} 
 		} else if (verb.equals(ITopicMapMicroformat.FIND_OR_CREATE_BOOKMARK)) {
 			System.out.println("FIND_OR_CREATE_BOOKMARK "+jsonObject.toJSONString());
 			//FIND_OR_CREATE_BOOKMARK {"ListProperty":{"tag1":"Transclusion","tag4":"","tag2":
@@ -304,10 +304,11 @@ public class TopicMapHandler  extends BaseHandler {
 			//"url":"https:\/\/en.wikipedia.org\/wiki\/Transclusion"}
 			String url = notNullString((String)jsonObject.get(ITQCoreOntology.RESOURCE_URL_PROPERTY));
 			String title = notNullString((String)jsonObject.get(ITopicMapMicroformat.TOPIC_LABEL));
+			String details = notNullString((String)jsonObject.get("details"));
 			String language  = notNullString((String)jsonObject.get(ITopicMapMicroformat.LANGUAGE));
 			String userId  = notNullString((String)jsonObject.get(ICredentialsMicroformat.USER_NAME));
 			JSONObject tagLabels = (JSONObject)jsonObject.get(ITopicMapMicroformat.LIST_PROPERTY);
-			r = model.findOrCreateBookmark(url, title, language, userId, tagLabels, credentials);
+			r = model.findOrCreateBookmark(url, title, details, language, userId, tagLabels, credentials);
 			environment.logDebug("CondoHandler.FindOrCreateBookmark "+r.getErrorString()+" | "+r.getResultObject());
 			if (!r.hasError()) {
 				code = BaseHandler.RESPONSE_OK;

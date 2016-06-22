@@ -398,7 +398,7 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 
 	@Override
 	public IResult findOrCreateBookmark(String url, String title,
-			String language, String userId, JSONObject tagLabels, ITicket credentials) {
+			String details, String language, String userId, JSONObject tagLabels, ITicket credentials) {
 		environment.logDebug("TopicMapModel.findOrCreateBookmark- "+url+" | "+userId);
 		IResult result = this.getTopicByURL(url, credentials);
 		ISubjectProxy bkmk = (ISubjectProxy)result.getResultObject();
@@ -407,6 +407,7 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 		if (bkmk == null) {
 			isNew = true;
 			//make a new one
+			//WHY ARE WE DOING THIS BY HAND?
 			JSONObject jo = new JSONObject();
 			jo.put(ITQCoreOntology.INSTANCE_OF_PROPERTY_TYPE, INodeTypes.BOOKMARK_TYPE);
 			jo.put(ITopicMapMicroformat.IS_PRIVATE, "F");
@@ -443,6 +444,10 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 					result.addErrorString(r.getErrorString());
 			}
 		}
+		if (details != null && !details.equals("")) {
+			//add annotation and pivot
+			addAnnotation(bkmk, details, language, userId, result);
+		}
 		System.out.println("FindOrCreateBookmark-2 "+bkmk+" "+tagLabels);
 		if (bkmk != null && tagLabels != null && !tagLabels.isEmpty()) {
 			
@@ -468,6 +473,18 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 		return result;
 	}
 
+	/**
+	 * Create an annotation node for this <code>bookmark</code>
+	 * @param bookmark
+	 * @param details
+	 * @param language
+	 * @param userId
+	 * @param result
+	 */
+	private void addAnnotation(ISubjectProxy bookmark, String details, String language, String userId, IResult result) {
+		//TODO
+		//ISubjectProxy note = nodeModel.newInstanceNode(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
+	}
 
 
 }

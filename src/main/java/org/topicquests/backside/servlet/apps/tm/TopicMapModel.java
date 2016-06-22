@@ -17,6 +17,7 @@ package org.topicquests.backside.servlet.apps.tm;
 
 import java.util.*;
 
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 
@@ -31,6 +32,7 @@ import org.topicquests.backside.servlet.apps.tm.api.ITopicMapMicroformat;
 import org.topicquests.backside.servlet.apps.tm.api.ITopicMapModel;
 import org.topicquests.common.ResultPojo;
 import org.topicquests.common.api.IResult;
+import org.topicquests.es.util.JSONQueryUtil;
 import org.topicquests.ks.SystemEnvironment;
 import org.topicquests.ks.TicketPojo;
 import org.topicquests.ks.api.ICoreIcons;
@@ -49,6 +51,7 @@ import org.topicquests.ks.tm.api.ISubjectProxyModel;
 public class TopicMapModel extends BaseModel implements ITopicMapModel {
 	private ITagModel tagModel;
 	private ITicket systemCredentials;
+	private JSONQueryUtil queryUtil;
 
 	/**
 	 * 
@@ -57,6 +60,7 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 		super(env);
 		tagModel = new TagModel(environment);
 		systemCredentials = new TicketPojo(ITQCoreOntology.SYSTEM_USER);
+		queryUtil = new JSONQueryUtil();
 	}
 
 	/* (non-Javadoc)
@@ -342,16 +346,14 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 	@Override
 	public IResult getTopicByURL(String url, ITicket credentials) {
 		QueryBuilder qb1 = QueryBuilders.termQuery(ITQCoreOntology.RESOURCE_URL_PROPERTY, url);
-		environment.logDebug("TopicMapModel.getTopicByURL- "+qb1.toString());
-		//runQuery returns a list of JSON strings
 		IResult result = topicMap.runQuery(qb1.toString(), 0, -1, credentials);
 		environment.logDebug("TopicMapModel.getTopicByURL+ "+result.getErrorString()+" | "+result.getResultObject());
-		List<String> lx = (List<String>)result.getResultObject();
+		//TopicMapModel.getTopicByURL+  | [org.topicquests.ks.tm.SubjectProxy@6aab361d, org.topicquests.ks.tm.SubjectProxy@1098da46]
+		List<Object> lx = (List<Object>)result.getResultObject();
 		if (lx != null) {
 			if (lx.size() > 0) {
 				try {
-					JSONObject jo = (JSONObject)new JSONParser(JSONParser.MODE_JSON_SIMPLE).parse(lx.get(0));
-					ISubjectProxy n = new SubjectProxy(jo);
+					ISubjectProxy n = (SubjectProxy)(lx.get(0));
 					result.setResultObject(n);
 				} catch (Exception ex) {
 					environment.logError(ex.getMessage(), ex);
@@ -407,21 +409,11 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 		if (bkmk == null) {
 			isNew = true;
 			//make a new one
-			//WHY ARE WE DOING THIS BY HAND?
-			JSONObject jo = new JSONObject();
-			jo.put(ITQCoreOntology.INSTANCE_OF_PROPERTY_TYPE, INodeTypes.BOOKMARK_TYPE);
-			jo.put(ITopicMapMicroformat.IS_PRIVATE, "F");
-			jo.put(ITopicMapMicroformat.TOPIC_LABEL, title);
-			
-			jo.put(ICredentialsMicroformat.USER_NAME, credentials.getUserLocator());
-			jo.put(ITQCoreOntology.SMALL_IMAGE_PATH, ICoreIcons.BOOKMARK_SM);
-			jo.put(ITQCoreOntology.LARGE_IMAGE_PATH, ICoreIcons.BOOKMARK);
-			jo.put(ITopicMapMicroformat.LANGUAGE, language);
-			JSONObject extras = new JSONObject();
-			extras.put(ITQCoreOntology.RESOURCE_URL_PROPERTY, url);
-			jo.put("extras", extras);
-			result = this.newInstanceNode(jo, credentials);
-			bkmk = (ISubjectProxy)result.getResultObject();
+			bkmk = nodeModel.newInstanceNode(INodeTypes.BOOKMARK_TYPE, 
+					title, "", language, userId, ICoreIcons.BOOKMARK_SM, ICoreIcons.BOOKMARK, false);
+			bkmk.setURL(url);
+			result = topicMap.putNode(bkmk);
+			result.setResultObject(bkmk);
 		}
 		if (!isNew) {
 			//It's an existing object; should we add this user to it?
@@ -446,7 +438,7 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 		}
 		if (details != null && !details.equals("")) {
 			//add annotation and pivot
-			addAnnotation(bkmk, details, language, userId, result);
+			addAnnotation(bkmk, details, language, userId, credentials, result);
 		}
 		System.out.println("FindOrCreateBookmark-2 "+bkmk+" "+tagLabels);
 		if (bkmk != null && tagLabels != null && !tagLabels.isEmpty()) {
@@ -481,9 +473,28 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 	 * @param userId
 	 * @param result
 	 */
-	private void addAnnotation(ISubjectProxy bookmark, String details, String language, String userId, IResult result) {
-		//TODO
-		//ISubjectProxy note = nodeModel.newInstanceNode(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
+	private void addAnnotation(ISubjectProxy bookmark, String details, String language, String userId, ITicket credentials, IResult result) {
+		int len = details.length();
+		String title = details;
+		if (len > 50) {
+			title = details.substring(0, 50)+"...";
+		}
+		//Make an annotation
+		ISubjectProxy note = nodeModel.newInstanceNode(INodeTypes.ANNOTATION_TYPE, title, details, language,
+				userId, ICoreIcons.NOTE_SM, ICoreIcons.NOTE, false);
+		//save it
+		IResult r = topicMap.putNode(note);
+		if (r.hasError())
+			result.addErrorString(r.getErrorString());
+		//pivot annotation-bookmark
+		r = nodeModel.relateExistingNodesAsPivots(note, bookmark, ISocialBookmarkLegend.ANNOTATION_BOOKMARK_RELATION_TYPE,
+				userId, ICoreIcons.RELATION_ICON_SM, ICoreIcons.RELATION_ICON, false, false);
+		if (r.hasError())
+			result.addErrorString(r.getErrorString());
+		//pivot annotation-user
+		r = relateNodeToUser(note, userId, credentials);
+		if (r.hasError())
+			result.addErrorString(r.getErrorString());
 	}
 
 

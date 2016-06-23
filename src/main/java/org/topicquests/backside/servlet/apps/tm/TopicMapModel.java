@@ -476,8 +476,8 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 	private void addAnnotation(ISubjectProxy bookmark, String details, String language, String userId, ITicket credentials, IResult result) {
 		int len = details.length();
 		String title = details;
-		if (len > 50) {
-			title = details.substring(0, 50)+"...";
+		if (len > 40) {
+			title = details.substring(0, 40)+"...";
 		}
 		//Make an annotation
 		ISubjectProxy note = nodeModel.newInstanceNode(INodeTypes.ANNOTATION_TYPE, title, details, language,

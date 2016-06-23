@@ -21,8 +21,9 @@ package org.topicquests.backside.servlet.apps.tm.api;
  */
 public interface ISocialBookmarkLegend {
 	public static final String
-		TAG_BOOKMARK_RELATION_TYPE		= "TagBookmarkRelationType",
-		TAG_USER_RELATION_TYPE			= "TagUserRelationType",
-		BOOKMARK_USER_RELATIONTYPE		= "BookmarkUserRelationType";
+		TAG_BOOKMARK_RELATION_TYPE			= "TagBookmarkRelationType",
+		TAG_USER_RELATION_TYPE				= "TagUserRelationType",
+		BOOKMARK_USER_RELATIONTYPE			= "BookmarkUserRelationType",
+		ANNOTATION_BOOKMARK_RELATION_TYPE	= "AnnotationBookmarkRelationType";
 
 }

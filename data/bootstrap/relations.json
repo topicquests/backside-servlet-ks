@@ -56,7 +56,8 @@
 
   {"lox":"TagBookmarkRelationType","sbOf":"RelationType","label":"Tag Bookmark Relation Type","details":"ISocialBookmarkLegend extension Tag Bookmark relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
   {"lox":"TagUserRelationType","sbOf":"RelationType","label":"Tag User Relation Type","details":"ISocialBookmarkLegend extension Tag User relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
-  {"lox":"BookmarkUserRelationType","sbOf":"RelationType","label":"Bookmark User Relation Type","details":"ISocialBookmarkLegend extension Bookmark User  relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]}
+  {"lox":"UserBookmarkRelationType","sbOf":"RelationType","label":"User Bookmark Relation Type","details":"ISocialBookmarkLegend extension User Bookmark relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]}
+  {"lox":"AnnotationBookmarkRelationType","sbOf":"RelationType","label":"Annotation Bookmark Relation Type","details":"ISocialBookmarkLegend extension Annotation Bookmark relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]}
 
-
+  
 ]}

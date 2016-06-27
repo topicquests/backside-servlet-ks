@@ -57,15 +57,18 @@ public interface ITopicMapModel {
 	IResult query(JSONObject query, int start, int count, ITicket credentials);
 	
 	/**
-	 * Note: a case could be made for 'listTopicsByURL' except that
+	 * <p>Note: a case could be made for 'listTopicsByURL' except that
 	 * URL in this case refers to a lone PropertyType; the assumption
 	 * is that, as a TopicMap, there can be one and only one topic
-	 * with that identity property.
+	 * with that identity property.<p>
+	 * <p>There are, in fact, cases where this will return a list of proxies</p>
+	 *
 	 * @param url
 	 * @param credentials
 	 * @return
 	 */
-	IResult getTopicByURL(String url, ITicket credentials);
+	IResult listTopicsByURL(String url, ITicket credentials);
+	
 	////////////////
 	// Specialized TopicMap handlers
 	////////////////
@@ -75,6 +78,12 @@ public interface ITopicMapModel {
 	IResult listInstanceTopics(String typeLocator, int start, int count, ITicket credentials);
 	
 	IResult listTopicsByKeyValue(String propertyKey, String value, int start, int count, ITicket credentials);
+	
+	IResult listAllBlogPosts(int start, int count, ITicket credentials);
+	
+	IResult listBlogPostsByUser(String userId, int start, int count, ITicket credentials);
+	
+	IResult getBookmarkByURL(String url, ITicket credentials);
 	
 	/**
 	 * <p>Performs a <em>MultiGet</em> on a list of tree child nodes contained by the topic

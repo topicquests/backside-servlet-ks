@@ -60,7 +60,10 @@ public interface ITopicMapMicroformat extends ICredentialsMicroformat {
 		ADD_RELATION			= "AddRelation",	//post
 		ADD_CHILD_NODE			= "AddChildNode", // inside EXTRAS
 		FIND_OR_PROCESS_TAG		= "FindProcessTag", //post
-		FIND_OR_CREATE_BOOKMARK	= "FindProcessBookmark"; //post
+		FIND_OR_CREATE_BOOKMARK	= "FindProcessBookmark", //post
+		// blog-specific
+		LIST_ALL_BLOG_POSTS		= "ListAllBlogs",
+		LIST_BLOGS_BY_USER		= "ListUserBlogs";
 		
 		
 	

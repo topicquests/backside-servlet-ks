@@ -73,7 +73,7 @@ public class TopicMapHandler  extends BaseHandler {
 		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
 		int code = 0;
 		IResult r;
-		System.out.println("CondoHandler.handleGet "+verb);
+		System.out.println("TopicMapHandler.handleGet "+verb);
 		if (verb.equals(IUserMicroformat.LIST_USERS)) {
 			String startS = notNullString((String)jsonObject.get(ICredentialsMicroformat.ITEM_FROM));
 			String countS = notNullString((String)jsonObject.get(ICredentialsMicroformat.ITEM_COUNT));
@@ -168,7 +168,45 @@ public class TopicMapHandler  extends BaseHandler {
 				}
 
 			}
-			
+		} else if (verb.equals(ITopicMapMicroformat.LIST_ALL_BLOG_POSTS)) { 
+			String startS = notNullString((String)jsonObject.get(ICredentialsMicroformat.ITEM_FROM));
+			String countS = notNullString((String)jsonObject.get(ICredentialsMicroformat.ITEM_COUNT));
+			int start = 0, count = -1;
+			if (!startS.equals("")) {
+				try {
+					start = Integer.valueOf(startS);
+				} catch (Exception e1) {}
+			}
+			if (!countS.equals("")) {
+				try {
+					count = Integer.valueOf(countS);
+				} catch (Exception e2) {}
+			}
+			//TODO: note: we are ignoring any SORT modifiers
+			//This really returns some live cargo in the form of a list of user objects in JSON format
+			// We are restricting this to: name, email, avatar, homepage, geolocation, role
+			r = model.listAllBlogPosts(start, count, credentials);
+			if (r.hasError()) {
+				code = BaseHandler.RESPONSE_INTERNAL_SERVER_ERROR;
+				message = r.getErrorString();
+			} else {
+				//Time to take that list apart
+				if (r.getResultObject() != null) {
+					List<ISubjectProxy> usrs = (List<ISubjectProxy>)r.getResultObject();
+					Iterator<ISubjectProxy>itr = usrs.iterator();
+					List<JSONObject>jsonUsers = new ArrayList<JSONObject>();
+					while (itr.hasNext()) {
+						jsonUsers.add((JSONObject)itr.next().getData());
+					}
+					returnMessage.put(ICredentialsMicroformat.CARGO, jsonUsers);
+					code = BaseHandler.RESPONSE_OK;
+					message = "ok";
+				} else {
+					message = "Not found";
+					code = BaseHandler.RESPONSE_OK;
+				}
+
+			}
 		} else if (verb.equals(ITopicMapMicroformat.LIST_SUBCLASS_TOPICS)) { 
 			//TODO
 		} else if (verb.equals(ITopicMapMicroformat.LOAD_TREE)) {
@@ -190,7 +228,7 @@ public class TopicMapHandler  extends BaseHandler {
 		} else if (verb.equals(ITopicMapMicroformat.GET_TOPIC_BY_URL)) {
 			String url = (String)jsonObject.get(ITQCoreOntology.RESOURCE_URL_PROPERTY);
 			if (url != null) {
-				r = model.getTopicByURL(url, credentials);
+				r = model.listTopicsByURL(url, credentials);
 				if (r.getResultObject() != null) {
 					ISubjectProxy n = (ISubjectProxy)r.getResultObject();
 					System.out.println("GETTOPICBYURL "+n);
@@ -222,7 +260,7 @@ public class TopicMapHandler  extends BaseHandler {
 		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
 		int code = 0;
 		IResult r;
-		System.out.println("CondoHandler.handlePost "+verb);
+		System.out.println("TopicMapHandler.handlePost "+verb);
 		if (verb.equals(ITopicMapMicroformat.PUT_TOPIC)) {
 			//TODO
 		} else if (verb.equals(ITopicMapMicroformat.NEW_INSTANCE_TOPIC)) {

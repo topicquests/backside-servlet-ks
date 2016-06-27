@@ -21,8 +21,13 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.api.ICredentialsMicroformat;
 import org.topicquests.backside.servlet.apps.BaseModel;
@@ -113,6 +118,61 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 	public IResult listSubclassTopics(String superClassLocator,
 			int start, int count, ITicket credentials) {
 		IResult result = topicMap.listSubclassNodes(superClassLocator, start, count, credentials);
+		return result;
+	}
+
+	@Override
+	public IResult listAllBlogPosts(int start, int count, ITicket credentials) {
+		System.out.println("TopicMapModel.listAllBlogPosts "+start+" "+count);
+		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		QueryBuilder t2 = QueryBuilders.termQuery(ITQCoreOntology.INSTANCE_OF_PROPERTY_TYPE, INodeTypes.BLOG_TYPE);
+		searchSourceBuilder.query(t2);
+		SortBuilder sb = new FieldSortBuilder(ITQCoreOntology.CREATED_DATE_PROPERTY).order(SortOrder.DESC);
+		searchSourceBuilder.sort(sb);
+		searchSourceBuilder.from(start);
+		if (count > -1)
+			searchSourceBuilder.size(count);
+		String q = searchSourceBuilder.toString();
+		IResult result = topicMap.executeQueryBuilder(searchSourceBuilder, credentials);
+		System.out.println("LISTALLBLOGPOSTS "+q);
+		environment.logDebug("TopicMapModel.listBlogPostsByUser+ "+result.getErrorString()+" | "+result.getResultObject());
+		//TopicMapModel.getTopicByURL+  | [org.topicquests.ks.tm.SubjectProxy@6aab361d, org.topicquests.ks.tm.SubjectProxy@1098da46]
+		List<Object> lx = (List<Object>)result.getResultObject();
+		if (lx != null) {
+			if (lx.size() > 0) {
+				result.setResultObject(lx);
+			} else
+				result.setResultObject(null);
+		}
+		System.out.println("LISTALLBLOGPOSTS+ "+result.getErrorString()+" | "+result.getResultObject());
+		return result;	}
+
+	@Override
+	public IResult listBlogPostsByUser(String userId, int start, int count,
+			ITicket credentials) {
+		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		QueryBuilder t1 = QueryBuilders.termQuery(ITQCoreOntology.CREATOR_ID_PROPERTY, userId);
+		QueryBuilder t2 = QueryBuilders.termQuery(ITQCoreOntology.INSTANCE_OF_PROPERTY_TYPE, INodeTypes.BLOG_TYPE);
+		BoolQueryBuilder query = new BoolQueryBuilder();
+		query.must(t1);
+		query.must(t2);
+		searchSourceBuilder.query(query);
+		SortBuilder sb = new FieldSortBuilder(ITQCoreOntology.CREATED_DATE_PROPERTY).order(SortOrder.DESC);
+		searchSourceBuilder.sort(sb);
+		searchSourceBuilder.from(start);
+		if (count > -1)
+			searchSourceBuilder.size(count);
+		IResult result = topicMap.runQuery(searchSourceBuilder.toString(), 0, -1, credentials);
+		environment.logDebug("TopicMapModel.listBlogPostsByUser+ "+result.getErrorString()+" | "+result.getResultObject());
+		//TopicMapModel.getTopicByURL+  | [org.topicquests.ks.tm.SubjectProxy@6aab361d, org.topicquests.ks.tm.SubjectProxy@1098da46]
+		List<Object> lx = (List<Object>)result.getResultObject();
+		if (lx != null) {
+			if (lx.size() > 0) {
+				result.setResultObject(lx);
+			} else
+				result.setResultObject(null);
+		}
+		System.out.println("LISTBLOGSBYUSER+ "+result.getErrorString()+" | "+result.getResultObject());
 		return result;
 	}
 
@@ -344,10 +404,10 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 	}
 
 	@Override
-	public IResult getTopicByURL(String url, ITicket credentials) {
+	public IResult listTopicsByURL(String url, ITicket credentials) {
 		QueryBuilder qb1 = QueryBuilders.termQuery(ITQCoreOntology.RESOURCE_URL_PROPERTY, url);
 		IResult result = topicMap.runQuery(qb1.toString(), 0, -1, credentials);
-		environment.logDebug("TopicMapModel.getTopicByURL+ "+result.getErrorString()+" | "+result.getResultObject());
+		environment.logDebug("TopicMapModel.listTopicsByURL+ "+result.getErrorString()+" | "+result.getResultObject());
 		//TopicMapModel.getTopicByURL+  | [org.topicquests.ks.tm.SubjectProxy@6aab361d, org.topicquests.ks.tm.SubjectProxy@1098da46]
 		List<Object> lx = (List<Object>)result.getResultObject();
 		if (lx != null) {
@@ -363,10 +423,38 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 			} else
 				result.setResultObject(null);
 		}
-		System.out.println("GETTOPICBYURL+ "+result.getErrorString()+" | "+result.getResultObject());
+		System.out.println("LISTTOPICSBYURL+ "+result.getErrorString()+" | "+result.getResultObject());
 		return result;
 	}
-
+	
+	@Override
+	public IResult getBookmarkByURL(String url, ITicket credentials) {
+		QueryBuilder t1 = QueryBuilders.termQuery(ITQCoreOntology.RESOURCE_URL_PROPERTY, url);
+		QueryBuilder t2 = QueryBuilders.termQuery(ITQCoreOntology.INSTANCE_OF_PROPERTY_TYPE, INodeTypes.BOOKMARK_TYPE);
+		final BoolQueryBuilder query = new BoolQueryBuilder();
+		query.must(t1);
+		query.must(t2);
+		IResult result = topicMap.runQuery(query.toString(), 0, -1, credentials);
+		environment.logDebug("TopicMapModel.getBookmarkByURL+ "+result.getErrorString()+" | "+result.getResultObject());
+		//TopicMapModel.getTopicByURL+  | [org.topicquests.ks.tm.SubjectProxy@6aab361d, org.topicquests.ks.tm.SubjectProxy@1098da46]
+		List<Object> lx = (List<Object>)result.getResultObject();
+		if (lx != null) {
+			if (lx.size() > 0) {
+				try {
+					ISubjectProxy n = (SubjectProxy)(lx.get(0));
+					result.setResultObject(n);
+				} catch (Exception ex) {
+					environment.logError(ex.getMessage(), ex);
+					result.addErrorString(ex.getMessage());
+					result.setResultObject(null);
+				}
+			} else
+				result.setResultObject(null);
+		}
+		System.out.println("GETBOOKMARKBYURL+ "+result.getErrorString()+" | "+result.getResultObject());
+		return result;
+	}
+	
 	@Override
 	public IResult addPivot(String topicLocator, String pivotLocator,
 			String pivotRelationType, String smallImagePath,
@@ -402,7 +490,7 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 	public IResult findOrCreateBookmark(String url, String title,
 			String details, String language, String userId, JSONObject tagLabels, ITicket credentials) {
 		environment.logDebug("TopicMapModel.findOrCreateBookmark- "+url+" | "+userId);
-		IResult result = this.getTopicByURL(url, credentials);
+		IResult result = this.getBookmarkByURL(url, credentials);
 		ISubjectProxy bkmk = (ISubjectProxy)result.getResultObject();
 		System.out.println("FindOrCreateBookmark-1 "+bkmk);
 		boolean isNew = false;
@@ -496,6 +584,7 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 		if (r.hasError())
 			result.addErrorString(r.getErrorString());
 	}
+
 
 
 }

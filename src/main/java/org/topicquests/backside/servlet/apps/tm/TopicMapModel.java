@@ -129,11 +129,12 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 		searchSourceBuilder.query(t2);
 		SortBuilder sb = new FieldSortBuilder(ITQCoreOntology.CREATED_DATE_PROPERTY).order(SortOrder.DESC);
 		searchSourceBuilder.sort(sb);
-		searchSourceBuilder.from(start);
-		if (count > -1)
-			searchSourceBuilder.size(count);
+		//searchSourceBuilder.from(start);
+		//if (count > -1)
+		//	searchSourceBuilder.size(count);
 		String q = searchSourceBuilder.toString();
-		IResult result = topicMap.executeQueryBuilder(searchSourceBuilder, credentials);
+		//IResult result = topicMap.executeQueryBuilder(searchSourceBuilder, credentials);
+		IResult result = topicMap.runQuery(q, start, count, credentials);
 		System.out.println("LISTALLBLOGPOSTS "+q);
 		environment.logDebug("TopicMapModel.listBlogPostsByUser+ "+result.getErrorString()+" | "+result.getResultObject());
 		//TopicMapModel.getTopicByURL+  | [org.topicquests.ks.tm.SubjectProxy@6aab361d, org.topicquests.ks.tm.SubjectProxy@1098da46]

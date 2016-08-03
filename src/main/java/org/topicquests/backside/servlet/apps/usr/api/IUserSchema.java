@@ -68,6 +68,13 @@ public interface IUserSchema {
 	
 	public static final String updateUserProperty =
 			"UPDATE userprops  SET val=? WHERE prop=? AND name=?";
+	
+	/**
+	 * Intended for key-value pairs which occupy multiple rows, e.g. roles
+	 */
+	public static final String changeUserProperty =
+			"UPDATE userprops  SET val=? WHERE prop=? AND val=? AND name=?";
+	
 	public static final String removeUserProperty=
 			"DELETE FROM userprops WHERE name=? AND prop=? AND val=?";
 	public static final String putUserProperty=

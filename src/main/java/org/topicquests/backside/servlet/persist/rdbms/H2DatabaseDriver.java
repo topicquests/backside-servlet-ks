@@ -45,6 +45,7 @@ public class H2DatabaseDriver implements IRDBMSDatabase {
 
     public H2DatabaseDriver(ServletEnvironment env, String dbName,String userName, String pwd, String filePath)
             throws Exception {
+    	System.out.println("H2DBStart "+filePath);
     	environment = env;
         this.userName = userName;
         this.password = pwd;

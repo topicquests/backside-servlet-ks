@@ -57,7 +57,8 @@ public class UserModel implements IUserModel {
 		String userName=environment.getStringProperty("MyDatabaseUser");
 		String userPwd=environment.getStringProperty("MyDatabasePwd");
 		String dbPath = environment.getStringProperty("UserDatabasePath");
-		database = new H2UserDatabase(environment,dbName,userName,userPwd,dbPath);
+		
+		database = new H2UserDatabase(environment, dbName, userName, userPwd, dbPath);
 		SystemEnvironment tmenv = environment.getTopicMapEnvironment();
 		System.out.println("FOO "+tmenv);
 		topicMap = tmenv.getDatabase();
@@ -67,14 +68,14 @@ public class UserModel implements IUserModel {
 
 	private void validateDefaultAdmin() {
 		//from config-props.xml
+
 		String admin = environment.getStringProperty("DefaultAdminEmail");
 		String pwd = environment.getStringProperty("DefaultAdminPwd");
 		System.out.println("VALIDATE "+admin+" | "+pwd);
 		IResult r = authenticate(admin,pwd);
 		if (r.getResultObject() == null) {
 			r = this.insertUser(admin, "defaultadmin", pwd, "Default Admin", "", ISecurity.ADMINISTRATOR_ROLE, "", "", false);
-			//This user is far more than an Admin
-			r = this.addUserRole("defaultadmin", ISecurity.OWNER_ROLE);
+			r = this.addUserRole("defaultadmin", ISecurity.OWNER_ROLE);	
 		}
 	}
 	/* (non-Javadoc)

@@ -97,9 +97,7 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 			return result;
 		}
 		PreparedStatement s = null;
-		PreparedStatement s2 = null;
 		ResultSet rs = null;
-		ResultSet rs2 = null;
 		try {
 			String pwd = sha1(password);
 			System.out.println("AUTH "+email+" "+pwd);
@@ -110,23 +108,8 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 
 			if (rs.next()) {
 				String key,val,ava,name;
-				ITicket t = new TicketPojo();
-		//		ava = rs.getString(IUserSchema.USER_AVATAR);
 				name = rs.getString(IUserSchema.USER_NAME);
-	//			if (!ava.equals(""))
-	//				t.addAvatarLocator(ava);
-				t.setUserLocator(name);
-				t.setProperty(IUserSchema.USER_EMAIL, rs.getString(IUserSchema.USER_EMAIL));
-				t.setProperty(IUserSchema.USER_FULLNAME, rs.getString(IUserSchema.USER_FULLNAME));
-				s2 = con.prepareStatement(IUserSchema.getUserProperties);
-				s2.setString(1, name);
-				rs2 = s2.executeQuery();
-				while (rs2.next()) {
-					key = rs2.getString("prop");
-					val = rs2.getString("val");
-					t.setProperty(key, val);
-				}
-				result.setResultObject(t);
+				result = this.getTicket(con, name);
 			}
 			//otherwise return null
 		} catch (Exception e) {
@@ -135,10 +118,6 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 		} finally {
 			closePreparedStatement(s,result);
 			closeResultSet(rs,result);
-			if (s2 != null)
-				closePreparedStatement(s2,result);
-			if (rs2 != null)
-				closeResultSet(rs2,result);
 		}
 		return result;
 	}
@@ -166,7 +145,6 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 			//		t.addAvatarLocator(ava);
 				t.setUserLocator(rs.getString(IUserSchema.USER_NAME));
 				t.setProperty(IUserSchema.USER_EMAIL, email);
-			//	t.setProperty(IUserSchema.USER_ROLE, rs.getString(IUserSchema.USER_ROLE));
 				t.setProperty(IUserSchema.USER_FULLNAME, rs.getString(IUserSchema.USER_FULLNAME));
 				s2 = con.prepareStatement(IUserSchema.getUserProperties);
 				s2.setString(1, userName);
@@ -174,15 +152,19 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 				List<String>roles = new ArrayList<String>();
 				while (rs2.next()) {
 					key = rs2.getString("prop");
-					if (key.equals(IUserSchema.USER_ROLE)) 
+					System.out.println("H2UDB "+key);
+					if (key.equals(IUserSchema.USER_ROLE)) {
 						roles.add(rs2.getString("val"));
-					else {
+						System.out.println("H2UDB1 "+roles);
+					} else {
 						val = rs2.getString("val");
 				//	System.out.println("GETPROP "+userName+" "+key+" | "+val);
 						t.setProperty(key, val);
 					}
 				}
+				//HERE, we must convert roles to string
 				t.setProperty(IUserMicroformat.USER_ROLE, roles);
+				System.out.println("H2UDB2 "+t.getProperty(IUserMicroformat.USER_ROLE));
 				result.setResultObject(t);
 			}
 			//otherwise return null
@@ -203,40 +185,15 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 	public IResult getTicketByEmail(Connection con, String email) {
 		IResult result = new ResultPojo();
 		PreparedStatement s = null;
-		PreparedStatement s2 = null;
 		ResultSet rs = null;
-		ResultSet rs2 = null;
 		try {
 			s = con.prepareStatement(IUserSchema.getUserByEmail);
 			s.setString(1, email);
 			rs = s.executeQuery();
 			if (rs.next()) {
-				String key,val,ava;
-				String userName = rs.getString(IUserSchema.USER_NAME);
-				ITicket t = new TicketPojo();
-		//		ava = rs.getString(IUserSchema.USER_AVATAR);
-		//		if (!ava.equals(""))
-		//			t.addAvatarLocator(ava);
-				t.setUserLocator(rs.getString(IUserSchema.USER_NAME));
-				t.setProperty(IUserSchema.USER_EMAIL, email);
-		//		t.setProperty(IUserSchema.USER_ROLE, rs.getString(IUserSchema.USER_ROLE));
-				t.setProperty(IUserSchema.USER_FULLNAME, rs.getString(IUserSchema.USER_FULLNAME));
-				s2 = con.prepareStatement(IUserSchema.getUserProperties);
-				s2.setString(1, userName);
-				rs2 = s2.executeQuery();
-				List<String>roles = new ArrayList<String>();
-				while (rs2.next()) {
-					key = rs2.getString("prop");
-					if (key.equals(IUserSchema.USER_ROLE)) 
-						roles.add(rs2.getString("val"));
-					else {
-						val = rs2.getString("val");
-				//	System.out.println("GETPROP "+userName+" "+key+" | "+val);
-						t.setProperty(key, val);
-					}
-				}
-				t.setProperty(IUserMicroformat.USER_ROLE, roles);
-				result.setResultObject(t);
+				String name;
+				name = rs.getString(IUserSchema.USER_NAME);
+				result = this.getTicket(con, name);
 			}
 			//otherwise return null
 		} catch (Exception e) {
@@ -244,10 +201,6 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 		} finally {
 			closePreparedStatement(s,result);
 			closeResultSet(rs,result);
-			if (s2 != null)
-				closePreparedStatement(s2,result);
-			if (rs2 != null)
-				closeResultSet(rs2,result);
 		}
 		return result;	
 	}
@@ -460,12 +413,12 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 	 */
 	@Override
 	public IResult addUserRole(Connection con, String userName, String newRole) {
-		return updateUserData(con, userName, IUserSchema.USER_ROLE, newRole);
+		return this.insertUserData(con, userName, IUserSchema.USER_ROLE, newRole);
 	}
 	
 	@Override
 	public IResult removeUserRole(Connection con, String userName, String oldRole) {
-		return removeUserData(con, userName, IUserSchema.USER_ROLE, oldRole);
+		return this.removeUserData(con, userName, IUserSchema.USER_ROLE, oldRole); //(con, userName, IUserSchema.USER_ROLE, oldRole);
 	}
 
 	@Override
@@ -537,25 +490,14 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 			rs = s.executeQuery();
 			String name, key,val, ava;
 			ITicket t;
+			IResult r;
 			while (rs.next()) {
 				t = new TicketPojo();
 				name = rs.getString(IUserSchema.USER_NAME);
-			//	ava = rs.getString(IUserSchema.USER_AVATAR);
-			//	if (!ava.equals(""))
-			//		t.addAvatarLocator(ava);;
-				t.setUserLocator(name);
-				t.setProperty(IUserSchema.USER_EMAIL, rs.getString(IUserSchema.USER_EMAIL));
-				//t.setProperty(IUserSchema.USER_ROLE, rs.getString(IUserSchema.USER_ROLE));
-				t.setProperty(IUserSchema.USER_FULLNAME, rs.getString(IUserSchema.USER_FULLNAME));
-				s2 = con.prepareStatement(IUserSchema.getUserProperties);
-				s2.setString(1, name);
-				rs2 = s2.executeQuery();
-				while (rs2.next()) {
-					key = rs2.getString("prop");
-					val = rs2.getString("val");
-			//		System.out.println("GETPROP2 "+name+" "+key+" | "+val);
-					t.setProperty(key, val);
-				}
+				r = this.getTicket(con, name);
+				t = (ITicket)r.getResultObject();
+				if (r.hasError())
+					result.addErrorString(r.getErrorString());
 				users.add(t);
 			}
 		} catch (Exception e) {

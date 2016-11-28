@@ -48,7 +48,26 @@ public interface ITopicMapModel {
 	 */
 	IResult putTopic(JSONObject topic);
 	
+	/**
+	 * <code>topic</code> must be a full ISubjectProxy object
+	 * @param topic
+	 * @param checkVersion
+	 * @return
+	 */
 	IResult updateTopic(JSONObject topic, boolean checkVersion);
+	
+	/**
+	 * Simple way to update a topic's text fields
+	 * @param locator
+	 * @param label
+	 * @param description
+	 * @param language
+	 * @param checkVersion
+	 * @param credentials
+	 * @return
+	 */
+	IResult updateTopicTextFields(String locator, String label,
+			String description, String language, boolean checkVersion, ITicket credentials);
 	
 	IResult getTopic(String topicLocator, ITicket credentials);
 	
@@ -79,9 +98,9 @@ public interface ITopicMapModel {
 	
 	IResult listTopicsByKeyValue(String propertyKey, String value, int start, int count, ITicket credentials);
 	
-	IResult listAllBlogPosts(int start, int count, ITicket credentials);
+	//IResult listAllBlogPosts(int start, int count, ITicket credentials);
 	
-	IResult listBlogPostsByUser(String userId, int start, int count, ITicket credentials);
+	//IResult listBlogPostsByUser(String userId, int start, int count, ITicket credentials);
 	
 	IResult getBookmarkByURL(String url, ITicket credentials);
 	
@@ -89,11 +108,25 @@ public interface ITopicMapModel {
 	 * <p>Performs a <em>MultiGet</em> on a list of tree child nodes contained by the topic
 	 * identified by <code>rootNodeLocator</code>.</p>
 	 * <p>Returns a JSONObject as a map: locator:JSONnode</p>
+	 * <p>Essentially, this simply fetches all the child nodes of the given node, and
+	 * returns a list of them</p>
+	 * <p>Note: this is <em>not</em> a recursive walk down the tree</p>
 	 * @param rootNodeLocator
+	 * @param contextLocator
 	 * @param credentials
 	 * @return
 	 */
-	IResult listTreeChildNodesJSON(String rootNodeLocator, ITicket credentials);
+	IResult listTreeChildNodesJSON(String rootNodeLocator, String contextLocator, ITicket credentials);
+	
+	/**
+	 * Recursively walk down a tree from <code>rootNodeLocator</code> along child lines associated
+	 * with <code>contextLocator</code>, which may or may not be the same as <code>rootNodeLocator</code>
+	 * @param rootNodeLocator
+	 * @param contextLocator
+	 * @param credentials
+	 * @return
+	 */
+	IResult collectParentChildTree(String rootNodeLocator, String contextLocator, ITicket credentials);
 	
     /////////////////////////////////
     // DSL for creating topics
@@ -136,7 +169,7 @@ public interface ITopicMapModel {
 	IResult addPivot(String topicLocator, String pivotLocator, String pivotRelationType,
 					 String smallImagePath, String largeImagePath, boolean isTransclude, boolean isPrivate, ITicket credentials);
 
-	IResult addRelation(String topicLocator, String pivotLocator, String pivotRelationType,
+	IResult addRelation(String sourceLocator, String targetLocator, String relationTypeLocator,
 			 String smallImagePath, String largeImagePath, boolean isTransclude, boolean isPrivate, ITicket credentials);
 
 	/**
@@ -174,6 +207,15 @@ public interface ITopicMapModel {
      */
     IResult listUserTopics(int start, int count, ITicket credentials);
 
+    /**
+     * Returns a tree rooted in <code>rootLocator</code>
+     * @param rootLocator
+     * @param maxDepth
+     * @param start
+     * @param count
+     * @param credentials
+     * @return
+     */
     IResult getNodeTree(String rootLocator, int maxDepth, int start, int count, ITicket credentials);
     
 	void shutDown();

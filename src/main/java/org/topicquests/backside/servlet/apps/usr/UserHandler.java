@@ -62,13 +62,13 @@ public class UserHandler  extends BaseHandler {
 	public void handleGet(HttpServletRequest request, HttpServletResponse response, ITicket credentials, JSONObject jsonObject) throws ServletException, IOException {
 		JSONObject returnMessage = newJSONObject();
 		String message = "", rtoken="";
-		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
+		String verb = getVerb(jsonObject);
 		System.out.println("UserHandler.get verb: "+verb);
 		int code = 0;
 		IResult r;
 		if (verb.equals(IUserMicroformat.LIST_USERS)) {
-			String startS = notNullString((String)jsonObject.get(ICredentialsMicroformat.ITEM_FROM));
-			String countS = notNullString((String)jsonObject.get(ICredentialsMicroformat.ITEM_COUNT));
+			String startS = getItemFrom(jsonObject);
+			String countS = getItemCount(jsonObject);
 			int start = 0, count = -1;
 			if (!startS.equals("")) {
 				try {
@@ -106,7 +106,7 @@ public class UserHandler  extends BaseHandler {
 				}
 			}
 		} else if (verb.equals(IUserMicroformat.GET_USER)) {
-			String email = notNullString((String)jsonObject.get(ICredentialsMicroformat.USER_EMAIL));
+			String email = getEmail(jsonObject);
 			r = model.getTicketByEmail(email);
 			if (r.getResultObject() != null) {
 				ITicket t = (ITicket)r.getResultObject();
@@ -132,26 +132,26 @@ public class UserHandler  extends BaseHandler {
 	public void handlePost(HttpServletRequest request, HttpServletResponse response, ITicket credentials, JSONObject jsonObject) throws ServletException, IOException {
 		JSONObject returnMessage = newJSONObject();
 		String message = "", rtoken="";
-		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
+		String verb = getVerb(jsonObject);
 		int code = 0;
 		IResult r;
 		System.out.println("UserHandler.post verb: "+verb);
 		if (verb.equals(IUserMicroformat.NEW_USER)) {
-			String email = (String)jsonObject.get(IUserMicroformat.USER_EMAIL);
+			String email = getEmail(jsonObject);
 			//TODO sanity check
-			String userName = (String)jsonObject.get(IUserMicroformat.USER_NAME);
-			String fullName = (String)jsonObject.get(IUserMicroformat.USER_FULLNAME);
-			String password = (String)jsonObject.get(IUserMicroformat.USER_PWD);
-			String avatar = notNullString((String)jsonObject.get(IUserMicroformat.USER_AVATAR));
-			String homepage = notNullString((String)jsonObject.get(IUserMicroformat.USER_HOMEPAGE));
+			String userName = getUserHandle(jsonObject);
+			String fullName = jsonObject.getAsString(IUserMicroformat.USER_FULLNAME);
+			String password = jsonObject.getAsString(IUserMicroformat.USER_PWD);
+			String avatar = notNullString(jsonObject.getAsString(IUserMicroformat.USER_AVATAR));
+			String homepage = notNullString(jsonObject.getAsString(IUserMicroformat.USER_HOMEPAGE));
 			System.out.println("NEWUSER "+homepage);
-			String geolocation = notNullString((String)jsonObject.get(IUserMicroformat.USER_GEOLOC));
-			String role = notNullString((String)jsonObject.get(IUserMicroformat.USER_ROLE));
+			String geolocation = notNullString(jsonObject.getAsString(IUserMicroformat.USER_GEOLOC));
+			String role = notNullString(jsonObject.getAsString(IUserMicroformat.USER_ROLE));
 			if (role.equals("")) 
 				role = ISecurity.USER_ROLE; //default role
 			byte [] foo = BaseEncoding.base64().decode(password);
 			String creds = new String(foo);
-			r = model.insertUser(email, userName, creds, fullName, avatar, role, homepage, geolocation, true);
+			r = model.insertUser(email, userName, UUID.randomUUID().toString(), creds, fullName, avatar, role, homepage, geolocation, true);
 			System.out.println("NEWUSER2 "+r.getErrorString());
 			if (r.hasError()) {
 				code = BaseHandler.RESPONSE_INTERNAL_SERVER_ERROR;
@@ -164,8 +164,8 @@ public class UserHandler  extends BaseHandler {
 			returnMessage.put(ICredentialsMicroformat.RESP_TOKEN, rtoken);
 			returnMessage.put(ICredentialsMicroformat.RESP_MESSAGE, message);
 		} else if (verb.equals(IAdminMicroformat.UPDATE_USER_PASSWORD)) {
-			String userName = (String)jsonObject.get(IUserMicroformat.USER_NAME);
-			String password = (String)jsonObject.get(IUserMicroformat.USER_PWD);
+			String userName = getUserHandle(jsonObject);
+			String password = jsonObject.getAsString(IUserMicroformat.USER_PWD);
 			byte [] foo = BaseEncoding.base64().decode(password);
 			String creds = new String(foo);
 		//	System.out.println("FFFF "+creds);
@@ -178,7 +178,7 @@ public class UserHandler  extends BaseHandler {
 				code = BaseHandler.RESPONSE_OK;
 			}
 		} else if (verb.equals(IAdminMicroformat.REMOVE_USER)) {
-			String userName = (String)jsonObject.get(IUserMicroformat.USER_NAME);
+			String userName = getUserHandle(jsonObject);
 			System.out.println("UserHandler.removeUser "+userName);
 			r = model.removeUser(userName);
 			if (r.hasError()) {
@@ -189,9 +189,9 @@ public class UserHandler  extends BaseHandler {
 				code = BaseHandler.RESPONSE_OK;
 			}
 		} else if (verb.equals(IAdminMicroformat.UPDATE_USER_DATA)) {
-			String userName = (String)jsonObject.get(IUserMicroformat.USER_NAME);
-			String key = (String)jsonObject.get(IUserMicroformat.PROP_KEY);
-			String val = (String)jsonObject.get(IUserMicroformat.PROP_VAL);
+			String userName = getUserHandle(jsonObject);
+			String key = jsonObject.getAsString(IUserMicroformat.PROP_KEY);
+			String val = jsonObject.getAsString(IUserMicroformat.PROP_VAL);
 			r = model.insertUserData(userName, key, val);
 			if (r.hasError()) {
 				code = BaseHandler.RESPONSE_OK;

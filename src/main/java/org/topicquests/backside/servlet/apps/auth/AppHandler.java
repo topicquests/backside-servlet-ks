@@ -59,11 +59,11 @@ public class AppHandler  extends BaseHandler {
 		JSONObject returnMessage = newJSONObject();
 		System.out.println("AUTHGET "+jsonObject.toJSONString());
 		String message = "", rtoken="";
-		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
+		String verb = getVerb(jsonObject);
 		System.out.println("VERB "+verb);
 		int code = 0;
 		if (verb.equals(IAuthMicroformat.VALIDATE)) {
-			String name = (String)jsonObject.get(ICredentialsMicroformat.USER_NAME);
+			String name = (String)jsonObject.get(ICredentialsMicroformat.USER_ID);
 			IResult r = model.existsUsername(name);
 			Boolean x = (Boolean)r.getResultObject();
 			//returns ok only if this username does not exist
@@ -163,7 +163,7 @@ public class AppHandler  extends BaseHandler {
 		JSONObject returnMessage = newJSONObject();
 		System.out.println("AUTHPOST "+jsonObject.toJSONString());
 		String message = "", rtoken="";
-		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
+		String verb = getVerb(jsonObject);
 		int code = 0;
 		
 		//We have nothing to do here

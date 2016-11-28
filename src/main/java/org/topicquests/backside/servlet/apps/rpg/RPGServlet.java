@@ -26,18 +26,18 @@ import org.topicquests.backside.servlet.ServletEnvironment;
 
 /**
  * @author park
- *
+ * This servlet is fired from config-props.xml
  */
 public class RPGServlet extends HttpServlet {
 	private ServletEnvironment environment;
-	//private RPGHandler handler;
+	private RPGHandler handler;
 
 	/**
 	 * 
 	 */
 	public RPGServlet(ServletEnvironment env, String basePath) {
 		environment = env;
-	//	handler = new RPGHandler(environment, basePath);
+		handler = new RPGHandler(environment, basePath);
 	}
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

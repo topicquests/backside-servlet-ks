@@ -16,6 +16,7 @@
 package org.topicquests.backside.servlet.apps.tm.api;
 
 import org.topicquests.common.api.IResult;
+import org.topicquests.ks.api.ITicket;
 import org.topicquests.ks.tm.api.INodeTypes;
 
 /**
@@ -41,4 +42,14 @@ public interface IStructuredConversationModel {
 	IResult newConversationNode(String nodeType, String parentLocator, String contextLocator, String locator,
 			String label, String details, String language, String url, String userId, boolean isPrivate);
 
+	/**
+	 * Add a <em>transcluded</em> child to a parent in a particular context
+	 * @param parentLocator
+	 * @param contextLocator
+	 * @param childLocator
+	 * @param language TODO
+	 * @param credentials
+	 * @return
+	 */
+	IResult transcludeChildNode(String parentLocator, String contextLocator, String childLocator, String language, ITicket credentials);
 }

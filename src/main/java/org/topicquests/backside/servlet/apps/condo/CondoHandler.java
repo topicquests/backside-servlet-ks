@@ -69,7 +69,7 @@ public class CondoHandler  extends BaseHandler {
 	public void handleGet(HttpServletRequest request, HttpServletResponse response, ITicket credentials, JSONObject jsonObject) throws ServletException, IOException {
 		JSONObject returnMessage = newJSONObject();
 		String message = "", rtoken="";
-		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
+		String verb = getVerb(jsonObject);
 		int code = 0;
 		IResult r;
 		System.out.println("CondoHandler.handleGet "+verb);
@@ -91,7 +91,7 @@ public class CondoHandler  extends BaseHandler {
 		JSONObject returnMessage = newJSONObject();
 		JSONObject cargo = (JSONObject)jsonObject.get(ICredentialsMicroformat.CARGO);
 		String message = "", rtoken="";
-		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
+		String verb = getVerb(jsonObject);
 		int code = 0;
 		IResult r;
 		System.out.println("CondoHandler.handlePost "+verb);

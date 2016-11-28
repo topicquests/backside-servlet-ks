@@ -23,6 +23,7 @@ public interface IUserSchema {
 	public static final String 
 		USER_EMAIL		="email",
 		USER_NAME		="name",
+		USER_ID			="id",
 		USER_FULLNAME	= "fullName",
 		USER_PASSWORD	= "pwd",
 		USER_AVATAR		= "avatar",
@@ -36,7 +37,8 @@ public interface IUserSchema {
 			"CREATE TABLE users ("
 			+ "email VARCHAR(255) PRIMARY KEY,"
 			+ "pwd VARCHAR(128) NOT NULL,"
-			+ "name VARCHAR(128) NOT NULL,"
+			+ "id VARCHAR(128) NOT NULL,"
+			+ "name VARCHAR(128) NOT NULL," // name is user's handle
 			+ "fullName VARCHAR(128) NOT NULL)",
 			//a rule can be a list of roles, each a short string
 			//the first role is usually the primary role, e.g. USER_ROLE from ISecurity
@@ -81,7 +83,7 @@ public interface IUserSchema {
 			"INSERT INTO userprops values(?,?,?)";
 
 	public static final String putUser =
-			"INSERT INTO users values(?, ?, ?, ?)";
+			"INSERT INTO users values(?, ?, ?, ?, ?)";
 	
 	
 	public static final String listUserNames =

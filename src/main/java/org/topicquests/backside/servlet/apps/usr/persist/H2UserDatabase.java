@@ -143,8 +143,10 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 			//	ava = rs.getString(IUserSchema.USER_AVATAR);
 			//	if (!ava.equals(""))
 			//		t.addAvatarLocator(ava);
-				t.setUserLocator(rs.getString(IUserSchema.USER_NAME));
+				t.setUserLocator(rs.getString(IUserSchema.USER_ID));
 				t.setProperty(IUserSchema.USER_EMAIL, email);
+				t.setUserLocator(rs.getString(IUserSchema.USER_ID));
+				t.setProperty(IUserSchema.USER_NAME, IUserSchema.USER_NAME);
 				t.setProperty(IUserSchema.USER_FULLNAME, rs.getString(IUserSchema.USER_FULLNAME));
 				s2 = con.prepareStatement(IUserSchema.getUserProperties);
 				s2.setString(1, userName);
@@ -210,40 +212,43 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 	 * @see org.topicquests.backside.servlet.api.IUserPersist#insertUser(java.sql.Connection, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public IResult insertUser(Connection con, String email, String userName,
-			String password, String userFullName, String avatar, String role, String homepage, String geolocation) {
+	public IResult insertUser(Connection con, String email, String userHandle,
+			String userId, String password, String userFullName, 
+			String avatar, String role, String homepage, String geolocation) {
 		IResult result = new ResultPojo();
 		PreparedStatement s = null;
 		PreparedStatement s2 = null;
+		System.out.println("INSERTUSER "+email+" | "+userHandle+" | "+userId);
 		try {
 			String pwd = sha1(password);
 			s = con.prepareStatement(IUserSchema.putUser);
 			s.setString(1, email);
 			s.setString(2, pwd);
-			s.setString(3, userName);
-			s.setString(4, userFullName);
+			s.setString(3, userId);
+			s.setString(4, userHandle);
+			s.setString(5, userFullName);
 		//	s.setString(5, "");
 		//	s.setString(6, "");
 			boolean x = s.execute();
 			System.out.println("INSERTUSER1 "+x);
 			s2 = con.prepareStatement(IUserSchema.putUserProperty);
-			s2.setString(1, userName);
+			s2.setString(1, userHandle);
 			s2.setString(2, IUserSchema.USER_HOMEPAGE);
 			s2.setString(3, homepage);
 			x = s2.execute();
 			System.out.println("INSERTUSER2 "+x);
 			s2.clearParameters();
-			s2.setString(1, userName);
+			s2.setString(1, userHandle);
 			s2.setString(2, IUserSchema.USER_GEOLOC);
 			s2.setString(3, geolocation);
 			x = s2.execute();
 			s2.clearParameters();
-			s2.setString(1, userName);
+			s2.setString(1, userHandle);
 			s2.setString(2, IUserSchema.USER_ROLE);
 			s2.setString(3, role);
 			x = s2.execute();
 			s2.clearParameters();
-			s2.setString(1, userName);
+			s2.setString(1, userHandle);
 			s2.setString(2, IUserSchema.USER_AVATAR);
 			s2.setString(3, avatar);
 			x = s2.execute();

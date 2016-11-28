@@ -15,6 +15,8 @@
  */
 package test;
 
+import java.util.UUID;
+
 import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.api.ISecurity;
 import org.topicquests.backside.servlet.apps.usr.api.IUserModel;
@@ -47,17 +49,17 @@ public class UserTest {
 		model = environment.getUserModel();
 
 		//(String email, String userName, String password, String avatar, String role, String homepage, String geolocation)
-		IResult r = model.insertUser(I1, N1, P1, "Sam Slow", "", ISecurity.USER_ROLE, "", "", true);
+		IResult r = model.insertUser(I1, N1, UUID.randomUUID().toString(), P1, "Sam Slow", "", ISecurity.USER_ROLE, "", "", true);
 		if (r.hasError()) {
 			System.out.println("A "+r.getErrorString());
 			System.exit(1);
 		}
-		r =  model.insertUser(I2, N2, P2, "Sara Slow", "", ISecurity.ADMINISTRATOR_ROLE, "", "", true);
+		r =  model.insertUser(I2, N2, UUID.randomUUID().toString(), P2, "Sara Slow", "", ISecurity.ADMINISTRATOR_ROLE, "", "", true);
 		if (r.hasError()) {
 			System.out.println("B "+r.getErrorString());
 			System.exit(1);
 		}
-		r =  model.insertUser(I3, N3, P3, "Bob Foo", "bobobo", ISecurity.USER_ROLE, "http://google.com/", "101,125", true);
+		r =  model.insertUser(I3, N3, UUID.randomUUID().toString(), P3, "Bob Foo", "bobobo", ISecurity.USER_ROLE, "http://google.com/", "101,125", true);
 		if (r.hasError()) {
 			System.out.println("C "+r.getErrorString());
 			System.exit(1);

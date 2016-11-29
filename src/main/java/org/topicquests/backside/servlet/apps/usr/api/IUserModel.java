@@ -52,7 +52,8 @@ public interface IUserModel {
      * use <code>existsUsername</code> first
      * </p>
      * @param email 
-     * @param userName
+     * @param userHandle
+     * @param userId TODO
      * @param password
      * @param userFullName 
      * @param avatar 
@@ -63,10 +64,10 @@ public interface IUserModel {
      * @return
      */
     IResult insertUser(String email,
-    				  String userName,
-    				  String password, String userFullName, 
-    				  String avatar, String role, String homepage, 
-    				  String geolocation, boolean addTopic);
+    				  String userHandle,
+    				  String userId, String password, 
+    				  String userFullName, String avatar, String role, 
+    				  String homepage, String geolocation, boolean addTopic);
     
     /**
      * Used when importing from an XML export

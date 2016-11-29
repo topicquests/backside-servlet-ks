@@ -127,7 +127,7 @@ public class UploadHandler  extends BaseHandler {
 		try {
 			JSONObject json = new JSONObject();
 			json.put(ICredentialsMicroformat.VERB, verb);
-			json.put(ICredentialsMicroformat.USER_NAME, userId);
+			json.put(ICredentialsMicroformat.USER_ID, userId);
 			json.put(ICredentialsMicroformat.SESSION_TOKEN, sToken);
 			json.put(ICredentialsMicroformat.USER_IP, userIP);
 			String result = json.toJSONString();

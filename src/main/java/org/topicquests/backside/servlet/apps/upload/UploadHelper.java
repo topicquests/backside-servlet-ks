@@ -47,7 +47,7 @@ public class UploadHelper {
 		//{"uName":"joe","sToken":"d8611be2-1da2-4c0f-975b-d82ef1d5ce17","verb":"uUpload","uIP":""}
 		JSONObject jo = jsonFromString(path);
 		String trailer = (String)jo.get(ICredentialsMicroformat.VERB)+"/"+
-				(String)jo.get(ICredentialsMicroformat.USER_NAME)+"/"+
+				(String)jo.get(ICredentialsMicroformat.USER_ID)+"/"+
 				(String)jo.get(ICredentialsMicroformat.SESSION_TOKEN)+"/"; //TODO add USERIP
 		// uUpload/joe/0628c396-5781-4451-9435-7f9a3d1ee794
 		String fp = FormPojo.getHtmlForm(trailer);

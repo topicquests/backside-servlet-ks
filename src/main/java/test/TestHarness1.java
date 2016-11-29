@@ -48,7 +48,8 @@ public class TestHarness1 {
 		//new ConversationTest1(environment);
 		//new FullTextSearchTest1(environment);
 		//new FullTextSearchTest2(environment);
-		new QueryTest1(environment);
+		//new QueryTest1(environment);
+		new ConTreeTest(environment);
 		System.out.println("TestHarness Did");
 		environment.shutDown();
 		System.exit(0);

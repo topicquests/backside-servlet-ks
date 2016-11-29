@@ -16,6 +16,7 @@
 package org.topicquests.backside.servlet.apps.usr;
 
 import java.sql.*;
+import java.util.UUID;
 
 import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.api.ISecurity;
@@ -74,7 +75,7 @@ public class UserModel implements IUserModel {
 		System.out.println("VALIDATE "+admin+" | "+pwd);
 		IResult r = authenticate(admin,pwd);
 		if (r.getResultObject() == null) {
-			r = this.insertUser(admin, "defaultadmin", pwd, "Default Admin", "", ISecurity.ADMINISTRATOR_ROLE, "", "", false);
+			r = this.insertUser(admin, "defaultadmin", UUID.randomUUID().toString(), pwd, "Default Admin", "", ISecurity.ADMINISTRATOR_ROLE, "", "", false);
 			r = this.addUserRole("defaultadmin", ISecurity.OWNER_ROLE);	
 		}
 	}
@@ -118,7 +119,7 @@ public class UserModel implements IUserModel {
 	 * @see org.topicquests.backside.servlet.apps.usr.api.IUserModel#insertUser(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public IResult insertUser(String email, String userName, String password, String userFullName, String avatar, String role, String homepage, String geolocation, boolean addTopic) {
+	public IResult insertUser(String email, String userHandle, String userId, String password, String userFullName, String avatar, String role, String homepage, String geolocation, boolean addTopic) {
 		Connection con = null;
 		IResult r = getMapConnection();
 		if (r.hasError())
@@ -131,12 +132,12 @@ public class UserModel implements IUserModel {
 		if (addTopic) {
 			String s = userFullName;
 			if (s.equals(""))
-				s = userName;
-			ISubjectProxy n = nodeModel.newInstanceNode(userName, ITQCoreOntology.USER_TYPE, s, "", "en", 
+				s = userHandle;
+			ISubjectProxy n = nodeModel.newInstanceNode(userId, ITQCoreOntology.USER_TYPE, s, "", "en", 
 					ITQCoreOntology.SYSTEM_USER, ICoreIcons.PERSON_ICON_SM, ICoreIcons.PERSON_ICON, false);
 			result = topicMap.putNode(n);
 		}
-		IResult x = database.insertUser(con, email, userName, password, userFullName, avatar, role, homepage, geolocation);
+		IResult x = database.insertUser(con, email, userHandle, userId, password, userFullName, avatar, role, homepage, geolocation);
 		if (x.hasError())
 			result.addErrorString(x.getErrorString());
 		result.setResultObject(x.getResultObject());

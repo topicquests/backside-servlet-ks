@@ -53,8 +53,12 @@ public interface IUserSchema {
 	
 	public static final String getUserByEmail =
 			"SELECT * FROM users WHERE lower(email)=lower(?)";
-	public static final String getUserByName =
+	public static final String getUserByHandle =
 			"SELECT * FROM users WHERE lower(name)=lower(?)";
+	
+	public static final String getUserById =
+			"SELECT * FROM users WHERE id=?";
+	
 	public static final String removeUser =
 			"DELETE FROM users WHERE name=?";
 	public static final String updateUserPwd = 

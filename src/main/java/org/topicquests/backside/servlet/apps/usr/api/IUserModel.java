@@ -46,6 +46,10 @@ public interface IUserModel {
 	 */
 	IResult getTicketByEmail(String email);
 	
+	IResult getTicketById(String userId);
+	
+	IResult getTicketByHandle(String userHandle);
+	
     /**
      * <p>
      * Throws an exception if user already exists. Should

@@ -105,9 +105,35 @@ public class UserHandler  extends BaseHandler {
 					code = BaseHandler.RESPONSE_OK;
 				}
 			}
-		} else if (verb.equals(IUserMicroformat.GET_USER)) {
+		} else if (verb.equals(IUserMicroformat.GET_USER_BY_EMAIL)) {
 			String email = getEmail(jsonObject);
 			r = model.getTicketByEmail(email);
+			if (r.getResultObject() != null) {
+				ITicket t = (ITicket)r.getResultObject();
+				JSONObject jUser = ticketToUser(t);
+				returnMessage.put(ICredentialsMicroformat.CARGO, jUser);
+				code = BaseHandler.RESPONSE_OK;
+				message = "ok";
+			} else {
+				message = "Not found";
+				code = BaseHandler.RESPONSE_OK;
+			}
+		} else if (verb.equals(IUserMicroformat.GET_USER_BY_ID)) {
+			String id = getUserId(jsonObject);
+			r = model.getTicketById(id);
+			if (r.getResultObject() != null) {
+				ITicket t = (ITicket)r.getResultObject();
+				JSONObject jUser = ticketToUser(t);
+				returnMessage.put(ICredentialsMicroformat.CARGO, jUser);
+				code = BaseHandler.RESPONSE_OK;
+				message = "ok";
+			} else {
+				message = "Not found";
+				code = BaseHandler.RESPONSE_OK;
+			}
+		} else if (verb.equals(IUserMicroformat.GET_USER_BY_HANDLE)) {
+			String handle = getUserHandle(jsonObject);
+			r = model.getTicketByHandle(handle);
 			if (r.getResultObject() != null) {
 				ITicket t = (ITicket)r.getResultObject();
 				JSONObject jUser = ticketToUser(t);

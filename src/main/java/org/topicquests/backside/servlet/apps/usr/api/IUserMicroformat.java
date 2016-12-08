@@ -54,7 +54,9 @@ public interface IUserMicroformat extends ICredentialsMicroformat {
 		NEW_USER		= "NewUser", 	//POST
 		/** subject to common modifiers */
 		LIST_USERS		= "ListUsers", 	//GET
-		GET_USER		= "GetUser";  //GET
+		GET_USER_BY_EMAIL		= "GetUser",  //GET
+		GET_USER_BY_ID			= "GetUsrId",
+		GET_USER_BY_HANDLE		= "GetUsrHndl";
 		
 		//REMOVE_USER is in IAdminMicroformats
 		

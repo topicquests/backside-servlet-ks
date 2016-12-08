@@ -102,7 +102,7 @@ public class UserModel implements IUserModel {
 		if (r.hasError())
 			return r;
 		con = (Connection)r.getResultObject();
-		return database.getTicket(con, userName);
+		return database.getTicketByHandle(con, userName);
 	}
 	
 	@Override
@@ -114,6 +114,28 @@ public class UserModel implements IUserModel {
 		con = (Connection)r.getResultObject();
 		return database.getTicketByEmail(con, email);
 	}
+	
+
+	@Override
+	public IResult getTicketById(String userId) {
+		Connection con = null;
+		IResult r = getMapConnection();
+		if (r.hasError())
+			return r;
+		con = (Connection)r.getResultObject();
+		return database.getTicketById(con, userId);
+	}
+
+	@Override
+	public IResult getTicketByHandle(String userHandle) {
+		Connection con = null;
+		IResult r = getMapConnection();
+		if (r.hasError())
+			return r;
+		con = (Connection)r.getResultObject();
+		return database.getTicketByHandle(con, userHandle);
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.topicquests.backside.servlet.apps.usr.api.IUserModel#insertUser(java.lang.String, java.lang.String, java.lang.String)

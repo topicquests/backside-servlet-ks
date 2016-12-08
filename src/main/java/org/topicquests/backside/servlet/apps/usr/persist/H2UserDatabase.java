@@ -109,7 +109,7 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 			if (rs.next()) {
 				String key,val,ava,name;
 				name = rs.getString(IUserSchema.USER_NAME);
-				result = this.getTicket(con, name);
+				result = this.getTicketByHandle(con, name);
 			}
 			//otherwise return null
 		} catch (Exception e) {
@@ -126,15 +126,15 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 	 * @see org.topicquests.backside.servlet.api.IUserPersist#getTicket(java.sql.Connection, java.lang.String)
 	 */
 	@Override
-	public IResult getTicket(Connection con, String userName) {
+	public IResult getTicketByHandle(Connection con, String userHandle) {
 		IResult result = new ResultPojo();
 		PreparedStatement s = null;
 		PreparedStatement s2 = null;
 		ResultSet rs = null;
 		ResultSet rs2 = null;
 		try {
-			s = con.prepareStatement(IUserSchema.getUserByName);
-			s.setString(1, userName);
+			s = con.prepareStatement(IUserSchema.getUserByHandle);
+			s.setString(1, userHandle);
 			rs = s.executeQuery();
 			if (rs.next()) {
 				String key,val,ava;
@@ -149,7 +149,7 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 				t.setProperty(IUserSchema.USER_NAME, IUserSchema.USER_NAME);
 				t.setProperty(IUserSchema.USER_FULLNAME, rs.getString(IUserSchema.USER_FULLNAME));
 				s2 = con.prepareStatement(IUserSchema.getUserProperties);
-				s2.setString(1, userName);
+				s2.setString(1, userHandle);
 				rs2 = s2.executeQuery();
 				List<String>roles = new ArrayList<String>();
 				while (rs2.next()) {
@@ -195,7 +195,31 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 			if (rs.next()) {
 				String name;
 				name = rs.getString(IUserSchema.USER_NAME);
-				result = this.getTicket(con, name);
+				result = this.getTicketByHandle(con, name);
+			}
+			//otherwise return null
+		} catch (Exception e) {
+			environment.logError(e.getMessage(), e);
+		} finally {
+			closePreparedStatement(s,result);
+			closeResultSet(rs,result);
+		}
+		return result;	
+	}
+
+	@Override
+	public IResult getTicketById(Connection con, String userId) {
+		IResult result = new ResultPojo();
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		try {
+			s = con.prepareStatement(IUserSchema.getUserById);
+			s.setString(1, userId);
+			rs = s.executeQuery();
+			if (rs.next()) {
+				String name;
+				name = rs.getString(IUserSchema.USER_NAME);
+				result = this.getTicketByHandle(con, name);
 			}
 			//otherwise return null
 		} catch (Exception e) {
@@ -352,7 +376,7 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 		ResultSet rs = null;
 		Boolean x;
 		try {
-			s = con.prepareStatement(IUserSchema.getUserByName);
+			s = con.prepareStatement(IUserSchema.getUserByHandle);
 			s.setString(1, userName);
 			rs = s.executeQuery();
 			if (rs.next()) {
@@ -501,7 +525,7 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 				t = new TicketPojo();
 				name = rs.getString(IUserSchema.USER_NAME);
 				//environment.logDebug("H2-1 "+name);
-				r = this.getTicket(con, name);
+				r = this.getTicketByHandle(con, name);
 				t = (ITicket)r.getResultObject();
 				if (r.hasError())
 					result.addErrorString(r.getErrorString());

@@ -277,7 +277,11 @@ public abstract class BaseHandler {
 	public String getUserHandle(JSONObject jsonObject) {
 		return notNullString(jsonObject.getAsString(ICredentialsMicroformat.USER_HANDLE));
 	}
-	
+
+	public String getUserId(JSONObject jsonObject) {
+		return notNullString(jsonObject.getAsString(ICredentialsMicroformat.USER_ID));
+	}
+
 	public String getItemFrom(JSONObject jsonObject) {
 		return notNullString(jsonObject.getAsString(ICredentialsMicroformat.ITEM_FROM));
 	}

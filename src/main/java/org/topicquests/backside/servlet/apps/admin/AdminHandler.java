@@ -181,7 +181,6 @@ public class AdminHandler  extends BaseHandler {
 				message = "ok";
 			}			
 		} else if (verb.equals(IAdminMicroformat.UPDATE_USER_ROLE)) {
-			environment.logDebug("UPDATE_USER_ROLE "+jsonObject.toJSONString());
 			username= getUserHandle(jsonObject);
 			userrole= getUserRole(jsonObject);
 			r = model.addUserRole(username, userrole);

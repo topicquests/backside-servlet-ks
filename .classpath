@@ -43,6 +43,6 @@
 	<classpathentry kind="lib" path="lib/elasticsearch-2.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-core-5.5.2.jar"/>
 	<classpathentry kind="lib" path="lib/tq-elastic-node-provider-0.4.2.jar"/>
-	<classpathentry kind="lib" path="lib/tq-elastic-ks-0.5.9.jar" sourcepath="/TQElasticKnowledgeSystem/src/main/java"/>
+	<classpathentry kind="lib" path="lib/tq-elastic-ks-0.5.9.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

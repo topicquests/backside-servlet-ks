@@ -143,15 +143,12 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 			//	ava = rs.getString(IUserSchema.USER_AVATAR);
 			//	if (!ava.equals(""))
 			//		t.addAvatarLocator(ava);
+				t.setUserLocator(rs.getString(IUserSchema.USER_ID));
 				t.setProperty(IUserSchema.USER_EMAIL, email);
 				t.setUserLocator(rs.getString(IUserSchema.USER_ID));
-				//environment.logDebug("H2-2 "+rs.getString(IUserSchema.USER_ID));
-
-				t.setProperty(IUserSchema.USER_NAME, rs.getString(IUserSchema.USER_NAME));
-				//environment.logDebug("H2-3 "+rs.getString(IUserSchema.USER_NAME));
+				t.setProperty(IUserSchema.USER_NAME, IUserSchema.USER_NAME);
 				t.setProperty(IUserSchema.USER_FULLNAME, rs.getString(IUserSchema.USER_FULLNAME));
-				//environment.logDebug("H2-4 "+rs.getString(IUserSchema.USER_FULLNAME));
-							s2 = con.prepareStatement(IUserSchema.getUserProperties);
+				s2 = con.prepareStatement(IUserSchema.getUserProperties);
 				s2.setString(1, userName);
 				rs2 = s2.executeQuery();
 				List<String>roles = new ArrayList<String>();

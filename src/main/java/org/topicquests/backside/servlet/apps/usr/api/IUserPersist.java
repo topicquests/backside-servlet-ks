@@ -46,12 +46,15 @@ public interface IUserPersist extends IRDBMSDatabase {
      * Very dangerous method. Use only after authentication, e.g. 
      * in web services.
      * @param con
-     * @param userName
+     * @param userHandle
      * @return
      */
-	IResult getTicket(Connection con, String userName);
+	IResult getTicketByHandle(Connection con, String userHandle);
 	
 	IResult getTicketByEmail(Connection con, String email);
+	
+	IResult getTicketById(Connection con, String userId);
+		
     /**
      * <p>
      * Throws an exception if user already exists. Should

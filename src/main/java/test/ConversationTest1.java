@@ -49,7 +49,7 @@ public class ConversationTest1 {
 	public ConversationTest1(ServletEnvironment env) {
 		environment = env;
 		model = environment.getUserModel();
-		IResult r = model.insertUser("joe@example.com", "joe", "76e1467b-2d90-4bd7-af0f-9527657ea019", "joe!", "Joe Joe", "", ISecurity.USER_ROLE, "", "", true);
+		IResult r = model.insertUser("joe@example.com", "joe", "b921a18c-5677-4ea6-b076-f6f11dec3e9f", "joe!", "Joe Joe", "", ISecurity.USER_ROLE, "", "", true);
 		topicMap = environment.getTopicMapEnvironment().getDatabase();
 		conversationModel = environment.getConversationModel();
 		credentials = new TicketPojo(ITQCoreOntology.SYSTEM_USER);
@@ -65,17 +65,17 @@ public class ConversationTest1 {
 	 */
 	private void runTest() {
 		IResult r = conversationModel.newConversationNode(INodeTypes.CONVERSATION_MAP_TYPE, null, null,
-				MAP_LOC, "My first map", null, "en", "", "joe", false);
+				MAP_LOC, "My first map", null, "en", "", "76e1467b-2d90-4bd7-af0f-9527657ea019", false);
 		ISubjectProxy sp = (ISubjectProxy)r.getResultObject();
 		System.out.println("AAA "+r.getErrorString()+" | "+sp.toJSONString());
 		if (r.hasError()) System.exit(1);
 		r = conversationModel.newConversationNode(INodeTypes.ISSUE_TYPE, MAP_LOC, MAP_LOC,
-				QUESTION_LOC, "Why is the sky blue?", null, "en", "", "joe", false);
+				QUESTION_LOC, "Why is the sky blue?", null, "en", "", "76e1467b-2d90-4bd7-af0f-9527657ea019", false);
 		sp = (ISubjectProxy)r.getResultObject();
 		System.out.println("BBB"+r.getErrorString()+" | "+sp.toJSONString());
 		if (r.hasError()) System.exit(1);
 		r = conversationModel.newConversationNode(INodeTypes.POSITION_TYPE, QUESTION_LOC, MAP_LOC,
-				ANSWER_LOC, "Nobody really knows.", null, "en", "", "joe", false);
+				ANSWER_LOC, "Nobody really knows.", null, "en", "", "76e1467b-2d90-4bd7-af0f-9527657ea019", false);
 		sp = (ISubjectProxy)r.getResultObject();
 		System.out.println("CCC"+r.getErrorString()+" | "+sp.toJSONString());
 		if (r.hasError()) System.exit(1);

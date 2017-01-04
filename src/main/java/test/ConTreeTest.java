@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package test;
 
@@ -21,16 +21,20 @@ public class ConTreeTest {
 	private ITopicMapModel model;
 	private ITicket credentials;
 	private final String lox = "b921a18c-5677-4ea6-b076-f6f11dec3e9f";
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public ConTreeTest(ServletEnvironment env) {
 		environment = env;
 		model = new TopicMapModel(environment);
 		credentials = new TicketPojo(ITQCoreOntology.SYSTEM_USER);
 		IResult r = model.collectParentChildTree(lox, lox, credentials);
-		System.out.println("A "+r.getErrorString()+" "+r.getResultObject());
+		System.out.println("A "+r.getResultObject());
+		if (r.hasError()) {
+			System.out.println("A "+r.getErrorString());
+			System.exit(1);
+		}
 	}
 
 }

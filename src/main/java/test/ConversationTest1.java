@@ -49,7 +49,7 @@ public class ConversationTest1 {
 	public ConversationTest1(ServletEnvironment env) {
 		environment = env;
 		model = environment.getUserModel();
-		IResult r = model.insertUser("joe@example.com", "joe", "joe!", "Joe Joe", "", ISecurity.USER_ROLE, "", "", true);
+		IResult r = model.insertUser("joe@example.com", "joe", "76e1467b-2d90-4bd7-af0f-9527657ea019", "joe!", "Joe Joe", "", ISecurity.USER_ROLE, "", "", true);
 		topicMap = environment.getTopicMapEnvironment().getDatabase();
 		conversationModel = environment.getConversationModel();
 		credentials = new TicketPojo(ITQCoreOntology.SYSTEM_USER);

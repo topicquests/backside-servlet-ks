@@ -27,10 +27,8 @@ import org.topicquests.util.LoggingPlatform;
 public class TestHarness1 {
 	private static ServletEnvironment environment;
 	private static IAdminModel adminModel;
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
+
+	public void testAll() {
 		System.out.println("BOO!");
 		LoggingPlatform logger = LoggingPlatform.getInstance("logger.properties");
 		System.out.println("TestHarness Starting");
@@ -42,7 +40,7 @@ public class TestHarness1 {
 			environment.shutDown();
 			System.exit(1);
 		}
-		new InviteTest(environment, adminModel);
+		//new InviteTest(environment, adminModel);
 		new UserTest(environment);
 		new DecodeTest();
 		new ConversationTest1(environment);
@@ -52,7 +50,6 @@ public class TestHarness1 {
 		new ConTreeTest(environment);
 		System.out.println("TestHarness Did");
 		environment.shutDown();
-		System.exit(0);
 	}
 
 }

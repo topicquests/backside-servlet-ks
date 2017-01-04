@@ -1,25 +1,19 @@
 machine:
   pre:
     - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
-    - sudo curl -L -o /usr/local/bin/docker-compose https://github.com/docker/compose/releases/download/1.7.1/docker-compose-`uname -s`-`uname -m`
   services:
     - docker
 
 dependencies:
-  cache_directories:
-    - "~/docker"
   override:
     - docker info
-    - if [[ -e ~/docker/backside-servlet-ks.tar ]]; then docker load --input ~/docker/backside-servlet-ks.tar; fi
-    - if [[ -e ~/docker/elasticsearch.tar ]]; then docker load --input ~/docker/elasticsearch.tar; fi
-    - docker-compose up --build -d
-    - mkdir -p ~/docker
-    - docker save wenzowski/backside-servlet-ks > ~/docker/backside-servlet-ks.tar
-    - docker save elasticsearch > ~/docker/elasticsearch.tar
+    - docker build --rm=false -t wenzowski/backside-servlet-ks .
+    - sudo pip install docker-compose==1.9.0
+    - docker-compose up -d
 
 test:
   override:
-    - docker-compose run web ./test.sh
+    - docker-compose run web mvn clean test
 
 deployment:
   release:
@@ -28,6 +22,6 @@ deployment:
     commands:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
       - docker pull wenzowski/backside-servlet-ks
-      - docker build -t wenzowski/backside-servlet-ks:$CIRCLE_TAG -t wenzowski/backside-servlet-ks .
+      - docker build --rm=false -t wenzowski/backside-servlet-ks:$CIRCLE_TAG -t wenzowski/backside-servlet-ks .
       - docker push wenzowski/backside-servlet-ks:$CIRCLE_TAG
       - docker push wenzowski/backside-servlet-ks:latest

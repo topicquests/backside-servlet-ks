@@ -10,4 +10,4 @@ services:
     links:
       - elasticsearch:es
   elasticsearch:
-    image: elasticsearch:2.3.3
+    image: elasticsearch:2.4.1

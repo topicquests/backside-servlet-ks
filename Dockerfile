@@ -1,33 +1,20 @@
-FROM anapsix/alpine-java:jdk8
+FROM openjdk:8-jdk-alpine
+
+RUN apk add --no-cache curl tar bash
+
+ARG MAVEN_VERSION=3.3.9
+ARG USER_HOME_DIR="/root"
+
+RUN mkdir -p /usr/share/maven /usr/share/maven/ref \
+  && curl -fsSL http://apache.osuosl.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz \
+    | tar -xzC /usr/share/maven --strip-components=1 \
+  && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+
 WORKDIR /app
 
-ENV GPG_VERSION=2.1.12-r0
-ENV OPENSSL_VERSION=1.0.2j-r0
-
-RUN apk add --no-cache gnupg=$GPG_VERSION openssl=$OPENSSL_VERSION && \
-    wget -q https://www.apache.org/dist/ant/KEYS && \
-    gpg --import KEYS && rm KEYS
-
-ENV ANT_VERSION=1.9.7 \
-    ANT_HOME=/opt/ant \
-    PATH=${PATH}:/opt/ant/bin
-RUN wget -q http://www.us.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz && \
-    wget -q http://www.us.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz.asc && \
-    gpg --verify apache-ant-${ANT_VERSION}-bin.tar.gz.asc && \
-    tar xzf apache-ant-${ANT_VERSION}-bin.tar.gz && \
-    mv apache-ant-${ANT_VERSION} ${ANT_HOME}${ANT_VERSION} && \
-    ln -s ${ANT_HOME}${ANT_VERSION} ${ANT_HOME} && \
-    rm -f apache-ant-${ANT_VERSION}-bin.tar.gz.asc && \
-    rm -f apache-ant-${ANT_VERSION}-bin.tar.gz
-
-ADD lib lib
 ADD . .
-
-RUN sed -i.bak 's/localhost/es/' config/provider-config.xml && \
-    cat run.sh | sed -e 's/org\.topicquests\.backside\.servlet\.Main/test\.TestHarness1/' > test.sh && \
-    chmod +x test.sh && \
-    mkdir -p /app/classes && \
-    ant compile
+RUN mvn clean install -DskipTests
+RUN sed -i.bak 's/localhost/es/' config/provider-config.xml
 
 VOLUME /app/data/backside
 EXPOSE 8080

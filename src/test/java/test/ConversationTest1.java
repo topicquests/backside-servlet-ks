@@ -65,17 +65,17 @@ public class ConversationTest1 {
 	 */
 	private void runTest() {
 		IResult r = conversationModel.newConversationNode(INodeTypes.CONVERSATION_MAP_TYPE, null, null,
-				MAP_LOC, "My first map", null, "en", "", "76e1467b-2d90-4bd7-af0f-9527657ea019", false);
+				MAP_LOC, "My first map", null, "en", "", "b921a18c-5677-4ea6-b076-f6f11dec3e9f", false);
 		ISubjectProxy sp = (ISubjectProxy)r.getResultObject();
 		System.out.println("AAA "+r.getErrorString()+" | "+sp.toJSONString());
 		if (r.hasError()) System.exit(1);
 		r = conversationModel.newConversationNode(INodeTypes.ISSUE_TYPE, MAP_LOC, MAP_LOC,
-				QUESTION_LOC, "Why is the sky blue?", null, "en", "", "76e1467b-2d90-4bd7-af0f-9527657ea019", false);
+				QUESTION_LOC, "Why is the sky blue?", null, "en", "", "b921a18c-5677-4ea6-b076-f6f11dec3e9f", false);
 		sp = (ISubjectProxy)r.getResultObject();
 		System.out.println("BBB"+r.getErrorString()+" | "+sp.toJSONString());
 		if (r.hasError()) System.exit(1);
 		r = conversationModel.newConversationNode(INodeTypes.POSITION_TYPE, QUESTION_LOC, MAP_LOC,
-				ANSWER_LOC, "Nobody really knows.", null, "en", "", "76e1467b-2d90-4bd7-af0f-9527657ea019", false);
+				ANSWER_LOC, "Nobody really knows.", null, "en", "", "b921a18c-5677-4ea6-b076-f6f11dec3e9f", false);
 		sp = (ISubjectProxy)r.getResultObject();
 		System.out.println("CCC"+r.getErrorString()+" | "+sp.toJSONString());
 		if (r.hasError()) System.exit(1);

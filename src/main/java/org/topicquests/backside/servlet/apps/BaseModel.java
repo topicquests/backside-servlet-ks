@@ -45,6 +45,7 @@ public class BaseModel {
 			if (user != null) {
 				//ISubjectProxy sourceNode,ISubjectProxy targetNode, String relationTypeLocator, String userId,
 				//String smallImagePath, String largeImagePath, boolean isTransclude,boolean isPrivate
+				environment.logDebug("RELATING-3 \n"+node.toJSONString()+"\n"+user.toJSONString());
 				r = nodeModel.relateExistingNodesAsPivots(node, user, relation, userId, 
 						ICoreIcons.RELATION_ICON_SM, ICoreIcons.RELATION_ICON, false, false);
 				if (r.hasError())

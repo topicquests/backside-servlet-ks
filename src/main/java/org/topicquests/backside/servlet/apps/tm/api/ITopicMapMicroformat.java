@@ -29,9 +29,11 @@ public interface ITopicMapMicroformat extends ICredentialsMicroformat {
 		GET_TOPIC				= "GetTopic",
 		FULL_TEXT_SEARCH		= "ftSrch",
 		FULL_TEXT_PHRASE_SEARCH	= "ftPhrSrch",  
+		//POST
 
 		PUT_TOPIC				= "PutTopic",
-		//POST
+		UPDATE_TOPIC			= "UpdateTopic",
+		UPDATE_TOPIC_TEXT_FIELDS= "UpdateTextFields",
 		REMOVE_TOPIC			= "RemTopic",
 		//followed by cargo with specs for the topic,
 		//e.g. Locator = some value or not present, meaning needs locator
@@ -49,11 +51,14 @@ public interface ITopicMapMicroformat extends ICredentialsMicroformat {
 		// uName: userId  // already in rest of query
 		// isPrv: 'T' or 'F'
 		NEW_CONVERSATION_NODE	= "NewConvNode",
+		// parent, child, context, Lang
+		TRANSCLUDE_CHILD		= "Transclude",
 		//allows to add key/value pairs and special items
 		ADD_FEATURES_TO_TOPIC	= "AddFeatures",
 		LIST_INSTANCE_TOPICS	= "ListInstances",
 		LIST_SUBCLASS_TOPICS	= "ListSubclasses",
 		LOAD_TREE				= "LoadTree",
+		COLLECT_CONVERSATION_TREE	= "ColConTree",
 		LIST_TREE_CHILD_NODES	= "ListTreeNodes", //multiget from a rootLocator
 		GET_TOPIC_BY_URL		= "GetByURL",
 		ADD_PIVOT				= "AddPivot",	//post
@@ -66,6 +71,7 @@ public interface ITopicMapMicroformat extends ICredentialsMicroformat {
 		LIST_BLOGS_BY_USER		= "ListUserBlogs";
 		
 		
+		
 	
 	//attributes
 	public static final String
@@ -74,6 +80,9 @@ public interface ITopicMapMicroformat extends ICredentialsMicroformat {
 		PARENT_LOCATOR					= ITQCoreOntology.INSTANCE_OF_PROPERTY_TYPE,
 		CONVERSATION_PARENT_LOCATOR 	= "ConParentLocator",
 		CONTEXT_LOCATOR					= "ContextLocator", // for parent/child nodes
+		REL_SRC_LOCATOR					= "RelSrcLoc",
+		REL_TRG_LOCATOR					= "RelTrgLoc",
+		REL_TYPE_LOCATOR				= "RelTypLoc",
 		TOPIC_LABEL			= ITQCoreOntology.LABEL_PROPERTY,
 		TOPIC_DETAILS		= ITQCoreOntology.DETAILS_PROPERTY,
 		LIST_PROPERTY		= "ListProperty",
@@ -89,5 +98,7 @@ public interface ITopicMapMicroformat extends ICredentialsMicroformat {
 		IS_PRIVATE			= ITQCoreOntology.IS_PRIVATE_PROPERTY,
 		TAG_NAMES			= "TagNames",
 		//FEATURES creates a space for additional key/value pairs
-		FEATURES			= "Features";
+		FEATURES			= "Features",
+		TREE_ROOT_LOCATOR	= "TreeRootLocator",
+		MAX_TREE_DEPTH		= "MaxTreeDepth";
 }

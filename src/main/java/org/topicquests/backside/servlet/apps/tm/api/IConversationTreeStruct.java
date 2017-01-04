@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, TopicQuests
+ * Copyright 2016, TopicQuests
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,35 @@
  */
 package org.topicquests.backside.servlet.apps.tm.api;
 
+import java.util.List;
+
+import net.minidev.json.JSONObject;
+import org.topicquests.ks.tm.api.ISubjectProxy;
+
 /**
- * @author park
+ * @author jackpark
  *
  */
-public interface ISocialBookmarkLegend {
+public interface IConversationTreeStruct {
 	public static final String
-		TAG_BOOKMARK_RELATION_TYPE			= "TagBookmarkRelationType",
-		TAG_USER_RELATION_TYPE				= "TagUserRelationType",
-		BOOKMARK_USER_RELATIONTYPE			= "BookmarkUserRelationType",
-		ANNOTATION_BOOKMARK_RELATION_TYPE	= "AnnotationBookmarkRelationType";
-
+		ROOT 		= "root",
+		CHILDNODES	= "kids";
+	
+	/**
+	 * Root is the {@link ISubjectProxy} as a {@link JSONObject}
+	 * @param root
+	 */
+	void setRoot(JSONObject root);
+	JSONObject getRoot();
+	
+	/**
+	 * A child is a {@link JSONObject} instance of {@link IConversationTreeStruct}
+	 * @param child
+	 */
+	void addChild(JSONObject child);
+	
+	List<JSONObject> listChildNodes();
+	
+	JSONObject getData();
+	
 }

@@ -59,7 +59,8 @@ public interface IUserPersist extends IRDBMSDatabase {
      * </p>
      * @param con
      * @param email 
-     * @param userName
+     * @param userHandle
+     * @param userId TODO
      * @param password
      * @param userFullName TODO
      * @param avatar
@@ -70,8 +71,8 @@ public interface IUserPersist extends IRDBMSDatabase {
      */
     IResult insertUser(Connection con,
     				  String email,
-    				  String userName,
-    				  String password, String userFullName, String avatar, String role, String homepage, String geolocation);
+    				  String userHandle,
+    				  String userId, String password, String userFullName, String avatar, String role, String homepage, String geolocation);
     
     /**
      * Used when importing from an XML export

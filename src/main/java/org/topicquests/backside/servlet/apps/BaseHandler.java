@@ -143,13 +143,13 @@ public abstract class BaseHandler {
 		}
 		JSONObject jo = jsonFromString(pt);
 		result.setResultObjectA(jo);
-		String x = (String)jo.get(ICredentialsMicroformat.USER_IP);
+		String x = jo.getAsString(ICredentialsMicroformat.USER_IP);
 		System.out.println("GET IP "+x);
 		//IP is the user's ip address -- it can be null
-		String verb = (String)jo.get(ICredentialsMicroformat.VERB);
+		String verb = getVerb(jo);
 		if (!verb.equals(IAuthMicroformat.AUTHENTICATE)) {
 			//IF THIS IS NOT AN AUTHENTICATE: look up this user
-			String token = (String)jo.get(ICredentialsMicroformat.SESSION_TOKEN);
+			String token = jo.getAsString(ICredentialsMicroformat.SESSION_TOKEN);
 			// can send in either null, or an empty string
 			if (token != null && !token.equals("")) {
 				t = credentialCache.getTicket(token);
@@ -261,6 +261,31 @@ public abstract class BaseHandler {
     public String getQueryString(HttpServletRequest request) {
     	return notNullString(request.getQueryString());
     }
+    
+    public String getVerb(JSONObject jsonObject) {
+    	String result = "EmptyVerb"; //DEFAULT
+    	String x = jsonObject.getAsString(ICredentialsMicroformat.VERB);
+    	if (x != null)
+    		result = x.trim();
+    	return result;
+    }
+    
+	public String getEmail(JSONObject jsonObject) {
+		return notNullString(jsonObject.getAsString(ICredentialsMicroformat.USER_EMAIL));
+	}
+
+	public String getUserHandle(JSONObject jsonObject) {
+		return notNullString(jsonObject.getAsString(ICredentialsMicroformat.USER_HANDLE));
+	}
+	
+	public String getItemFrom(JSONObject jsonObject) {
+		return notNullString(jsonObject.getAsString(ICredentialsMicroformat.ITEM_FROM));
+	}
+	
+	public String getItemCount(JSONObject jsonObject) {
+		return notNullString(jsonObject.getAsString(ICredentialsMicroformat.ITEM_COUNT));
+	}
+
 //////////////////////////////////////
 //    SENDJSON 0 {"rMsg":"","rToken":"","cargo":{"crDt":"2015-07-25T18:30:56-07:00","t
 //    	rCl":["ClassType"],"crtr":"jackpark","lox":"37cbbf86-6861-43c0-85e7-facc95d2cf1e
@@ -443,7 +468,8 @@ public abstract class BaseHandler {
 		//name, email, avatar, homepage, geolocation, role
 		JSONObject result = newJSONObject();
 		result.put(IUserMicroformat.USER_EMAIL, t.getProperty(IUserSchema.USER_EMAIL));
-		result.put(IUserMicroformat.USER_NAME, t.getUserLocator());
+		result.put(IUserMicroformat.USER_HANDLE, t.getProperty(IUserSchema.USER_NAME));
+		result.put(IUserMicroformat.USER_ID, t.getUserLocator());
 		String ava = "";
 		List<String> avas = t.listAvatars();
 		if (avas != null && avas.size() > 0)

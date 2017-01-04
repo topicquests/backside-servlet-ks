@@ -30,6 +30,7 @@ import org.topicquests.ks.api.ITQCoreOntology;
 import org.topicquests.ks.api.ITQDataProvider;
 import org.topicquests.ks.api.ITicket;
 import org.topicquests.ks.tm.api.INodeTypes;
+import org.topicquests.ks.tm.api.IParentChildContainer;
 import org.topicquests.ks.tm.api.ISubjectProxy;
 import org.topicquests.ks.tm.api.ISubjectProxyModel;
 
@@ -78,10 +79,10 @@ public class StructuredConversationModel extends BaseModel implements IStructure
 		} else if (nodeType.equals(INodeTypes.RESOURCE_TYPE)) {//IBIS Reference Node
 			smallIcon = ICoreIcons.LINK_SM;
 			largeIcon = ICoreIcons.LINK;
-		} //else if (nodeType.equals(INodeTypes.DECISION_TYPE)) {
-		//	smallIcon = ICoreIcons;
-		//	largeIcon = ICoreIcons.ISSUE;
-		//}
+		} else if (nodeType.equals(INodeTypes.CHALLENGE_TYPE)) {
+			smallIcon = ICoreIcons.CHALLENGE_SM;
+			largeIcon = ICoreIcons.CHALLENGE_SM;
+		}
 		else {
 			// this is an error condition -- bad NodeType
 			environment.logError("StructuredConversationModel "+IErrorMessages.BAD_NODE_TYPE+" "+userId+" | "+label, null);
@@ -100,6 +101,7 @@ public class StructuredConversationModel extends BaseModel implements IStructure
 		IResult r = null;
 		ISubjectProxy n = nodeModel.newInstanceNode(locator, nodeType, label, details, language, userLocator,
 				smallIcon, largeIcon, isPrivate);
+		System.out.println("SCM-1 "+parentLocator+" "+contextLocator);
 		//TODO
 		// We have an obligation to see if a parentLocator was passed in without a
 		// contextLocator -- which would be an error condition
@@ -107,16 +109,26 @@ public class StructuredConversationModel extends BaseModel implements IStructure
 			!parentLocator.equals("") &&
 			contextLocator != null &&
 			!contextLocator.equals("")) {
+			
 			r = topicMap.getNode(parentLocator, credentials);
 			if (r.hasError()) {
 				result.addErrorString(r.getErrorString());
 			}
+			System.out.println("SCM-2 "+r.getErrorString()+" | "+r.getResultObject());
 			ISubjectProxy parent = (ISubjectProxy)r.getResultObject();
 			if (parent != null) {
-				nodeModel.addParentNode(n, contextLocator, parent.getSmallImage(), parentLocator,  parent.getLabel(language));
-				//n.addParentNode(contextLocator, parent.getSmallImage(), parentLocator, parent.getLabel(language));
+				// nodeModel is not implemented yet
+				//nodeModel.addParentNode(n, contextLocator, parent.getSmallImage(), parentLocator,  parent.getLabel(language));
+				//String contextLocator, String smallIcon, String locator, String subject
+				((IParentChildContainer)n).addParentNode(contextLocator, parent.getSmallImage(), parentLocator, parent.getLabel(language));
+				((IParentChildContainer)parent).addChildNode(contextLocator, n.getSmallImage(), n.getLocator(), n.getLabel(language), null);
+				r = topicMap.putNode(parent);
+				if (r.hasError()) {
+					result.addErrorString(r.getErrorString());
+				}
 			} else {
 				//TODO this is a really bad situation -- missing parent
+				environment.logError("StructuredConversationModel Missing Parent "+parentLocator, null);
 			}
 		}
 		if (url != null && !url.equals(""))
@@ -129,6 +141,29 @@ public class StructuredConversationModel extends BaseModel implements IStructure
 		if (r.hasError())
 			result.addErrorString(r.getErrorString());
 		result.setResultObject(n);
+		return result;
+	}
+
+
+	@Override
+	public IResult transcludeChildNode(String parentLocator, String contextLocator, String childLocator,
+			String language, ITicket credentials) {
+		IResult result = new ResultPojo();
+		IResult r = topicMap.getNode(parentLocator, credentials);
+		if (r.hasError()) result.addErrorString(r.getErrorString());
+		ISubjectProxy parent = (ISubjectProxy)r.getResultObject();
+		r = topicMap.getNode(childLocator, credentials);
+		if (r.hasError()) result.addErrorString(r.getErrorString());
+		ISubjectProxy child = (ISubjectProxy)r.getResultObject();
+		((IParentChildContainer)child).addParentNode(contextLocator, parent.getSmallImage(), parentLocator, parent.getLabel(language));
+		((IParentChildContainer)parent).addChildNode(contextLocator, child.getSmallImage(), childLocator, child.getLabel(language), childLocator);
+		child.doUpdate();
+		parent.doUpdate();
+		r = topicMap.updateNode(child, true);
+		if (r.hasError()) result.addErrorString(r.getErrorString());
+		r = topicMap.updateNode(parent, true);
+		if (r.hasError()) result.addErrorString(r.getErrorString());
+		environment.logDebug("StructuredConversationModel.transcludeChildNodee "+result.getErrorString());
 		return result;
 	}
 }

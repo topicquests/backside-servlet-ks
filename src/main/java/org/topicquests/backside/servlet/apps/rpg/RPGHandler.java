@@ -31,6 +31,7 @@ import org.topicquests.backside.servlet.api.ICredentialsMicroformat;
 import org.topicquests.backside.servlet.api.IErrorMessages;
 import org.topicquests.backside.servlet.apps.BaseHandler;
 import org.topicquests.backside.servlet.apps.admin.api.IAdminMicroformat;
+import org.topicquests.backside.servlet.apps.rpg.api.IRPGMicroformat;
 import org.topicquests.backside.servlet.apps.rpg.api.IRPGModel;
 import org.topicquests.backside.servlet.apps.tm.StructuredConversationModel;
 import org.topicquests.backside.servlet.apps.tm.api.IStructuredConversationModel;
@@ -70,21 +71,24 @@ public class RPGHandler  extends BaseHandler {
 	public void handleGet(HttpServletRequest request, HttpServletResponse response, ITicket credentials, JSONObject jsonObject) throws ServletException, IOException {
 		JSONObject returnMessage = newJSONObject();
 		String message = "", rtoken="";
-		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
+		String verb = getVerb(jsonObject);
+		String userId = jsonObject.getAsString(IRPGMicroformat.MEMBER_ID);
+		String guildLoc = jsonObject.getAsString(IRPGMicroformat.GUILD_LOCATOR);
 		int code = 0;
 		IResult r;
 		System.out.println("RPGHandler.handleGet "+verb);
-		if (verb.equals(IUserMicroformat.LIST_USERS)) {
+		//AT PRESENT, NO GET Verbs
+//		if (verb.equals(IUserMicroformat.LIST_USERS)) {
 			//TODO
-		}  else {
+//		}  else {
 			String x = IErrorMessages.BAD_VERB+"-RPGServletGet-"+verb;
 			environment.logError(x, null);
 			throw new ServletException(x);
-		}
-		returnMessage.put(ICredentialsMicroformat.RESP_TOKEN, rtoken);
-		returnMessage.put(ICredentialsMicroformat.RESP_MESSAGE, message);
-		super.sendJSON(returnMessage.toJSONString(), code, response);
-		returnMessage = null;
+//		}
+//		returnMessage.put(ICredentialsMicroformat.RESP_TOKEN, rtoken);
+//		returnMessage.put(ICredentialsMicroformat.RESP_MESSAGE, message);
+//		super.sendJSON(returnMessage.toJSONString(), code, response);
+//		returnMessage = null;
 	}
 	
 	
@@ -92,15 +96,21 @@ public class RPGHandler  extends BaseHandler {
 		JSONObject returnMessage = newJSONObject();
 		JSONObject cargo = (JSONObject)jsonObject.get(ICredentialsMicroformat.CARGO);
 		String message = "", rtoken="";
-		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
+		String verb = getVerb(jsonObject);
 		int code = 0;
 		IResult r;
 		System.out.println("CondoHandler.handlePost "+verb);
-		if (verb.equals(ITopicMapMicroformat.PUT_TOPIC)) {
+		if (verb.equals(IRPGMicroformat.ADD_LEADER)) {
 			//TODO
 	
+		} else if (verb.equals(IRPGMicroformat.ADD_MEMBER)) {
+
+		} else if (verb.equals(IRPGMicroformat.REMOVE_LEADER)) {
+			
+		} else if (verb.equals(IRPGMicroformat.REMOVE_MEMBER)) {
+			
 		} else {
-			String x = IErrorMessages.BAD_VERB+"-AdminServletPost-"+verb;
+			String x = IErrorMessages.BAD_VERB+"-RPGHandler-"+verb;
 			environment.logError(x, null);
 			throw new ServletException(x);
 		}

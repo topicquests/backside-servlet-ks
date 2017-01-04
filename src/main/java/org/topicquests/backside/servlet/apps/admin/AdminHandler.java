@@ -41,12 +41,12 @@ import org.topicquests.ks.api.ITicket;
  * @author park
  *
  */
-public class AppHandler  extends BaseHandler {
+public class AdminHandler  extends BaseHandler {
 	private IAdminModel model;
 	/**
 	 * 
 	 */
-	public AppHandler(ServletEnvironment env, String basePath) {
+	public AdminHandler(ServletEnvironment env, String basePath) {
 		super(env,basePath);
 		try {
 			model = new AdminModel(environment);
@@ -60,15 +60,15 @@ public class AppHandler  extends BaseHandler {
 	public void handleGet(HttpServletRequest request, HttpServletResponse response, ITicket credentials, JSONObject jsonObject) throws ServletException, IOException {
 		JSONObject returnMessage = newJSONObject();
 		String message = "", rtoken="";
-		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
+		String verb = getVerb(jsonObject);
 		System.out.println("AdminHandler.get "+verb+" "+jsonObject.toJSONString());
 		int code = 0;
 		IResult r;
 		String startS, countS;
 		int start, count;
 		if (verb.equals(IAdminMicroformat.LIST_USERS)) {
-			startS = notNullString((String)jsonObject.get(ICredentialsMicroformat.ITEM_FROM));
-			countS = notNullString((String)jsonObject.get(ICredentialsMicroformat.ITEM_COUNT));
+			startS = getItemFrom(jsonObject);
+			countS = getItemCount(jsonObject);
 			start = 0;
 			count = -1;
 			if (!startS.equals("")) {
@@ -103,7 +103,7 @@ public class AppHandler  extends BaseHandler {
 				message = "ok";
 			}
 		} else if (verb.equals(IAdminMicroformat.EXISTS_INVITE)) {
-			String email = (String)jsonObject.get(ICredentialsMicroformat.USER_EMAIL);
+			String email = getEmail(jsonObject);
 			System.out.println("AdminHandler.existsInvite "+email);
 			r = model.existsInvite(email);
 			Boolean b = (Boolean)r.getResultObject();
@@ -115,8 +115,8 @@ public class AppHandler  extends BaseHandler {
 				message = "not found";
 			}
 		} else if (verb.equals(IAdminMicroformat.LIST_INVITES)) {
-			startS = notNullString((String)jsonObject.get(ICredentialsMicroformat.ITEM_FROM));
-			countS = notNullString((String)jsonObject.get(ICredentialsMicroformat.ITEM_COUNT));
+			startS = getItemFrom(jsonObject);
+			countS = getItemCount(jsonObject);
 			start = 0;
 			count = -1;
 			if (!startS.equals("")) {
@@ -156,10 +156,15 @@ public class AppHandler  extends BaseHandler {
 		returnMessage = null;
 	}
 	
+		
+	String getUserRole(JSONObject jsonObject) {
+		return jsonObject.getAsString(IUserMicroformat.USER_ROLE);
+	}
+	
 	public void handlePost(HttpServletRequest request, HttpServletResponse response, ITicket credentials, JSONObject jsonObject) throws ServletException, IOException {
 		JSONObject returnMessage = newJSONObject();
 		String message = "", rtoken="";
-		String verb = (String)jsonObject.get(ICredentialsMicroformat.VERB);
+		String verb = getVerb(jsonObject);
 		System.out.println("AdminHandler.post verb: "+verb);
 		int code = 0;
 		IResult r;
@@ -168,37 +173,38 @@ public class AppHandler  extends BaseHandler {
 			//TODO
 		} else if (verb.equals(IAdminMicroformat.UPDATE_USER_EMAIL)) {
 			//TODO: really, this belongs to User app, not admin
-			username=(String)jsonObject.get(ICredentialsMicroformat.USER_NAME);
-			useremail=(String)jsonObject.get(ICredentialsMicroformat.USER_EMAIL);
+			username= getUserHandle(jsonObject);
+			useremail= getEmail(jsonObject);
 			r = model.updateUserEmail(username, useremail);
 			if (!r.hasError()) {
 				code = BaseHandler.RESPONSE_OK;
 				message = "ok";
 			}			
 		} else if (verb.equals(IAdminMicroformat.UPDATE_USER_ROLE)) {
-			username=(String)jsonObject.get(ICredentialsMicroformat.USER_NAME);
-			userrole=(String)jsonObject.get(IUserMicroformat.USER_ROLE);
+			username= getUserHandle(jsonObject);
+			userrole= getUserRole(jsonObject);
 			r = model.addUserRole(username, userrole);
 			if (!r.hasError()) {
 				code = BaseHandler.RESPONSE_OK;
 				message = "ok";
 			}
 		} else if (verb.equals(IAdminMicroformat.REMOVE_USER_ROLE)) {
-			username=(String)jsonObject.get(ICredentialsMicroformat.USER_NAME);
-			userrole=(String)jsonObject.get(IUserMicroformat.USER_ROLE);
+			username= getUserHandle(jsonObject);
+			userrole= getUserRole(jsonObject);
 			r = model.removeUserRole(username, userrole);
 			if (!r.hasError()) {
 				code = BaseHandler.RESPONSE_OK;
 				message = "ok";
-			}		} else if (verb.equals(IAdminMicroformat.NEW_INVITE)) {
-			useremail=(String)jsonObject.get(ICredentialsMicroformat.USER_EMAIL);
+			}
+		} else if (verb.equals(IAdminMicroformat.NEW_INVITE)) {
+			useremail= getEmail(jsonObject);
 			r = model.addInvite(useremail);
 			if (!r.hasError()) {
 				code = BaseHandler.RESPONSE_OK;
 				message = "ok";
 			}
 		} else if (verb.equals(IAdminMicroformat.REMOVE_INVITE)) {
-			useremail=(String)jsonObject.get(ICredentialsMicroformat.USER_EMAIL);
+			useremail= getEmail(jsonObject);
 			r = model.removeInvite(useremail);
 			if (!r.hasError()) {
 				code = BaseHandler.RESPONSE_OK;

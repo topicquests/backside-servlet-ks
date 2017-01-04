@@ -30,7 +30,9 @@ public interface ICredentialsMicroformat {
 	 */
 	public static final String
 		/** absolutely required field */
-		USER_NAME		= "uName",
+		USER_HANDLE		= "uName",
+		/** required field */
+		USER_ID			= "uId",
 		/** required for authentication */
 		USER_EMAIL		= "uEmail",
 		/** password is encrypted, is only required for authentication */

@@ -42,6 +42,16 @@
   <classpathentry kind="var" path="M2_REPO/commons-cli/commons-cli/1.3.1/commons-cli-1.3.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/twitter/jsr166e/1.1.0/jsr166e-1.1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/h2database/h2/1.3.160/h2-1.3.160.jar"/>
+  <classpathentry kind="var" path="M2_REPO/io/searchbox/jest/2.0.3/jest-2.0.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/io/searchbox/jest-common/2.0.3/jest-common-2.0.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/google/code/gson/gson/2.6.2/gson-2.6.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore-nio/4.4.4/httpcore-nio-4.4.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.4.4/httpcore-4.4.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpclient/4.5.2/httpclient-4.5.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.9/commons-codec-1.9.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpasyncclient/4.1.1/httpasyncclient-4.1.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.7.21/slf4j-api-1.7.21.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-servlet/9.2.11.v20150529/jetty-servlet-9.2.11.v20150529.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-security/9.2.11.v20150529/jetty-security-9.2.11.v20150529.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-server/9.2.11.v20150529/jetty-server-9.2.11.v20150529.jar"/>
@@ -54,6 +64,7 @@
   <classpathentry kind="var" path="M2_REPO/net/minidev/accessors-smart/1.1/accessors-smart-1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/ow2/asm/asm/5.0.3/asm-5.0.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.17/log4j-1.2.17.jar"/>
+  <classpathentry kind="var" path="M2_REPO/xpp3/xpp3/1.1.3.4-RC3/xpp3-1.1.3.4-RC3.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/topicquests/tq-elastic-ks/0.5.9/tq-elastic-ks-0.5.9.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/topicquests/tq-elastic-node-provider/0.4.2/tq-elastic-node-provider-0.4.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/topicquests/tq-support/1.4/tq-support-1.4.jar"/>

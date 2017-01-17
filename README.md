@@ -22,12 +22,3 @@ Automatically download dependencies and build this project.
 ```
 mvn clean install -Dmaven.test.skip=true
 ```
-
-# Updating
-Search [the index](https://mvnrepository.com/) for public jar files published to [repo.maven.apache.org](https://repo.maven.apache.org/).
-
-Use maven to install unpublished jar files in this project's repository.
-
-```
-mvn install:install-file -Dfile=lib/tq-support-1.4.jar  -DgroupId=org.topicquests -DartifactId=tq-support -Dversion=1.4 -Dpackaging=jar -DlocalRepositoryPath=repo/
-```

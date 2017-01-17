@@ -12,6 +12,12 @@
   </properties>
   <repositories>
     <repository>
+      <id>snapshots</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <releases><enabled>false</enabled></releases>
+      <snapshots><enabled>true</enabled></snapshots>
+    </repository>
+    <repository>
       <id>data-local</id>
       <name>data</name>
       <url>file://${project.basedir}/repo</url>
@@ -77,12 +83,12 @@
     <dependency>
         <groupId>org.topicquests</groupId>
         <artifactId>tq-elastic-ks</artifactId>
-        <version>0.5.9</version>
+        <version>0.5.9-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>org.topicquests</groupId>
         <artifactId>tq-elastic-node-provider</artifactId>
-        <version>0.4.2</version>
+        <version>0.4.2-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>org.topicquests</groupId>

@@ -15,7 +15,7 @@
  */
 package org.topicquests.backside.servlet.apps.tm.api;
 
-import org.topicquests.common.api.IResult;
+import org.topicquests.support.api.IResult;
 import org.topicquests.ks.api.ITicket;
 import org.topicquests.ks.tm.api.INodeTypes;
 

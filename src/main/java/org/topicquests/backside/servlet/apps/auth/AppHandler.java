@@ -29,7 +29,7 @@ import org.topicquests.backside.servlet.api.IErrorMessages;
 import org.topicquests.backside.servlet.apps.BaseHandler;
 import org.topicquests.backside.servlet.apps.auth.api.IAuthMicroformat;
 import org.topicquests.backside.servlet.apps.usr.api.IUserModel;
-import org.topicquests.common.api.IResult;
+import org.topicquests.support.api.IResult;
 import org.topicquests.ks.api.ITicket;
 
 import com.google.common.io.BaseEncoding;

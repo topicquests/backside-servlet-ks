@@ -19,7 +19,7 @@ import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.apps.tm.api.IStructuredConversationModel;
 import org.topicquests.backside.servlet.api.ISecurity;
 import org.topicquests.backside.servlet.apps.usr.api.IUserModel;
-import org.topicquests.common.api.IResult;
+import org.topicquests.support.api.IResult;
 import org.topicquests.ks.TicketPojo;
 import org.topicquests.ks.api.ITQCoreOntology;
 import org.topicquests.ks.api.ITQDataProvider;

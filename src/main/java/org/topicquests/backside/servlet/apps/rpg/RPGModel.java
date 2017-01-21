@@ -7,7 +7,7 @@ import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.apps.rpg.api.IRPGModel;
 import org.topicquests.backside.servlet.apps.tm.api.ISocialBookmarkLegend;
 import org.topicquests.backside.servlet.apps.usr.api.IUserModel;
-import org.topicquests.common.api.IResult;
+import org.topicquests.support.api.IResult;
 import org.topicquests.ks.api.ITicket;
 import org.topicquests.ks.tm.api.INodeTypes;
 

@@ -114,7 +114,7 @@
         <dependency>
             <groupId>org.topicquests</groupId>
             <artifactId>tq-support</artifactId>
-            <version>1.4-SNAPSHOT</version>
+            <version>1.5-SNAPSHOT</version>
         </dependency>
 
         <dependency>

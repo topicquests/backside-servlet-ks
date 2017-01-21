@@ -20,7 +20,7 @@ import java.util.*;
 import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.apps.admin.AdminModel;
 import org.topicquests.backside.servlet.apps.admin.api.IAdminModel;
-import org.topicquests.common.api.IResult;
+import org.topicquests.support.api.IResult;
 
 /**
  * @author park

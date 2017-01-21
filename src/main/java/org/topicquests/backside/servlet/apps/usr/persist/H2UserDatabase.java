@@ -26,8 +26,8 @@ import org.topicquests.backside.servlet.apps.usr.api.IUserMicroformat;
 import org.topicquests.backside.servlet.apps.usr.api.IUserPersist;
 import org.topicquests.backside.servlet.apps.usr.api.IUserSchema;
 import org.topicquests.backside.servlet.persist.rdbms.H2DatabaseDriver;
-import org.topicquests.common.ResultPojo;
-import org.topicquests.common.api.IResult;
+import org.topicquests.support.ResultPojo;
+import org.topicquests.support.api.IResult;
 import org.topicquests.ks.TicketPojo;
 import org.topicquests.ks.api.ITicket;
 

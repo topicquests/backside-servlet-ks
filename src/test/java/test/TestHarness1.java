@@ -18,7 +18,7 @@ import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.apps.admin.AdminModel;
 import org.topicquests.backside.servlet.apps.admin.api.IAdminModel;
 
-import org.topicquests.util.LoggingPlatform;
+import org.topicquests.support.util.LoggingPlatform;
 
 /**
  * @author park

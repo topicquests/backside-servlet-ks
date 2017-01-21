@@ -25,7 +25,7 @@ import java.sql.Statement;
 import org.apache.log4j.Logger;
 import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.api.IRDBMSDatabase;
-import org.topicquests.common.api.IResult;
+import org.topicquests.support.api.IResult;
 /**
  * <p>Title: StoryReader Engine</p>
  *

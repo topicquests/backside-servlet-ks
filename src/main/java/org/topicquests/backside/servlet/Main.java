@@ -43,7 +43,7 @@ import org.topicquests.backside.servlet.apps.stat.StaticFileServlet;
 import org.topicquests.backside.servlet.apps.tm.TopicMapServlet;
 import org.topicquests.backside.servlet.apps.upload.UploadServlet;
 import org.topicquests.backside.servlet.apps.usr.UserServlet;
-import org.topicquests.util.LoggingPlatform;
+import org.topicquests.support.util.LoggingPlatform;
 /**
  * @author park
  *

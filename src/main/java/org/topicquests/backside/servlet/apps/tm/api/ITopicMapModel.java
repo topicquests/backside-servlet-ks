@@ -19,7 +19,7 @@ import java.util.List;
 
 import net.minidev.json.JSONObject;
 
-import org.topicquests.common.api.IResult;
+import org.topicquests.support.api.IResult;
 import org.topicquests.ks.api.ITicket;
 
 /**

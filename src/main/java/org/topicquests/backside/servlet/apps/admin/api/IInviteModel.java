@@ -15,7 +15,7 @@
  */
 package org.topicquests.backside.servlet.apps.admin.api;
 
-import org.topicquests.common.api.IResult;
+import org.topicquests.support.api.IResult;
 
 /**
  * @author park

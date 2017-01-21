@@ -17,7 +17,7 @@ package org.topicquests.backside.servlet;
 
 import java.util.*;
 
-import org.nex.config.ConfigPullParser;
+import org.topicquests.support.config.ConfigPullParser;
 import org.topicquests.backside.servlet.api.IStoppable;
 import org.topicquests.backside.servlet.apps.CredentialCache;
 import org.topicquests.backside.servlet.apps.tm.StructuredConversationModel;
@@ -27,7 +27,7 @@ import org.topicquests.backside.servlet.apps.usr.api.IUserModel;
 import org.topicquests.backside.servlet.apps.util.ElasticQueryDSL;
 import org.topicquests.ks.StatisticsUtility;
 import org.topicquests.ks.SystemEnvironment;
-import org.topicquests.util.LoggingPlatform;
+import org.topicquests.support.util.LoggingPlatform;
 
 /**
  * @author park

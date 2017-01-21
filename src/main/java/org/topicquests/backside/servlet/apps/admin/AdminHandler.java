@@ -34,7 +34,7 @@ import org.topicquests.backside.servlet.apps.admin.api.IAdminMicroformat;
 import org.topicquests.backside.servlet.apps.admin.api.IAdminModel;
 import org.topicquests.backside.servlet.apps.usr.UserModel;
 import org.topicquests.backside.servlet.apps.usr.api.IUserMicroformat;
-import org.topicquests.common.api.IResult;
+import org.topicquests.support.api.IResult;
 import org.topicquests.ks.api.ITicket;
 
 /**

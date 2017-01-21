@@ -6,7 +6,7 @@ package test;
 import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.apps.tm.TopicMapModel;
 import org.topicquests.backside.servlet.apps.tm.api.ITopicMapModel;
-import org.topicquests.common.api.IResult;
+import org.topicquests.support.api.IResult;
 import org.topicquests.ks.TicketPojo;
 import org.topicquests.ks.api.ITQCoreOntology;
 import org.topicquests.ks.api.ITicket;

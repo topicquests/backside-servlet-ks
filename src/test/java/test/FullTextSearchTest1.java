@@ -5,7 +5,7 @@ package test;
 
 import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.apps.util.ElasticQueryDSL;
-import org.topicquests.common.api.IResult;
+import org.topicquests.support.api.IResult;
 import org.topicquests.ks.SystemEnvironment;
 import org.topicquests.node.provider.Client;
 import org.topicquests.node.provider.ProviderEnvironment;

@@ -7,7 +7,7 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 import org.topicquests.backside.servlet.ServletEnvironment;
-import org.topicquests.common.api.IResult;
+import org.topicquests.support.api.IResult;
 import org.topicquests.ks.SystemEnvironment;
 import org.topicquests.ks.TicketPojo;
 import org.topicquests.ks.api.ITQCoreOntology;

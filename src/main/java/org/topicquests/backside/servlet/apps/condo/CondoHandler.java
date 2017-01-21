@@ -36,7 +36,7 @@ import org.topicquests.backside.servlet.apps.tm.api.IStructuredConversationModel
 import org.topicquests.backside.servlet.apps.tm.api.ITopicMapMicroformat;
 import org.topicquests.backside.servlet.apps.tm.api.ITopicMapModel;
 import org.topicquests.backside.servlet.apps.usr.api.IUserMicroformat;
-import org.topicquests.common.api.IResult;
+import org.topicquests.support.api.IResult;
 import org.topicquests.ks.api.ITQCoreOntology;
 import org.topicquests.ks.api.ITicket;
 import org.topicquests.ks.tm.api.ISubjectProxy;

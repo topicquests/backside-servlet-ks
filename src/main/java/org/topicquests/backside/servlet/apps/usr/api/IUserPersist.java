@@ -23,7 +23,7 @@ package org.topicquests.backside.servlet.apps.usr.api;
 import java.sql.*;
 
 import org.topicquests.backside.servlet.api.IRDBMSDatabase;
-import org.topicquests.common.api.IResult;
+import org.topicquests.support.api.IResult;
 
 
 /**

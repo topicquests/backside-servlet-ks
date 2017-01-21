@@ -18,7 +18,7 @@ package org.topicquests.backside.servlet.apps.admin.api;
 import java.sql.Connection;
 
 import org.topicquests.backside.servlet.api.IRDBMSDatabase;
-import org.topicquests.common.api.IResult;
+import org.topicquests.support.api.IResult;
 
 
 /**

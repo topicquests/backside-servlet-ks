@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
-   <suppress>
+    <suppress>
         <notes><![CDATA[
-   file name: jest-2.0.4.jar
-   ]]></notes>
-        <sha1>c44c10b78bb133588a4c64a21f5aca5a7d960827</sha1>
+       file name: tq-support-1.5-SNAPSHOT.jar
+       ]]></notes>
+        <gav regex="true">^io\.searchbox:jest:.*$</gav>
         <cpe>cpe:/a:apache:httpclient</cpe>
-   </suppress>
-   <suppress>
-        <notes><![CDATA[
-   file name: commons-collections4-4.1.jar
-   ]]></notes>
-        <sha1>a4cf4688fe1c7e3a63aa636cc96d013af537768e</sha1>
-        <cpe>cpe:/a:apache:commons_collections</cpe>
-   </suppress>
+    </suppress>
 </suppressions>

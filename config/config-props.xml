@@ -16,8 +16,10 @@
 	<!-- Server needs a default Administrator
 		These values should be changed.
 		Once an Admin logs in, should change the password again -->
-	<parameter name="DefaultAdminEmail" value="TestUser@foo.org" /> <!-- CHANGEME -->
-	<parameter name="DefaultAdminPwd" value="testing!" /> <!-- CHANGEME -->
+	<parameter name="DefaultAdminId" value="ef4da398-7440-4b23-b5a0-1331cc333141" /> <!-- CHANGEME -->
+	<parameter name="DefaultAdminEmail" value="default@example.com" /> <!-- CHANGEME -->
+	<parameter name="DefaultAdminName" value="therealdefaultadmin" /> <!-- CHANGEME -->
+	<parameter name="DefaultAdminPwd" value="antiquing" /> <!-- CHANGEME -->
 	
 		<!-- A list of external (plugin) servlet packages, which must include
 		their APIs, models, and handlers and any other supporting code.

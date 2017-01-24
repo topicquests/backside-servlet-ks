@@ -70,13 +70,15 @@ public class UserModel implements IUserModel {
 	private void validateDefaultAdmin() {
 		//from config-props.xml
 
-		String admin = environment.getStringProperty("DefaultAdminEmail");
+		String id = environment.getStringProperty("DefaultAdminId");
+		String email = environment.getStringProperty("DefaultAdminEmail");
+		String name = environment.getStringProperty("DefaultAdminName");
 		String pwd = environment.getStringProperty("DefaultAdminPwd");
-		System.out.println("VALIDATE "+admin+" | "+pwd);
-		IResult r = authenticate(admin,pwd);
+		System.out.println("VALIDATE "+id+" | "+email+" | "+name+" | "+pwd);
+		IResult r = authenticate(email,pwd);
 		if (r.getResultObject() == null) {
-			r = this.insertUser(admin, "defaultadmin", UUID.randomUUID().toString(), pwd, "Default Admin", "", ISecurity.ADMINISTRATOR_ROLE, "", "", false);
-			r = this.addUserRole("defaultadmin", ISecurity.OWNER_ROLE);	
+			r = this.insertUser(email, name, id, pwd, "Default Admin", "", ISecurity.ADMINISTRATOR_ROLE, "", "", false);
+			r = this.addUserRole(name, ISecurity.OWNER_ROLE);
 		}
 	}
 	/* (non-Javadoc)

@@ -137,16 +137,11 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 			s.setString(1, userHandle);
 			rs = s.executeQuery();
 			if (rs.next()) {
-				String key,val,ava;
-				String email = rs.getString(IUserSchema.USER_EMAIL);
+				String key,val;
 				ITicket t = new TicketPojo();
-			//	ava = rs.getString(IUserSchema.USER_AVATAR);
-			//	if (!ava.equals(""))
-			//		t.addAvatarLocator(ava);
 				t.setUserLocator(rs.getString(IUserSchema.USER_ID));
-				t.setProperty(IUserSchema.USER_EMAIL, email);
-				t.setUserLocator(rs.getString(IUserSchema.USER_ID));
-				t.setProperty(IUserSchema.USER_NAME, IUserSchema.USER_NAME);
+				t.setProperty(IUserSchema.USER_EMAIL, rs.getString(IUserSchema.USER_EMAIL));
+				t.setProperty(IUserSchema.USER_NAME, rs.getString(IUserSchema.USER_NAME));
 				t.setProperty(IUserSchema.USER_FULLNAME, rs.getString(IUserSchema.USER_FULLNAME));
 				s2 = con.prepareStatement(IUserSchema.getUserProperties);
 				s2.setString(1, userHandle);
@@ -160,7 +155,6 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 						System.out.println("H2UDB1 "+roles);
 					} else {
 						val = rs2.getString("val");
-				//	System.out.println("GETPROP "+userName+" "+key+" | "+val);
 						t.setProperty(key, val);
 					}
 				}

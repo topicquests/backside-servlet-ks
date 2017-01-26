@@ -19,25 +19,26 @@ import org.topicquests.backside.servlet.api.ICredentialsMicroformat;
 
 /**
  * @author park
- *
  */
 public interface IAdminMicroformat extends ICredentialsMicroformat {
 
-	/** Verbs */
-	public static final String
-		REMOVE_USER				= "RemUser",  //POST
-		UPDATE_USER_ROLE		= "UpdUsRol", //POST
-		REMOVE_USER_ROLE		= "RemUsRol", //POST
-		UPDATE_USER_EMAIL		= "UpdUsEma", //POST user
-		UPDATE_USER_PASSWORD	= "UpdUsPwd", //POST user
-		UPDATE_USER_DATA		= "UpdUsDat", //POST user
-		REMOVE_USER_DATA		= "RemUsDat", //POST user
-		/** subject to common modifiers */
-		LIST_USERS				= "ListUsers",	//GET
-		LIST_INVITES			= "ListInvites", //GET
-		NEW_INVITE				= "NewInvite", //POST
-		REMOVE_INVITE			= "RemoveInvite", //POST
-		EXISTS_INVITE			= "ExistsInvite"; //GET
+	/**
+	 * Verbs
+	 */
+	public static final String REMOVE_USER = "RemUser";  //POST
+	public static final String UPDATE_USER_ROLE = "UpdUsRol"; //POST
+	public static final String REMOVE_USER_ROLE = "RemUsRol"; //POST
+	public static final String UPDATE_USER_EMAIL = "UpdUsEma"; //POST user
+	public static final String UPDATE_USER_PASSWORD = "UpdUsPwd"; //POST user
+	public static final String UPDATE_USER_DATA = "UpdUsDat"; //POST user
+	public static final String REMOVE_USER_DATA = "RemUsDat"; //POST user
 
-
+	/**
+	 * subject to common modifiers
+	 */
+	public static final String LIST_USERS = "ListUsers";    //GET
+	public static final String LIST_INVITES = "ListInvites"; //GET
+	public static final String NEW_INVITE = "NewInvite"; //POST
+	public static final String REMOVE_INVITE = "RemoveInvite"; //POST
+	public static final String EXISTS_INVITE = "ExistsInvite"; //GET
 }

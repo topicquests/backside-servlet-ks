@@ -16,48 +16,40 @@
 package org.topicquests.backside.servlet.apps.usr.api;
 
 import org.topicquests.backside.servlet.api.ICredentialsMicroformat;
+import org.topicquests.backside.servlet.apps.admin.api.IAdminMicroformat;
 
 /**
  * @author park
- * <p>Microformat for passing user information</p>
- * <p>These apply <em>only</em> to the User App, which only deals with
- *  the user database, not the topic map</p>
+ *         <p>Microformat for passing user information</p>
+ *         <p>These apply <em>only</em> to the User App, which only deals with
+ *         the user database, not the topic map</p>
+ *
+ * see org.topicquests.backside.servlet.apps.admin.api.IAdminMicroformat
  */
 public interface IUserMicroformat extends ICredentialsMicroformat {
 	/**
 	 * JSON Attributes
 	 */
-	public static final String
-		USER_ROLE 		= "uRole",
-		USER_AVATAR		= "uAvatar",
-		USER_GEOLOC		= "uGeoloc",
-		USER_HOMEPAGE	= "uHomepage",
-		USER_FULLNAME	= "uFullName",
-		/** starts a list of USER_PROPERTY objects */
-		USER_PROPERTIES	= "uProplist",
-		USER_PROPERTY 	= "uProp",
-		PROP_KEY		= "pKey",
-		PROP_VAL		= "pVal",
-		/** list of usernames, possibly empty */
-		USER_LIST		= "uList";
-	
+	public static final String USER_ROLE = "uRole";
+	public static final String USER_AVATAR = "uAvatar";
+	public static final String USER_GEOLOC = "uGeoloc";
+	public static final String USER_HOMEPAGE = "uHomepage";
+	public static final String USER_FULLNAME = "uFullName";
+
+	/**
+	 * starts a list of USER_PROPERTY objects
+	 */
+	public static final String PROP_KEY = "pKey";
+	public static final String PROP_VAL = "pVal";
+
 	/**
 	 * Verbs
 	 */
-	public static final String
-		/**
-		 *<p> NEW_USER would be used at the client side simply to paint forms;
-		 * it is now sent into a GET.</p>
-		 * <p>Sent in as a POST, its cargo would be the necessary data for that user,
-		 * as captured in a NewUser form.</p>
-		 */
-		NEW_USER		= "NewUser", 	//POST
-		/** subject to common modifiers */
-		LIST_USERS		= "ListUsers", 	//GET
-		GET_USER_BY_EMAIL		= "GetUser",  //GET
-		GET_USER_BY_ID			= "GetUsrId",
-		GET_USER_BY_HANDLE		= "GetUsrHndl";
-		
-		//REMOVE_USER is in IAdminMicroformats
-		
+	public static final String NEW_USER = "NewUser";    //POST
+	public static final String LIST_USERS = "ListUsers";    //GET
+	public static final String GET_USER_BY_EMAIL = "GetUser";  //GET
+	public static final String GET_USER_BY_ID = "GetUsrId";
+	public static final String GET_USER_BY_HANDLE = "GetUsrHndl";
+
+
 }

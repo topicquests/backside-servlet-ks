@@ -4,7 +4,7 @@
     <groupId>org.topicquests.backside.servlet</groupId>
     <artifactId>backside-servlet-ks</artifactId>
     <packaging>jar</packaging>
-    <version>0.9.0-SNAPSHOT</version>
+    <version>0.10.0-SNAPSHOT</version>
     <name>backside-servlet-ks</name>
     <url>https://github.com/wenzowski/backside-servlet-ks</url>
     <developers>

@@ -15,51 +15,46 @@
  */
 package org.topicquests.backside.servlet.apps.usr.persist;
 
-import java.security.MessageDigest;
-import java.sql.*;
-import java.util.*;
-
 import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.api.IRDBMSDatabase;
-import org.topicquests.backside.servlet.apps.admin.api.IInviteSchema;
 import org.topicquests.backside.servlet.apps.usr.api.IUserMicroformat;
 import org.topicquests.backside.servlet.apps.usr.api.IUserPersist;
 import org.topicquests.backside.servlet.apps.usr.api.IUserSchema;
 import org.topicquests.backside.servlet.persist.rdbms.H2DatabaseDriver;
-import org.topicquests.support.ResultPojo;
-import org.topicquests.support.api.IResult;
 import org.topicquests.ks.TicketPojo;
 import org.topicquests.ks.api.ITicket;
+import org.topicquests.support.ResultPojo;
+import org.topicquests.support.api.IResult;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author park
- *
  */
-public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, IRDBMSDatabase {
+public class H2UserDatabase extends H2DatabaseDriver implements IUserPersist, IRDBMSDatabase {
 	private final String h2JdbcDriver = "org.h2.Driver";
-    private String userName, password, connectionString;
+	private String userName, password, connectionString;
+
 	/**
-	 * 
+	 *
 	 */
 	public H2UserDatabase(ServletEnvironment env, String dbName, String userName, String pwd, String filePath)
 			throws Exception {
-		super(env,dbName,userName,pwd, filePath);
+		super(env, dbName, userName, pwd, filePath);
 		init();
 	}
+
 	private void init() throws Exception {
 		Connection con = null;
 		ResultSet rs = null;
 		Statement s = null;
 		try {
 			con = getSQLConnection();
-			System.out.println("H2UserDatabase.init-1 "+con);
-			s= con.createStatement();
+			s = con.createStatement();
 			rs = s.executeQuery("select * from users");
-			environment.logDebug("H2UserDatabase.init "+rs.next());
-			System.out.println("H2UserDatabase.init-2");
 		} catch (Exception e) {
-			System.out.println("H2UserDatabase.init-3 ");
-			environment.logDebug("H2UserDatabase.init fail "+e.getMessage());
 			exportSchema();
 		} finally {
 			if (s != null)
@@ -71,53 +66,39 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 		}
 	}
 
-	/**
-	 * Salt a password for the database
-	 * @param input
-	 * @return
-	 * @throws Exception
-	 */
-	String sha1(String input) throws Exception {
-        MessageDigest mDigest = MessageDigest.getInstance("SHA1");
-        byte[] result = mDigest.digest(input.getBytes());
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < result.length; i++) {
-            sb.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
-        }
-        return sb.toString();
-    }
 	/* (non-Javadoc)
 	 * @see org.topicquests.backside.servlet.api.IUserPersist#authenticate(java.sql.Connection, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public IResult authenticate(Connection con, String email, String password) {
+	public IResult authenticate(Connection con, String identifier, String password) {
 		IResult result = new ResultPojo();
-		if (email == null || password == null) {
-			result.addErrorString("Missing email or password");
+		if (identifier == null || password == null) {
+			result.addErrorString("Missing handle/email or password");
 			return result;
 		}
 		PreparedStatement s = null;
 		ResultSet rs = null;
 		try {
-			String pwd = sha1(password);
-			System.out.println("AUTH "+email+" "+pwd);
 			s = con.prepareStatement(IUserSchema.authenticate);
-			s.setString(1, email);
-			s.setString(2, pwd);
+			s.setString(1, identifier);
+			s.setString(2, identifier);
 			rs = s.executeQuery();
 
 			if (rs.next()) {
-				String key,val,ava,name;
-				name = rs.getString(IUserSchema.USER_NAME);
-				result = this.getTicketByHandle(con, name);
+				String hash = rs.getString(IUserSchema.USER_PASSWORD);
+				boolean verified = PasswordStorage.verifyPassword(password, hash);
+				if (verified) {
+					String id = rs.getString(IUserSchema.USER_ID);
+					result = this.getTicketById(con, id);
+				}
 			}
 			//otherwise return null
 		} catch (Exception e) {
 			environment.logError(e.getMessage(), e);
 			e.printStackTrace();
 		} finally {
-			closePreparedStatement(s,result);
-			closeResultSet(rs,result);
+			closePreparedStatement(s, result);
+			closeResultSet(rs, result);
 		}
 		return result;
 	}
@@ -129,54 +110,25 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 	public IResult getTicketByHandle(Connection con, String userHandle) {
 		IResult result = new ResultPojo();
 		PreparedStatement s = null;
-		PreparedStatement s2 = null;
 		ResultSet rs = null;
-		ResultSet rs2 = null;
 		try {
 			s = con.prepareStatement(IUserSchema.getUserByHandle);
 			s.setString(1, userHandle);
 			rs = s.executeQuery();
 			if (rs.next()) {
-				String key,val;
-				ITicket t = new TicketPojo();
-				t.setUserLocator(rs.getString(IUserSchema.USER_ID));
-				t.setProperty(IUserSchema.USER_EMAIL, rs.getString(IUserSchema.USER_EMAIL));
-				t.setProperty(IUserSchema.USER_NAME, rs.getString(IUserSchema.USER_NAME));
-				t.setProperty(IUserSchema.USER_FULLNAME, rs.getString(IUserSchema.USER_FULLNAME));
-				s2 = con.prepareStatement(IUserSchema.getUserProperties);
-				s2.setString(1, userHandle);
-				rs2 = s2.executeQuery();
-				List<String>roles = new ArrayList<String>();
-				while (rs2.next()) {
-					key = rs2.getString("prop");
-					System.out.println("H2UDB "+key);
-					if (key.equals(IUserSchema.USER_ROLE)) {
-						roles.add(rs2.getString("val"));
-						System.out.println("H2UDB1 "+roles);
-					} else {
-						val = rs2.getString("val");
-						t.setProperty(key, val);
-					}
-				}
-				//HERE, we must convert roles to string
-				t.setProperty(IUserMicroformat.USER_ROLE, roles);
-				System.out.println("H2UDB2 "+t.getProperty(IUserMicroformat.USER_ROLE));
-				result.setResultObject(t);
+				String id = rs.getString(IUserSchema.USER_ID);
+				result = this.getTicketById(con, id);
 			}
 			//otherwise return null
 		} catch (Exception e) {
 			environment.logError(e.getMessage(), e);
 		} finally {
-			closePreparedStatement(s,result);
-			closeResultSet(rs,result);
-			if (s2 != null)
-				closePreparedStatement(s2,result);
-			if (rs2 != null)
-				closeResultSet(rs2,result);
+			closePreparedStatement(s, result);
+			closeResultSet(rs, result);
 		}
 		return result;
 	}
-	
+
 	@Override
 	public IResult getTicketByEmail(Connection con, String email) {
 		IResult result = new ResultPojo();
@@ -187,42 +139,62 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 			s.setString(1, email);
 			rs = s.executeQuery();
 			if (rs.next()) {
-				String name;
-				name = rs.getString(IUserSchema.USER_NAME);
-				result = this.getTicketByHandle(con, name);
+				String id = rs.getString(IUserSchema.USER_ID);
+				result = this.getTicketById(con, id);
 			}
 			//otherwise return null
 		} catch (Exception e) {
 			environment.logError(e.getMessage(), e);
 		} finally {
-			closePreparedStatement(s,result);
-			closeResultSet(rs,result);
+			closePreparedStatement(s, result);
+			closeResultSet(rs, result);
 		}
-		return result;	
+		return result;
 	}
 
 	@Override
 	public IResult getTicketById(Connection con, String userId) {
 		IResult result = new ResultPojo();
 		PreparedStatement s = null;
+		PreparedStatement s2 = null;
 		ResultSet rs = null;
+		ResultSet rs2 = null;
 		try {
 			s = con.prepareStatement(IUserSchema.getUserById);
 			s.setString(1, userId);
 			rs = s.executeQuery();
 			if (rs.next()) {
-				String name;
-				name = rs.getString(IUserSchema.USER_NAME);
-				result = this.getTicketByHandle(con, name);
+				String key, val;
+				ITicket t = new TicketPojo();
+				t.setUserLocator(rs.getString(IUserSchema.USER_ID));
+				t.setProperty(IUserSchema.USER_EMAIL, rs.getString(IUserSchema.USER_EMAIL));
+				t.setProperty(IUserSchema.USER_NAME, rs.getString(IUserSchema.USER_NAME));
+				t.setProperty(IUserSchema.USER_FULLNAME, rs.getString(IUserSchema.USER_FULLNAME));
+				s2 = con.prepareStatement(IUserSchema.getUserProperties);
+				s2.setString(1, userId);
+				rs2 = s2.executeQuery();
+				List<String> roles = new ArrayList<String>();
+				while (rs2.next()) {
+					key = rs2.getString("prop");
+					if (key.equals(IUserSchema.USER_ROLE)) {
+						roles.add(rs2.getString("val"));
+					} else {
+						val = rs2.getString("val");
+						t.setProperty(key, val);
+					}
+				}
+				//HERE, we must convert roles to string
+				t.setProperty(IUserMicroformat.USER_ROLE, roles);
+				result.setResultObject(t);
 			}
 			//otherwise return null
 		} catch (Exception e) {
 			environment.logError(e.getMessage(), e);
 		} finally {
-			closePreparedStatement(s,result);
-			closeResultSet(rs,result);
+			closePreparedStatement(s, result);
+			closeResultSet(rs, result);
 		}
-		return result;	
+		return result;
 	}
 
 
@@ -231,54 +203,71 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 	 */
 	@Override
 	public IResult insertUser(Connection con, String email, String userHandle,
-			String userId, String password, String userFullName, 
-			String avatar, String role, String homepage, String geolocation) {
+							  String userId, String password, String userFullName,
+							  String avatar, String role, String homepage, String geolocation) {
 		IResult result = new ResultPojo();
-		PreparedStatement s = null;
-		PreparedStatement s2 = null;
-		System.out.println("INSERTUSER "+email+" | "+userHandle+" | "+userId);
+		PreparedStatement putUser = null;
+		PreparedStatement putUserProperty = null;
 		try {
-			String pwd = sha1(password);
-			s = con.prepareStatement(IUserSchema.putUser);
-			s.setString(1, email);
-			s.setString(2, pwd);
-			s.setString(3, userId);
-			s.setString(4, userHandle);
-			s.setString(5, userFullName);
-		//	s.setString(5, "");
-		//	s.setString(6, "");
-			boolean x = s.execute();
-			System.out.println("INSERTUSER1 "+x);
-			s2 = con.prepareStatement(IUserSchema.putUserProperty);
-			s2.setString(1, userHandle);
-			s2.setString(2, IUserSchema.USER_HOMEPAGE);
-			s2.setString(3, homepage);
-			x = s2.execute();
-			System.out.println("INSERTUSER2 "+x);
-			s2.clearParameters();
-			s2.setString(1, userHandle);
-			s2.setString(2, IUserSchema.USER_GEOLOC);
-			s2.setString(3, geolocation);
-			x = s2.execute();
-			s2.clearParameters();
-			s2.setString(1, userHandle);
-			s2.setString(2, IUserSchema.USER_ROLE);
-			s2.setString(3, role);
-			x = s2.execute();
-			s2.clearParameters();
-			s2.setString(1, userHandle);
-			s2.setString(2, IUserSchema.USER_AVATAR);
-			s2.setString(3, avatar);
-			x = s2.execute();
+			String hash = PasswordStorage.createHash(password);
+			con.setAutoCommit(false);
 
-			System.out.println("INSERTUSER3 "+x);
-		} catch (Exception e) {
+			putUser = con.prepareStatement(IUserSchema.putUser);
+			putUser.setString(1, email);
+			putUser.setString(2, hash);
+			putUser.setString(3, userId);
+			putUser.setString(4, userHandle);
+			putUser.setString(5, userFullName);
+			int x = putUser.executeUpdate();
+
+			putUserProperty = con.prepareStatement(IUserSchema.putUserProperty);
+			putUserProperty.setString(1, userId);
+			putUserProperty.setString(2, IUserSchema.USER_HOMEPAGE);
+			putUserProperty.setString(3, homepage);
+			x = putUserProperty.executeUpdate();
+
+			putUserProperty.clearParameters();
+			putUserProperty.setString(1, userId);
+			putUserProperty.setString(2, IUserSchema.USER_GEOLOC);
+			putUserProperty.setString(3, geolocation);
+			x = putUserProperty.executeUpdate();
+
+			putUserProperty.clearParameters();
+			putUserProperty.setString(1, userId);
+			putUserProperty.setString(2, IUserSchema.USER_ROLE);
+			putUserProperty.setString(3, role);
+			x = putUserProperty.executeUpdate();
+
+			putUserProperty.clearParameters();
+			putUserProperty.setString(1, userId);
+			putUserProperty.setString(2, IUserSchema.USER_AVATAR);
+			putUserProperty.setString(3, avatar);
+			x = putUserProperty.executeUpdate();
+
+			con.commit();
+		} catch (SQLException e) {
+			result.addErrorString(e.getMessage());
 			environment.logError(e.getMessage(), e);
-			e.printStackTrace();
+			try {
+				con.rollback();
+			} catch (SQLException e2) {
+				result.addErrorString(e2.getMessage());
+				environment.logError(e2.getMessage(), e2);
+			}
+		} catch (Exception e) {
+			result.addErrorString(e.getMessage());
+			environment.logError(e.getMessage(), e);
 		} finally {
-			closePreparedStatement(s,result);
-			if (s2 != null)
-				closePreparedStatement(s2,result);
+			closePreparedStatement(putUser, result);
+			if (putUserProperty != null) {
+				closePreparedStatement(putUserProperty, result);
+			}
+			try {
+				con.setAutoCommit(true);
+			} catch (SQLException e) {
+				result.addErrorString(e.getMessage());
+				environment.logError(e.getMessage(), e);
+			}
 		}
 		return result;
 	}
@@ -287,7 +276,7 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 	 * @see org.topicquests.backside.servlet.api.IUserPersist#insertEncryptedUser(java.sql.Connection, java.lang.String, java.lang.String, java.lang.String)
 	 * /
 	@Override
-	public IResult insertEncryptedUser(Connection con, String userName,
+	public IResult insertEncryptedUser(Connection con, String userId,
 			String password, String grant) {
 		IResult result = new ResultPojo();
 		// TODO Auto-generated method stub
@@ -298,41 +287,37 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 	 * @see org.topicquests.backside.servlet.api.IUserPersist#insertUserData(java.sql.Connection, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public IResult insertUserData(Connection con, String userName,
-			String propertyType, String propertyValue) {
-		System.out.println("INSERTUSERDATA "+userName+" "+propertyType+" "+propertyValue);
-		environment.logDebug("ßß "+userName+" "+propertyType+" "+propertyValue);
-			IResult result = new ResultPojo();
+	public IResult insertUserData(Connection con, String userId, String propertyType, String propertyValue) {
+		IResult result = new ResultPojo();
 		PreparedStatement s = null;
 		try {
 			s = con.prepareStatement(IUserSchema.putUserProperty);
-			s.setString(1, userName);
+			s.setString(1, userId);
 			s.setString(2, propertyType);
 			s.setString(3, propertyValue);
 			s.execute();
 		} catch (Exception e) {
 			environment.logError(e.getMessage(), e);
 		} finally {
-			closePreparedStatement(s,result);
+			closePreparedStatement(s, result);
 		}
 		return result;
 	}
-	
+
 	@Override
-	public IResult removeUserData(Connection con, String userName, String propertyType, String oldValue) {
-		System.out.println("INSERTUSERDATA "+userName+" "+propertyType+" "+oldValue);
+	public IResult removeUserData(Connection con, String userId, String propertyType, String oldValue) {
 		IResult result = new ResultPojo();
 		PreparedStatement s = null;
 		try {
 			s = con.prepareStatement(IUserSchema.removeUserProperty);
-			s.setString(1, userName);
+			s.setString(1, userId);
 			s.setString(2, propertyType);
 			s.setString(3, oldValue);
 			s.execute();
 		} catch (Exception e) {
 			environment.logError(e.getMessage(), e);
 		} finally {
-			closePreparedStatement(s,result);
+			closePreparedStatement(s, result);
 		}
 		return result;
 	}
@@ -341,21 +326,20 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 	 * @see org.topicquests.backside.servlet.api.IUserPersist#updateUserData(java.sql.Connection, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public IResult updateUserData(Connection con, String userName,
-			String propertyType, String newValue) {
+	public IResult updateUserData(Connection con, String userId, String propertyType, String newValue) {
 		IResult result = new ResultPojo();
 		PreparedStatement s = null;
 		try {
 			s = con.prepareStatement(IUserSchema.updateUserProperty);
 			s.setString(1, newValue);
 			s.setString(2, propertyType);
-			s.setString(3, userName);
+			s.setString(3, userId);
 			boolean x = s.execute();
 		} catch (Exception e) {
 			environment.logError(e.getMessage(), e);
 			result.addErrorString(e.getMessage());
 		} finally {
-			closePreparedStatement(s,result);
+			closePreparedStatement(s, result);
 		}
 		return result;
 	}
@@ -383,8 +367,8 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 			environment.logError(e.getMessage(), e);
 			result.addErrorString(e.getMessage());
 		} finally {
-			closePreparedStatement(s,result);
-			closeResultSet(rs,result);
+			closePreparedStatement(s, result);
+			closeResultSet(rs, result);
 		}
 		return result;
 	}
@@ -393,18 +377,18 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 	 * @see org.topicquests.backside.servlet.api.IUserPersist#removeUser(java.sql.Connection, java.lang.String)
 	 */
 	@Override
-	public IResult removeUser(Connection con, String userName) {
+	public IResult removeUser(Connection con, String userId) {
 		IResult result = new ResultPojo();
 		PreparedStatement s = null;
 		try {
 			s = con.prepareStatement(IUserSchema.removeUser);
-			s.setString(1, userName);
+			s.setString(1, userId);
 			boolean x = s.execute();
 		} catch (Exception e) {
 			environment.logError(e.getMessage(), e);
 			result.addErrorString(e.getMessage());
 		} finally {
-			closePreparedStatement(s,result);
+			closePreparedStatement(s, result);
 		}
 		return result;
 	}
@@ -413,21 +397,20 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 	 * @see org.topicquests.backside.servlet.api.IUserPersist#changeUserPassword(java.sql.Connection, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public IResult changeUserPassword(Connection con, String userName,
-			String newPassword) {
+	public IResult changeUserPassword(Connection con, String userId, String newPassword) {
 		IResult result = new ResultPojo();
 		PreparedStatement s = null;
 		try {
-			String pwd = sha1(newPassword);
+			String hash = PasswordStorage.createHash(newPassword);
 			s = con.prepareStatement(IUserSchema.updateUserPwd);
-			s.setString(1, pwd);
-			s.setString(2, userName);
+			s.setString(1, hash);
+			s.setString(2, userId);
 			boolean x = s.execute();
 		} catch (Exception e) {
 			environment.logError(e.getMessage(), e);
 			result.addErrorString(e.getMessage());
 		} finally {
-			closePreparedStatement(s,result);
+			closePreparedStatement(s, result);
 		}
 		return result;
 	}
@@ -436,30 +419,29 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 	 * @see org.topicquests.backside.servlet.api.IUserPersist#addUserRole(java.sql.Connection, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public IResult addUserRole(Connection con, String userName, String newRole) {
-		return this.insertUserData(con, userName, IUserSchema.USER_ROLE, newRole);
-	}
-	
-	@Override
-	public IResult removeUserRole(Connection con, String userName, String oldRole) {
-		return this.removeUserData(con, userName, IUserSchema.USER_ROLE, oldRole); //(con, userName, IUserSchema.USER_ROLE, oldRole);
+	public IResult addUserRole(Connection con, String userId, String newRole) {
+		return this.insertUserData(con, userId, IUserSchema.USER_ROLE, newRole);
 	}
 
 	@Override
-	public IResult updateUserEmail(Connection con, String userName,
-			String newEmail) {
+	public IResult removeUserRole(Connection con, String userId, String oldRole) {
+		return this.removeUserData(con, userId, IUserSchema.USER_ROLE, oldRole); //(con, userId, IUserSchema.USER_ROLE, oldRole);
+	}
+
+	@Override
+	public IResult updateUserEmail(Connection con, String userId, String newEmail) {
 		IResult result = new ResultPojo();
 		PreparedStatement s = null;
 		try {
 			s = con.prepareStatement(IUserSchema.updateUserEmail);
 			s.setString(1, newEmail);
-			s.setString(2, userName);
+			s.setString(2, userId);
 			boolean x = s.execute();
 		} catch (Exception e) {
 			environment.logError(e.getMessage(), e);
 			result.addErrorString(e.getMessage());
 		} finally {
-			closePreparedStatement(s,result);
+			closePreparedStatement(s, result);
 		}
 		return result;
 	}
@@ -474,7 +456,7 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 		ResultSet rs = null;
 		Boolean x;
 		try {
-			List<String>users = new ArrayList<String>();
+			List<String> users = new ArrayList<String>();
 			result.setResultObject(users);
 			s = con.createStatement();
 			rs = s.executeQuery(IUserSchema.listUserNames);
@@ -485,15 +467,14 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 			environment.logError(e.getMessage(), e);
 			result.addErrorString(e.getMessage());
 		} finally {
-			closeStatement(s,result);
-			closeResultSet(rs,result);
+			closeStatement(s, result);
+			closeResultSet(rs, result);
 		}
 		return result;
 	}
 
 	@Override
 	public IResult listUsers(Connection con, int start, int count) {
-		System.out.println("H2UserDatabase.listUsers "+start+" | "+count);
 		IResult result = new ResultPojo();
 		PreparedStatement s = null;
 		PreparedStatement s2 = null;
@@ -502,9 +483,9 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 		String sql = IUserSchema.listUsers;
 		if (count > -1)
 			sql = IUserSchema.listUsersLimited;
-		
+
 		try {
-			List<ITicket>users = new ArrayList<ITicket>();
+			List<ITicket> users = new ArrayList<ITicket>();
 			result.setResultObject(users);
 			s = con.prepareStatement(sql);
 			if (count > -1) {
@@ -512,7 +493,7 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 				s.setInt(2, start);
 			}
 			rs = s.executeQuery();
-			String name, key,val, ava;
+			String name, key, val, ava;
 			ITicket t;
 			IResult r;
 			while (rs.next()) {
@@ -520,7 +501,7 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 				name = rs.getString(IUserSchema.USER_NAME);
 				//environment.logDebug("H2-1 "+name);
 				r = this.getTicketByHandle(con, name);
-				t = (ITicket)r.getResultObject();
+				t = (ITicket) r.getResultObject();
 				if (r.hasError())
 					result.addErrorString(r.getErrorString());
 				users.add(t);
@@ -529,12 +510,12 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 			environment.logError(e.getMessage(), e);
 			result.addErrorString(e.getMessage());
 		} finally {
-			closeStatement(s,result);
-			closeResultSet(rs,result);
+			closeStatement(s, result);
+			closeResultSet(rs, result);
 			if (s2 != null)
-				closeStatement(s2,result);
+				closeStatement(s2, result);
 			if (rs2 != null)
-				closeResultSet(rs2,result);
+				closeResultSet(rs2, result);
 		}
 		return result;
 	}
@@ -544,23 +525,21 @@ public class H2UserDatabase  extends H2DatabaseDriver implements IUserPersist, I
 	 */
 	@Override
 	public void exportSchema() throws Exception {
-	    Connection con = null;
-	    try {
-	      String[] sql = IUserSchema.TABLES;
-	      int len = sql.length;
-	      con = getSQLConnection();
-	      Statement s = con.createStatement();
-	      for (int i = 0; i < len; i++) {
-	    	environment.logDebug(sql[i]);
-	    	System.out.println("EXPORT: "+sql[i]);
-	        s.execute(sql[i]);
-	      }
-	      s.close();
-	      con.close();
-	    }
-	    catch (SQLException e) {
-	      throw new Exception(e);
-	    }
+		Connection con = null;
+		try {
+			String[] sql = IUserSchema.TABLES;
+			int len = sql.length;
+			con = getSQLConnection();
+			Statement s = con.createStatement();
+			for (int i = 0; i < len; i++) {
+				environment.logDebug(sql[i]);
+				s.execute(sql[i]);
+			}
+			s.close();
+			con.close();
+		} catch (SQLException e) {
+			throw new Exception(e);
+		}
 	}
 
 }

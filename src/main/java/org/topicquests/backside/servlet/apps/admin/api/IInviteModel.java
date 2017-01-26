@@ -19,18 +19,16 @@ import org.topicquests.support.api.IResult;
 
 /**
  * @author park
- *
  */
 public interface IInviteModel {
 
 	IResult existsInvite(String userEmail);
-	
+
 	IResult addInvite(String userEmail);
-	
+
 	IResult removeInvite(String userEmail);
 
 	/**
-	 * 
 	 * @param start
 	 * @param count -1 means list all
 	 * @return

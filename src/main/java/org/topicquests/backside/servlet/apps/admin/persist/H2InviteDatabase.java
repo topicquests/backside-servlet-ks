@@ -15,25 +15,19 @@
  */
 package org.topicquests.backside.servlet.apps.admin.persist;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.apps.admin.api.IInviteDatabase;
 import org.topicquests.backside.servlet.apps.admin.api.IInviteSchema;
-import org.topicquests.backside.servlet.apps.usr.api.IUserSchema;
 import org.topicquests.backside.servlet.persist.rdbms.H2DatabaseDriver;
 import org.topicquests.support.ResultPojo;
 import org.topicquests.support.api.IResult;
 
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author park
- *
  */
 public class H2InviteDatabase extends H2DatabaseDriver implements
 		IInviteDatabase {
@@ -47,24 +41,25 @@ public class H2InviteDatabase extends H2DatabaseDriver implements
 	 * @throws Exception
 	 */
 	public H2InviteDatabase(ServletEnvironment env, String dbName,
-			String userName, String pwd, String filePath) throws Exception {
+							String userName, String pwd, String filePath) throws Exception {
 		super(env, dbName, userName, pwd, filePath);
 		init();
 	}
+
 	private void init() throws Exception {
 		Connection con = null;
 		ResultSet rs = null;
 		Statement s = null;
 		try {
 			con = getSQLConnection();
-			System.out.println("H2InviteDatabase.init-1 "+con);
-			s= con.createStatement();
+			System.out.println("H2InviteDatabase.init-1 " + con);
+			s = con.createStatement();
 			rs = s.executeQuery("select * from invites");
-			environment.logDebug("H2InviteDatabase.init "+rs.next());
+			environment.logDebug("H2InviteDatabase.init " + rs.next());
 			System.out.println("H2InviteDatabase.init-2");
 		} catch (Exception e) {
 			System.out.println("H2InviteDatabase.init-3 ");
-			environment.logDebug("H2InviteDatabase.init fail "+e.getMessage());
+			environment.logDebug("H2InviteDatabase.init fail " + e.getMessage());
 			exportSchema();
 		} finally {
 			if (s != null)
@@ -75,6 +70,7 @@ public class H2InviteDatabase extends H2DatabaseDriver implements
 				con.close();
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.topicquests.backside.servlet.apps.admin.api.IInviteDatabase#existsInvite(java.sql.Connection, java.lang.String)
 	 */
@@ -85,7 +81,7 @@ public class H2InviteDatabase extends H2DatabaseDriver implements
 		ResultSet rs = null;
 		Boolean x;
 		try {
-			System.out.println("H2InviteDatabase.existsInvite "+userEmail);
+			System.out.println("H2InviteDatabase.existsInvite " + userEmail);
 			s = con.prepareStatement(IInviteSchema.getInvite);
 			s.setString(1, userEmail);
 			rs = s.executeQuery();
@@ -98,8 +94,8 @@ public class H2InviteDatabase extends H2DatabaseDriver implements
 			environment.logError(e.getMessage(), e);
 			result.addErrorString(e.getMessage());
 		} finally {
-			closeStatement(s,result);
-			closeResultSet(rs,result);
+			closeStatement(s, result);
+			closeResultSet(rs, result);
 		}
 		return result;
 	}
@@ -115,12 +111,12 @@ public class H2InviteDatabase extends H2DatabaseDriver implements
 			s = con.prepareStatement(IInviteSchema.insertInvite);
 			s.setString(1, userEmail);
 			boolean t = s.execute();
-			System.out.println("ADDINVITE "+t+" "+userEmail);
+			System.out.println("ADDINVITE " + t + " " + userEmail);
 		} catch (Exception e) {
 			environment.logError(e.getMessage(), e);
 			result.addErrorString(e.getMessage());
 		} finally {
-			closeStatement(s,result);
+			closeStatement(s, result);
 		}
 		return result;
 	}
@@ -140,7 +136,7 @@ public class H2InviteDatabase extends H2DatabaseDriver implements
 			environment.logError(e.getMessage(), e);
 			result.addErrorString(e.getMessage());
 		} finally {
-			closeStatement(s,result);
+			closeStatement(s, result);
 		}
 		return result;
 	}
@@ -153,9 +149,9 @@ public class H2InviteDatabase extends H2DatabaseDriver implements
 		String sql = IInviteSchema.listInvites;
 		if (count > -1)
 			sql = IInviteSchema.listInvitesLimited;
-		
+
 		try {
-			List<String>users = new ArrayList<String>();
+			List<String> users = new ArrayList<String>();
 			result.setResultObject(users);
 			s = con.prepareStatement(sql);
 			if (count > -1) {
@@ -170,30 +166,29 @@ public class H2InviteDatabase extends H2DatabaseDriver implements
 			environment.logError(e.getMessage(), e);
 			result.addErrorString(e.getMessage());
 		} finally {
-			closeStatement(s,result);
-			closeResultSet(rs,result);
+			closeStatement(s, result);
+			closeResultSet(rs, result);
 		}
 		return result;
 	}
 
 	void exportSchema() throws Exception {
-	    Connection con = null;
-	    try {
-	      String[] sql = IInviteSchema.INVITE_SCHEMA;
-	      int len = sql.length;
-	      con = getSQLConnection();
-	      Statement s = con.createStatement();
-	      for (int i = 0; i < len; i++) {
-	    	environment.logDebug(sql[i]);
-	    	System.out.println("EXPORT: "+sql[i]);
-	        s.execute(sql[i]);
-	      }
-	      s.close();
-	      con.close();
-	    }
-	    catch (SQLException e) {
-	      throw new Exception(e);
-	    }
+		Connection con = null;
+		try {
+			String[] sql = IInviteSchema.INVITE_SCHEMA;
+			int len = sql.length;
+			con = getSQLConnection();
+			Statement s = con.createStatement();
+			for (int i = 0; i < len; i++) {
+				environment.logDebug(sql[i]);
+				System.out.println("EXPORT: " + sql[i]);
+				s.execute(sql[i]);
+			}
+			s.close();
+			con.close();
+		} catch (SQLException e) {
+			throw new Exception(e);
+		}
 	}
 
 }

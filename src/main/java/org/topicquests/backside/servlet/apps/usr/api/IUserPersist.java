@@ -20,129 +20,135 @@
 */
 package org.topicquests.backside.servlet.apps.usr.api;
 
-import java.sql.*;
-
 import org.topicquests.backside.servlet.api.IRDBMSDatabase;
 import org.topicquests.support.api.IResult;
 
+import java.sql.Connection;
+
 
 /**
- *
  * @author Owner
- *
  */
 public interface IUserPersist extends IRDBMSDatabase {
 
-    /**
-     * Authenticate this user. Return <code>null</code> if doesn't authenticate
-     * @param connection
-     * @param email
-     * @param password
-     * @return			Ticket  can return <code>null</code>
-     */
+	/**
+	 * Authenticate this user. Return <code>null</code> if doesn't authenticate
+	 *
+	 * @param connection
+	 * @param email
+	 * @param password
+	 * @return Ticket can return <code>null</code>
+	 */
 	IResult authenticate(Connection con, String email, String password);
 
-    /**
-     * Very dangerous method. Use only after authentication, e.g. 
-     * in web services.
-     * @param con
-     * @param userHandle
-     * @return
-     */
+	/**
+	 * Very dangerous method. Use only after authentication, e.g.
+	 * in web services.
+	 *
+	 * @param con
+	 * @param userHandle
+	 * @return
+	 */
 	IResult getTicketByHandle(Connection con, String userHandle);
-	
+
 	IResult getTicketByEmail(Connection con, String email);
-	
+
 	IResult getTicketById(Connection con, String userId);
-		
-    /**
-     * <p>
-     * Throws an exception if user already exists. Should
-     * use <code>existsUsername</code> first
-     * </p>
-     * @param con
-     * @param email 
-     * @param userHandle
-     * @param userId TODO
-     * @param password
-     * @param userFullName TODO
-     * @param avatar
-     * @param role	cannot be <code>null</code>
-     * @param homepage TODO
-     * @param geolocation TODO
-     * @return
-     */
-    IResult insertUser(Connection con,
-    				  String email,
-    				  String userHandle,
-    				  String userId, String password, String userFullName, String avatar, String role, String homepage, String geolocation);
-    
-    /**
-     * Used when importing from an XML export
-     * @param con
-     * @param userName
-     * @param password is already encrypted
-     * @param grant
-     * @return
-     */
+
+	/**
+	 * <p>
+	 * Throws an exception if user already exists. Should
+	 * use <code>existsUsername</code> first
+	 * </p>
+	 *
+	 * @param con
+	 * @param email
+	 * @param userHandle
+	 * @param userId       TODO
+	 * @param password
+	 * @param userFullName TODO
+	 * @param avatar
+	 * @param role         cannot be <code>null</code>
+	 * @param homepage     TODO
+	 * @param geolocation  TODO
+	 * @return
+	 */
+	IResult insertUser(Connection con,
+					   String email,
+					   String userHandle,
+					   String userId, String password, String userFullName, String avatar, String role, String homepage, String geolocation);
+
+	/**
+	 * Used when importing from an XML export
+	 *
+	 * @param con
+	 * @param userName
+	 * @param password is already encrypted
+	 * @param grant
+	 * @return
+	 */
 //    IResult insertEncryptedUser(Connection con, String userName, String password, String grant);
-    
-    IResult insertUserData(Connection con, String userName, String propertyType, String propertyValue);
-    
-    IResult updateUserData(Connection con, String userName, String propertyType, String newValue);
-    
-    IResult removeUserData(Connection con, String userName, String propertyType, String oldValue);
-    /**
-     * Returns Boolean value as result
-     * @param con
-     * @param userName
-     * @return
-     */
-    IResult existsUsername(Connection con, String userName);
-    /**
-     *
-     * @param con
-     * @param userName
-     * @return
-     */
-    IResult removeUser(Connection con, String userName);
+
+	IResult insertUserData(Connection con, String userName, String propertyType, String propertyValue);
+
+	IResult updateUserData(Connection con, String userName, String propertyType, String newValue);
+
+	IResult removeUserData(Connection con, String userName, String propertyType, String oldValue);
+
+	/**
+	 * Returns Boolean value as result
+	 *
+	 * @param con
+	 * @param userName
+	 * @return
+	 */
+	IResult existsUsername(Connection con, String userName);
+
+	/**
+	 * @param con
+	 * @param userName
+	 * @return
+	 */
+	IResult removeUser(Connection con, String userName);
 
 	/**
 	 * Used when <code>grants</code> or <code>password</code> changes
-     * @param connection
+	 *
+	 * @param connection
 	 * @param ticket
 	 * @return
 	 */
 //	void updateUser(Connection con, Ticket ticket) throws TopicSpacesException;
-    IResult changeUserPassword(Connection con, String userName, String newPassword);
-    
- //   void changeUserGrant(Connection con, String userName, String newGrant)
+	IResult changeUserPassword(Connection con, String userName, String newPassword);
+
+	//   void changeUserGrant(Connection con, String userName, String newGrant)
 //		throws TopicSpacesException;
-    
-    IResult addUserRole(Connection con, String userName, String newRole);
-    
-    IResult removeUserRole(Connection con, String userName, String oldRole);
 
-    IResult updateUserEmail(Connection con, String userName, String newEmail);
+	IResult addUserRole(Connection con, String userName, String newRole);
 
-    /**
-     * <p>Return List of <code>locators</code></p>
-     * @param con
-     * @return	can return <code>null</code> or List<String>
-     * 
-     */
-    IResult listUserLocators(Connection con);
+	IResult removeUserRole(Connection con, String userName, String oldRole);
 
-    /**
-     * 
-     * @param con
-     * @param start
-     * @param count
-     * @return a possibly empty list of {@link ITicket} objects
-     */
-    IResult listUsers(Connection con, int start, int count);
-    /**
+	IResult updateUserEmail(Connection con, String userName, String newEmail);
+
+	/**
+	 * <p>Return List of <code>locators</code></p>
+	 *
+	 * @param con
+	 * @return can return <code>null</code> or List<String>
+	 */
+	IResult listUserLocators(Connection con);
+
+	/**
+	 * @param con
+	 * @param start
+	 * @param count
+	 * @return a possibly empty list of {@link ITicket} objects
+	 */
+	IResult listUsers(Connection con, int start, int count);
+
+	/**
 	 * Clear the database
+	 *
 	 * @throws TopicSpacesException
 	 */
 	void exportSchema() throws Exception;

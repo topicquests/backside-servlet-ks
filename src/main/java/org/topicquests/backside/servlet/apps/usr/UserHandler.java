@@ -15,15 +15,8 @@
  */
 package org.topicquests.backside.servlet.apps.usr;
 
-import java.util.*;
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.common.io.BaseEncoding;
 import net.minidev.json.JSONObject;
-
 import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.api.ICredentialsMicroformat;
 import org.topicquests.backside.servlet.api.IErrorMessages;
@@ -32,24 +25,29 @@ import org.topicquests.backside.servlet.apps.BaseHandler;
 import org.topicquests.backside.servlet.apps.admin.api.IAdminMicroformat;
 import org.topicquests.backside.servlet.apps.usr.api.IUserMicroformat;
 import org.topicquests.backside.servlet.apps.usr.api.IUserModel;
-import org.topicquests.backside.servlet.apps.usr.api.IUserSchema;
-import org.topicquests.support.api.IResult;
 import org.topicquests.ks.api.ITicket;
+import org.topicquests.support.api.IResult;
 
-import com.google.common.io.BaseEncoding;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author park
- *
  */
-public class UserHandler  extends BaseHandler {
+public class UserHandler extends BaseHandler {
 	//access to user database
 	private IUserModel model;
+
 	/**
-	 * 
+	 *
 	 */
 	public UserHandler(ServletEnvironment env, String basePath) {
-		super(env,basePath);
+		super(env, basePath);
 		System.out.println("User CondoHandler");
 		try {
 			model = new UserModel(environment);
@@ -61,9 +59,9 @@ public class UserHandler  extends BaseHandler {
 
 	public void handleGet(HttpServletRequest request, HttpServletResponse response, ITicket credentials, JSONObject jsonObject) throws ServletException, IOException {
 		JSONObject returnMessage = newJSONObject();
-		String message = "", rtoken="";
+		String message = "", rtoken = "";
 		String verb = getVerb(jsonObject);
-		System.out.println("UserHandler.get verb: "+verb);
+		System.out.println("UserHandler.get verb: " + verb);
 		int code = 0;
 		IResult r;
 		if (verb.equals(IUserMicroformat.LIST_USERS)) {
@@ -73,12 +71,14 @@ public class UserHandler  extends BaseHandler {
 			if (!startS.equals("")) {
 				try {
 					start = Integer.valueOf(startS);
-				} catch (Exception e1) {}
+				} catch (Exception e1) {
+				}
 			}
 			if (!countS.equals("")) {
 				try {
 					count = Integer.valueOf(countS);
-				} catch (Exception e2) {}
+				} catch (Exception e2) {
+				}
 			}
 			//TODO: note: we are ignoring any SORT modifiers
 			//This really returns some live cargo in the form of a list of user objects in JSON format
@@ -89,11 +89,11 @@ public class UserHandler  extends BaseHandler {
 				message = r.getErrorString();
 			} else {
 				//Time to take that list apart
-				System.out.println("UserHandler.ListUsers "+r.getResultObject());
+				System.out.println("UserHandler.ListUsers " + r.getResultObject());
 				if (r.getResultObject() != null) {
-					List<ITicket> usrs = (List<ITicket>)r.getResultObject();
-					Iterator<ITicket>itr = usrs.iterator();
-					List<JSONObject>jsonUsers = new ArrayList<JSONObject>();
+					List<ITicket> usrs = (List<ITicket>) r.getResultObject();
+					Iterator<ITicket> itr = usrs.iterator();
+					List<JSONObject> jsonUsers = new ArrayList<JSONObject>();
 					while (itr.hasNext()) {
 						jsonUsers.add(ticketToUser(itr.next()));
 					}
@@ -109,7 +109,7 @@ public class UserHandler  extends BaseHandler {
 			String email = getEmail(jsonObject);
 			r = model.getTicketByEmail(email);
 			if (r.getResultObject() != null) {
-				ITicket t = (ITicket)r.getResultObject();
+				ITicket t = (ITicket) r.getResultObject();
 				JSONObject jUser = ticketToUser(t);
 				returnMessage.put(ICredentialsMicroformat.CARGO, jUser);
 				code = BaseHandler.RESPONSE_OK;
@@ -122,7 +122,7 @@ public class UserHandler  extends BaseHandler {
 			String id = getUserId(jsonObject);
 			r = model.getTicketById(id);
 			if (r.getResultObject() != null) {
-				ITicket t = (ITicket)r.getResultObject();
+				ITicket t = (ITicket) r.getResultObject();
 				JSONObject jUser = ticketToUser(t);
 				returnMessage.put(ICredentialsMicroformat.CARGO, jUser);
 				code = BaseHandler.RESPONSE_OK;
@@ -135,7 +135,7 @@ public class UserHandler  extends BaseHandler {
 			String handle = getUserHandle(jsonObject);
 			r = model.getTicketByHandle(handle);
 			if (r.getResultObject() != null) {
-				ITicket t = (ITicket)r.getResultObject();
+				ITicket t = (ITicket) r.getResultObject();
 				JSONObject jUser = ticketToUser(t);
 				returnMessage.put(ICredentialsMicroformat.CARGO, jUser);
 				code = BaseHandler.RESPONSE_OK;
@@ -145,7 +145,7 @@ public class UserHandler  extends BaseHandler {
 				code = BaseHandler.RESPONSE_OK;
 			}
 		} else {
-			String x = IErrorMessages.BAD_VERB+"-UserServletGet-"+verb;
+			String x = IErrorMessages.BAD_VERB + "-UserServletGet-" + verb;
 			environment.logError(x, null);
 			throw new ServletException(x);
 		}
@@ -154,31 +154,32 @@ public class UserHandler  extends BaseHandler {
 		super.sendJSON(returnMessage.toJSONString(), code, response);
 		returnMessage = null;
 	}
-	
+
 	public void handlePost(HttpServletRequest request, HttpServletResponse response, ITicket credentials, JSONObject jsonObject) throws ServletException, IOException {
 		JSONObject returnMessage = newJSONObject();
-		String message = "", rtoken="";
+		String message = "", rtoken = "";
 		String verb = getVerb(jsonObject);
 		int code = 0;
 		IResult r;
-		System.out.println("UserHandler.post verb: "+verb);
+		System.out.println("UserHandler.post verb: " + verb);
 		if (verb.equals(IUserMicroformat.NEW_USER)) {
 			String email = getEmail(jsonObject);
 			//TODO sanity check
 			String userName = getUserHandle(jsonObject);
+			String userId = jsonObject.getAsString(IUserMicroformat.USER_ID);
 			String fullName = jsonObject.getAsString(IUserMicroformat.USER_FULLNAME);
 			String password = jsonObject.getAsString(IUserMicroformat.USER_PWD);
 			String avatar = notNullString(jsonObject.getAsString(IUserMicroformat.USER_AVATAR));
 			String homepage = notNullString(jsonObject.getAsString(IUserMicroformat.USER_HOMEPAGE));
-			System.out.println("NEWUSER "+homepage);
+			System.out.println("NEWUSER " + homepage);
 			String geolocation = notNullString(jsonObject.getAsString(IUserMicroformat.USER_GEOLOC));
 			String role = notNullString(jsonObject.getAsString(IUserMicroformat.USER_ROLE));
-			if (role.equals("")) 
+			if (role.equals(""))
 				role = ISecurity.USER_ROLE; //default role
-			byte [] foo = BaseEncoding.base64().decode(password);
+			byte[] foo = BaseEncoding.base64().decode(password);
 			String creds = new String(foo);
-			r = model.insertUser(email, userName, UUID.randomUUID().toString(), creds, fullName, avatar, role, homepage, geolocation, true);
-			System.out.println("NEWUSER2 "+r.getErrorString());
+			r = model.insertUser(email, userName, userId, creds, fullName, avatar, role, homepage, geolocation, true);
+			System.out.println("NEWUSER2 " + r.getErrorString());
 			if (r.hasError()) {
 				code = BaseHandler.RESPONSE_INTERNAL_SERVER_ERROR;
 				message = r.getErrorString();
@@ -190,12 +191,12 @@ public class UserHandler  extends BaseHandler {
 			returnMessage.put(ICredentialsMicroformat.RESP_TOKEN, rtoken);
 			returnMessage.put(ICredentialsMicroformat.RESP_MESSAGE, message);
 		} else if (verb.equals(IAdminMicroformat.UPDATE_USER_PASSWORD)) {
-			String userName = getUserHandle(jsonObject);
+			String userId = getUserId(jsonObject);
 			String password = jsonObject.getAsString(IUserMicroformat.USER_PWD);
-			byte [] foo = BaseEncoding.base64().decode(password);
+			byte[] foo = BaseEncoding.base64().decode(password);
 			String creds = new String(foo);
-		//	System.out.println("FFFF "+creds);
-			r = model.changeUserPassword(userName, creds);
+			//	System.out.println("FFFF "+creds);
+			r = model.changeUserPassword(userId, creds);
 			if (r.hasError()) {
 				code = BaseHandler.RESPONSE_INTERNAL_SERVER_ERROR;
 				message = r.getErrorString();
@@ -204,9 +205,9 @@ public class UserHandler  extends BaseHandler {
 				code = BaseHandler.RESPONSE_OK;
 			}
 		} else if (verb.equals(IAdminMicroformat.REMOVE_USER)) {
-			String userName = getUserHandle(jsonObject);
-			System.out.println("UserHandler.removeUser "+userName);
-			r = model.removeUser(userName);
+			String userId = getUserId(jsonObject);
+			System.out.println("UserHandler.removeUser " + userId);
+			r = model.removeUser(userId);
 			if (r.hasError()) {
 				code = BaseHandler.RESPONSE_OK;
 				message = r.getErrorString();
@@ -215,10 +216,10 @@ public class UserHandler  extends BaseHandler {
 				code = BaseHandler.RESPONSE_OK;
 			}
 		} else if (verb.equals(IAdminMicroformat.UPDATE_USER_DATA)) {
-			String userName = getUserHandle(jsonObject);
+			String userId = getUserId(jsonObject);
 			String key = jsonObject.getAsString(IUserMicroformat.PROP_KEY);
 			String val = jsonObject.getAsString(IUserMicroformat.PROP_VAL);
-			r = model.insertUserData(userName, key, val);
+			r = model.insertUserData(userId, key, val);
 			if (r.hasError()) {
 				code = BaseHandler.RESPONSE_OK;
 				message = r.getErrorString();
@@ -227,7 +228,7 @@ public class UserHandler  extends BaseHandler {
 				code = BaseHandler.RESPONSE_OK;
 			}
 		} else {
-			String x = IErrorMessages.BAD_VERB+"-UserServletPost-"+verb;
+			String x = IErrorMessages.BAD_VERB + "-UserServletPost-" + verb;
 			environment.logError(x, null);
 			throw new ServletException(x);
 		}
@@ -235,7 +236,7 @@ public class UserHandler  extends BaseHandler {
 		super.sendJSON(returnMessage.toJSONString(), code, response);
 		returnMessage = null;
 	}
-	
+
 
 	public void shutDown() {
 		model.shutDown();

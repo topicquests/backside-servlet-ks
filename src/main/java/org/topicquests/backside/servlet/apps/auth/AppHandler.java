@@ -57,14 +57,13 @@ public class AppHandler  extends BaseHandler {
 	//////////////////////////////////////////////
 	public void handleGet(HttpServletRequest request, HttpServletResponse response, ITicket credentials, JSONObject jsonObject) throws ServletException, IOException {
 		JSONObject returnMessage = newJSONObject();
-		System.out.println("AUTHGET "+jsonObject.toJSONString());
 		String message = "", rtoken="";
 		String verb = getVerb(jsonObject);
 		System.out.println("VERB "+verb);
 		int code = 0;
 		if (verb.equals(IAuthMicroformat.VALIDATE)) {
-			String name = (String)jsonObject.get(ICredentialsMicroformat.USER_ID);
-			IResult r = model.existsUsername(name);
+			String handle = (String)jsonObject.get(ICredentialsMicroformat.USER_HANDLE);
+			IResult r = model.existsUsername(handle);
 			Boolean x = (Boolean)r.getResultObject();
 			//returns ok only if this username does not exist
 			if (!x.booleanValue()) {

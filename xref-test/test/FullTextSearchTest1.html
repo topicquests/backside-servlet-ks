@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>FullTextSearchTest1 xref</title>
+<link type="text/css" rel="stylesheet" href="../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../testapidocs/test/FullTextSearchTest1.html">View Javadoc</a></div><pre>
+
+<a class="jxr_linenumber" name="1" href="#1">1</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="4" href="#4">4</a>   <strong class="jxr_keyword">package</strong> test;
+<a class="jxr_linenumber" name="5" href="#5">5</a>   
+<a class="jxr_linenumber" name="6" href="#6">6</a>   <strong class="jxr_keyword">import</strong> org.topicquests.backside.servlet.ServletEnvironment;
+<a class="jxr_linenumber" name="7" href="#7">7</a>   <strong class="jxr_keyword">import</strong> org.topicquests.backside.servlet.apps.util.ElasticQueryDSL;
+<a class="jxr_linenumber" name="8" href="#8">8</a>   <strong class="jxr_keyword">import</strong> org.topicquests.support.api.IResult;
+<a class="jxr_linenumber" name="9" href="#9">9</a>   <strong class="jxr_keyword">import</strong> org.topicquests.ks.SystemEnvironment;
+<a class="jxr_linenumber" name="10" href="#10">10</a>  <strong class="jxr_keyword">import</strong> org.topicquests.node.provider.Client;
+<a class="jxr_linenumber" name="11" href="#11">11</a>  <strong class="jxr_keyword">import</strong> org.topicquests.node.provider.ProviderEnvironment;
+<a class="jxr_linenumber" name="12" href="#12">12</a>  
+<a class="jxr_linenumber" name="13" href="#13">13</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_javadoccomment"> * @author park</em>
+<a class="jxr_linenumber" name="15" href="#15">15</a>  <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../test/FullTextSearchTest1.html">FullTextSearchTest1</a> {
+<a class="jxr_linenumber" name="18" href="#18">18</a>  	<strong class="jxr_keyword">private</strong> ServletEnvironment environment;
+<a class="jxr_linenumber" name="19" href="#19">19</a>  	<strong class="jxr_keyword">private</strong> SystemEnvironment tmEnvironment;
+<a class="jxr_linenumber" name="20" href="#20">20</a>  	<strong class="jxr_keyword">private</strong> ProviderEnvironment database;
+<a class="jxr_linenumber" name="21" href="#21">21</a>  	<strong class="jxr_keyword">private</strong> Client client;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  	<strong class="jxr_keyword">private</strong> ElasticQueryDSL queryDSL;
+<a class="jxr_linenumber" name="23" href="#23">23</a>  	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String
+<a class="jxr_linenumber" name="24" href="#24">24</a>  		QUERY = <span class="jxr_string">"TypeType"</span>,
+<a class="jxr_linenumber" name="25" href="#25">25</a>  		FIELD = <span class="jxr_string">"sbOf"</span>, <em class="jxr_comment">//list all classes which are subOf TypeType</em>
+<a class="jxr_linenumber" name="26" href="#26">26</a>  		INDEX = <span class="jxr_string">"topics"</span>;
+<a class="jxr_linenumber" name="27" href="#27">27</a>  
+<a class="jxr_linenumber" name="28" href="#28">28</a>  	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <em class="jxr_javadoccomment">	 *</em>
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="31" href="#31">31</a>  	<strong class="jxr_keyword">public</strong> <a href="../test/FullTextSearchTest1.html">FullTextSearchTest1</a>(ServletEnvironment env) {
+<a class="jxr_linenumber" name="32" href="#32">32</a>  		environment = env;
+<a class="jxr_linenumber" name="33" href="#33">33</a>  		tmEnvironment = environment.getTopicMapEnvironment();
+<a class="jxr_linenumber" name="34" href="#34">34</a>  		database = tmEnvironment.getProvider();
+<a class="jxr_linenumber" name="35" href="#35">35</a>  		client = database.getClient();
+<a class="jxr_linenumber" name="36" href="#36">36</a>  		queryDSL = environment.getQueryDSL();
+<a class="jxr_linenumber" name="37" href="#37">37</a>  		runTest();
+<a class="jxr_linenumber" name="38" href="#38">38</a>  	}
+<a class="jxr_linenumber" name="39" href="#39">39</a>  
+<a class="jxr_linenumber" name="40" href="#40">40</a>  	<strong class="jxr_keyword">void</strong> runTest() {
+<a class="jxr_linenumber" name="41" href="#41">41</a>  		String theQuery = queryDSL.fullTextQuerySingleField(QUERY, false, FIELD, 0, 10);
+<a class="jxr_linenumber" name="42" href="#42">42</a>  		System.out.println(<span class="jxr_string">"AAA "</span>+theQuery);
+<a class="jxr_linenumber" name="43" href="#43">43</a>  		IResult r = client.listObjectsByQuery(theQuery, INDEX );
+<a class="jxr_linenumber" name="44" href="#44">44</a>  		System.out.println(<span class="jxr_string">"BBB "</span>+r.getErrorString()+<span class="jxr_string">" | "</span>+r.getResultObject());
+<a class="jxr_linenumber" name="45" href="#45">45</a>  		<strong class="jxr_keyword">if</strong> (r.hasError()) System.exit(1);
+<a class="jxr_linenumber" name="46" href="#46">46</a>  	}
+<a class="jxr_linenumber" name="47" href="#47">47</a>  }
+<a class="jxr_linenumber" name="48" href="#48">48</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="49" href="#49">49</a>  <em class="jxr_javadoccomment">AAA {</em>
+<a class="jxr_linenumber" name="50" href="#50">50</a>  <em class="jxr_javadoccomment">  "from" : 0,</em>
+<a class="jxr_linenumber" name="51" href="#51">51</a>  <em class="jxr_javadoccomment">  "size" : 10,</em>
+<a class="jxr_linenumber" name="52" href="#52">52</a>  <em class="jxr_javadoccomment">  "query" : {</em>
+<a class="jxr_linenumber" name="53" href="#53">53</a>  <em class="jxr_javadoccomment">    "match" : {</em>
+<a class="jxr_linenumber" name="54" href="#54">54</a>  <em class="jxr_javadoccomment">      "sbOf" : {</em>
+<a class="jxr_linenumber" name="55" href="#55">55</a>  <em class="jxr_javadoccomment">        "query" : "TypeType",</em>
+<a class="jxr_linenumber" name="56" href="#56">56</a>  <em class="jxr_javadoccomment">        "type" : "boolean"</em>
+<a class="jxr_linenumber" name="57" href="#57">57</a>  <em class="jxr_javadoccomment">      }</em>
+<a class="jxr_linenumber" name="58" href="#58">58</a>  <em class="jxr_javadoccomment">    }</em>
+<a class="jxr_linenumber" name="59" href="#59">59</a>  <em class="jxr_javadoccomment">  }</em>
+<a class="jxr_linenumber" name="60" href="#60">60</a>  <em class="jxr_javadoccomment">}</em>
+<a class="jxr_linenumber" name="61" href="#61">61</a>  <em class="jxr_javadoccomment">BBB  | [{"crtr":"SystemUser","_ver":"1444584909656","lEdDt":"2015-10-11T10:35:09-07:00","label":"Property type","isFdrtd":false,"trCl":["TypeType"],"crDt":"2015-10-11T10:35:09-07:00","sbOf":"TypeType","lox":"PropertyType","sIco":"\/images\/cogwheel_sm.png","isPrv":false,"details":"Topic Map upper Property type","lIco":"\/images\/cogwheel.png"}, {"crtr":"SystemUser","_ver":"1444584910121","lEdDt":"2015-10-11T10:35:10-07:00","label":"LegendType type","isFdrtd":false,"trCl":["TypeType"],"crDt":"2015-10-11T10:35:10-07:00","sbOf":"TypeType","lox":"LegendType","sIco":"\/images\/cogwheel_sm.png","isPrv":false,"details":"Topic Map upper Legend type","lIco":"\/images\/cogwheel.png"}, {"crtr":"SystemUser","_ver":"1444584909917","lEdDt":"2015-10-11T10:35:09-07:00","label":"UserType type","isFdrtd":false,"trCl":["TypeType"],"crDt":"2015-10-11T10:35:09-07:00","sbOf":"TypeType","lox":"UserType","sIco":"\/images\/cogwheel_sm.png","isPrv":false,"details":"Topic Map upper User type","lIco":"\/images\/cogwheel.png"}, {"crtr":"SystemUser","_ver":"1444584910225","lEdDt":"2015-10-11T10:35:10-07:00","label":"ScopeType type","isFdrtd":false,"trCl":["TypeType"],"crDt":"2015-10-11T10:35:10-07:00","sbOf":"TypeType","lox":"ScopeType","sIco":"\/images\/cogwheel_sm.png","isPrv":false,"details":"Topic Map upper Scope type","lIco":"\/images\/cogwheel.png"}, {"crtr":"SystemUser","_ver":"1444584910005","lEdDt":"2015-10-11T10:35:10-07:00","label":"ResourceType type","isFdrtd":false,"trCl":["TypeType"],"crDt":"2015-10-11T10:35:10-07:00","sbOf":"TypeType","lox":"ResourceType","sIco":"\/images\/cogwheel_sm.png","isPrv":false,"details":"Topic Map upper Resource type","lIco":"\/images\/cogwheel.png"}, {"crtr":"SystemUser","_ver":"1444584909836","lEdDt":"2015-10-11T10:35:09-07:00","label":"Role type","isFdrtd":false,"trCl":["TypeType"],"crDt":"2015-10-11T10:35:09-07:00","sbOf":"TypeType","lox":"RoleType","sIco":"\/images\/cogwheel_sm.png","isPrv":false,"details":"Topic Map upper Role type","lIco":"\/images\/cogwheel.png"}, {"crtr":"SystemUser","_ver":"1447201184663","lEdDt":"2015-11-10T16:19:44-08:00","label":"Class type","isFdrtd":false,"crDt":"2015-11-10T16:19:44-08:00","trCl":["TypeType"],"sbOf":"TypeType","lox":"ClassType","isPrv":false,"sIco":"\/images\/cogwheel_sm.png","details":"Topic Map upper Class type","lIco":"\/images\/cogwheel.png"}, {"crtr":"SystemUser","_ver":"1444584909736","lEdDt":"2015-10-11T10:35:09-07:00","label":"Rule type","isFdrtd":false,"trCl":["TypeType"],"crDt":"2015-10-11T10:35:09-07:00","sbOf":"TypeType","lox":"RuleType","sIco":"\/images\/cogwheel_sm.png","isPrv":false,"details":"Topic Map upper Rule type","lIco":"\/images\/cogwheel.png"}, {"crtr":"SystemUser","_ver":"1447201187685","lEdDt":"2015-11-10T16:19:47-08:00","label":"Relation type","isFdrtd":false,"crDt":"2015-11-10T16:19:47-08:00","trCl":["TypeType"],"sbOf":"TypeType","lox":"RelationType","isPrv":false,"sIco":"\/images\/cogwheel_sm.png","details":"Topic Map upper Relation type","lIco":"\/images\/cogwheel.png"}, {"crtr":"SystemUser","_ver":"1447201190703","lEdDt":"2015-11-10T16:19:50-08:00","label":"Ontology type","isFdrtd":false,"crDt":"2015-11-10T16:19:50-08:00","trCl":["TypeType"],"sbOf":"TypeType","lox":"OntologyType","isPrv":false,"sIco":"\/images\/cogwheel_sm.png","details":"Topic Map upper Ontology type","lIco":"\/images\/cogwheel.png"}]</em>
+<a class="jxr_linenumber" name="62" href="#62">62</a>  
+<a class="jxr_linenumber" name="63" href="#63">63</a>  <em class="jxr_javadoccomment"> */</em>
+</pre>
+<hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
+</html>
+

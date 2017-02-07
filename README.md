@@ -15,11 +15,11 @@ The BacksideServletKS api will be available on port 8080 at your docker host's i
 Use docker to run tests in an automatically-provisioned environment.
 
 ```
-docker-compose build --no-cache && docker-compose run web ./test.sh
+docker-compose build --no-cache && docker-compose run web mvn clean test -Dgpg.skip=true
 ```
 
 # Building without Docker
 Automatically download dependencies and build this project.
 ```
-mvn clean install -Dmaven.test.skip=true
+mvn clean install -DskipTests
 ```

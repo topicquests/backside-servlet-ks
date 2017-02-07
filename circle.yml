@@ -1,6 +1,30 @@
 machine:
   pre:
     - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
+    - >-
+      cat > ~/.m2/settings.xml <<- EOF
+        <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+          <servers>
+            <server>
+              <id>github</id>
+              <password>\${env.GITHUB_API_TOKEN}</password>
+            </server>
+            <server>
+              <id>ossrh</id>
+              <username>\${env.OSSRH_USERNAME}</username>
+              <password>\${env.OSSRH_PASSWORD}</password>
+            </server>
+          </servers>
+          <profiles>
+            <profile>
+              <id>ossrh</id>
+              <activation>
+                <activeByDefault>true</activeByDefault>
+              </activation>
+            </profile>
+          </profiles>
+        </settings>
+      EOF
   services:
     - docker
 
@@ -26,10 +50,15 @@ dependencies:
 
 test:
   override:
-    - docker-compose run web mvn clean test -Dgpg.skip=true -Ddependency-check.skip=true
-    - docker-compose run web mvn clean verify -Dgpg.skip=true -Ddependency-check.skip=true
+    - docker-compose run web mvn clean test -Dgpg.skip=true
+    - docker-compose run web mvn clean verify -Dgpg.skip=true
 
 deployment:
+  staging:
+    branch: master
+    commands:
+      - mvn clean deploy -DskipTests -Dgpg.skip=true
+      - mvn clean site -DskipTests -Dgpg.skip=true
   release:
     tag: /^\d+\.\d+\.\d+$/
     owner: topicquests

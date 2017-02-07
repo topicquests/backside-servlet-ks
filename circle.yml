@@ -5,23 +5,37 @@ machine:
     - docker
 
 dependencies:
+  cache_directories:
+    - ~/docker
   override:
-    - docker info
-    - docker build --rm=false -t wenzowski/backside-servlet-ks .
-    - sudo pip install docker-compose==1.9.0
-    - docker-compose up -d
+    - >-
+      mkdir -p ~/docker;
+      if [[ -e ~/docker/elasticsearch.2.4.1.tar.gz ]]; then
+        docker load -i ~/docker/elasticsearch.2.4.1.tar.gz;
+      else
+        docker pull elasticsearch:2.4.1;
+        docker save -o ~/docker/elasticsearch.2.4.1.tar.gz elasticsearch:2.4.1;
+      fi;
+      if [[ -e ~/docker/backside-servlet-ks.tar.gz ]]; then
+        docker load -i ~/docker/backside-servlet-ks.tar.gz;
+      fi;
+      docker build --rm=false -t topicquests/backside-servlet-ks:latest . ;
+      docker save -o ~/docker/backside-servlet-ks.tar.gz topicquests/backside-servlet-ks:latest;
+      sudo pip install docker-compose==1.9.0;
+      docker-compose up -d;
 
 test:
   override:
-    - docker-compose run web mvn clean test
+    - docker-compose run web mvn clean test -Dgpg.skip=true -Ddependency-check.skip=true
+    - docker-compose run web mvn clean verify -Dgpg.skip=true -Ddependency-check.skip=true
 
 deployment:
   release:
     tag: /^\d+\.\d+\.\d+$/
-    owner: wenzowski
+    owner: topicquests
     commands:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      - docker pull wenzowski/backside-servlet-ks
-      - docker build --rm=false -t wenzowski/backside-servlet-ks:$CIRCLE_TAG -t wenzowski/backside-servlet-ks .
-      - docker push wenzowski/backside-servlet-ks:$CIRCLE_TAG
-      - docker push wenzowski/backside-servlet-ks:latest
+      - docker pull topicquests/backside-servlet-ks
+      - docker build --rm=false -t topicquests/backside-servlet-ks:$CIRCLE_TAG -t topicquests/backside-servlet-ks .
+      - docker push topicquests/backside-servlet-ks:$CIRCLE_TAG
+      - docker push topicquests/backside-servlet-ks:latest

@@ -26,8 +26,8 @@ dependencies:
 
 test:
   override:
-    - docker-compose run web mvn clean test -Dgpg.skip=true -Ddependency-check.skip=true
-    - docker-compose run web mvn clean verify -Dgpg.skip=true -Ddependency-check.skip=true
+    - docker-compose run web mvn clean test -Dgpg.skip=true
+    - docker-compose run web mvn clean verify -Dgpg.skip=true
 
 deployment:
   release:

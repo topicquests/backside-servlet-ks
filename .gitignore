@@ -31,3 +31,5 @@ buildNumber.properties
 !/.mvn/wrapper/maven-wrapper.jar
 *.iml
 SameLabels.json
+.project
+.classpath

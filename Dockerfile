@@ -13,11 +13,10 @@ RUN mkdir -p /usr/share/maven /usr/share/maven/ref \
 WORKDIR /app
 
 ADD pom.xml pom.xml
-ADD repo repo
-RUN mvn install clean
+RUN mvn install clean -DskipTests -Dgpg.skip=true -Ddependency-check.skip=true
 
 ADD . .
-RUN mvn -o clean install -DskipTests
+RUN mvn -o clean install -DskipTests -Dgpg.skip=true -Ddependency-check.skip=true
 RUN sed -i.bak 's/localhost/es/' config/provider-config.xml
 
 VOLUME /app/data/backside

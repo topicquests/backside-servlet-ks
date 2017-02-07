@@ -7,21 +7,21 @@ machine:
 dependencies:
   override:
     - docker info
-    - docker build --rm=false -t wenzowski/backside-servlet-ks .
+    - docker build --rm=false -t topicquests/backside-servlet-ks .
     - sudo pip install docker-compose==1.9.0
     - docker-compose up -d
 
 test:
   override:
-    - docker-compose run web mvn clean test
+    - docker-compose run web mvn clean test verify -Dgpg.skip=true
 
 deployment:
   release:
     tag: /^\d+\.\d+\.\d+$/
-    owner: wenzowski
+    owner: topicquests
     commands:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      - docker pull wenzowski/backside-servlet-ks
-      - docker build --rm=false -t wenzowski/backside-servlet-ks:$CIRCLE_TAG -t wenzowski/backside-servlet-ks .
-      - docker push wenzowski/backside-servlet-ks:$CIRCLE_TAG
-      - docker push wenzowski/backside-servlet-ks:latest
+      - docker pull topicquests/backside-servlet-ks
+      - docker build --rm=false -t topicquests/backside-servlet-ks:$CIRCLE_TAG -t topicquests/backside-servlet-ks .
+      - docker push topicquests/backside-servlet-ks:$CIRCLE_TAG
+      - docker push topicquests/backside-servlet-ks:latest

@@ -6,13 +6,19 @@
     <packaging>jar</packaging>
     <version>0.10.0-SNAPSHOT</version>
     <name>backside-servlet-ks</name>
-    <url>https://github.com/wenzowski/backside-servlet-ks</url>
+    <url>https://github.com/topicquests/backside-servlet-ks</url>
     <developers>
         <developer>
             <email>jackpark@topicquests.org</email>
             <name>Jack Park</name>
             <url>https://github.com/KnowledgeGarden</url>
             <id>KnowledgeGarden</id>
+        </developer>
+        <developer>
+            <email>markszpakowski@topicquests.org</email>
+            <name>Mark Szpakowski</name>
+            <url>https://github.com/markszpak</url>
+            <id>markszpak</id>
         </developer>
         <developer>
             <email>alec@wenzowski.com</email>
@@ -169,7 +175,7 @@
                         <phase>site</phase>
                         <configuration>
                             <repositoryName>backside-servlet-ks</repositoryName>
-                            <repositoryOwner>wenzowski</repositoryOwner>
+                            <repositoryOwner>topicquests</repositoryOwner>
                             <server>github</server>
                             <message>Building site for my project</message>
                             <path>${site.path}</path>
@@ -181,7 +187,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>1.4.4.1</version>
+                <version>1.4.5</version>
                 <configuration>
                     <cveValidForHours>12</cveValidForHours>
                     <failBuildOnCVSS>11</failBuildOnCVSS>
@@ -311,8 +317,8 @@
         </license>
     </licenses>
     <scm>
-        <url>https://github.com/wenzowski/backside-servlet-ks</url>
-        <connection>scm:git:git://github.com/wenzowski/backside-servlet-ks.git</connection>
+        <url>https://github.com/topicquests/backside-servlet-ks</url>
+        <connection>scm:git:git://github.com/topicquests/backside-servlet-ks.git</connection>
     </scm>
     <distributionManagement>
         <snapshotRepository>

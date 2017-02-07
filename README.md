@@ -1,4 +1,5 @@
-# backside-servlet-ks [![CircleCI](https://circleci.com/gh/wenzowski/backside-servlet-ks/tree/master.svg?style=svg)](https://circleci.com/gh/wenzowski/backside-servlet-ks/tree/master) [![](https://imagelayers.io/badge/wenzowski/backside-servlet-ks:0.6.1.svg)](https://imagelayers.io/?images=wenzowski/backside-servlet-ks:0.6.1 'Get your own badge on imagelayers.io')
+[![CircleCI](https://circleci.com/gh/topicquests/backside-servlet-ks/tree/master.svg?style=svg)](https://circleci.com/gh/topicquests/backside-servlet-ks/tree/master)
+# backside-servlet-ks
 BacksideServlet for the new TQElasticKnowledgeSystem, replaces BacksideServlet
 
 # Try it out

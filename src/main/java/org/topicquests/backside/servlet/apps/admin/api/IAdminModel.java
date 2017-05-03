@@ -43,15 +43,29 @@ public interface IAdminModel extends IInviteModel {
 	 * <p>At the UI, an Admin will insert or delete a role code from that string.</p>
 	 * <p>What is returned here is that revised role string.</p>
 	 *
-	 * @param userName
+	 * @param userId
 	 * @param newRole
 	 * @return
 	 */
-	IResult addUserRole(String userName, String newRole);
+	IResult addUserRole(String userId, String newRole);
 
-	IResult removeUserRole(String userName, String oldRole);
+	IResult removeUserRole(String userId, String oldRole);
 
-	IResult updateUserEmail(String userName, String newEmail);
+	IResult updateUserEmail(String userId, String newEmail);
+	
+	/**
+	 * <p>This is for one-time migration of userId values when a user database is updated
+	 * and you don't want to replace the topic map.</p>
+	 * <p>This will not scale; can only be used with a few users in a new system.</p>
+	 * <p>To use, force ElasticSearch to run in a different index (change the name in the yml file)
+	 * then boot the new system into that index. Then ask <em>all</em>present users to sign up
+	 * again. Then, use the Admin Migrate function to change each user's identity from the new one
+	 * to the old one. Then reboot back into the topic map.</p>
+	 * @param oldUserId  old replaces new
+	 * @param newUserId
+	 * @return
+	 */
+	IResult migrateUserId(String oldUserId, String newUserId);
 
 	void shutDown();
 }

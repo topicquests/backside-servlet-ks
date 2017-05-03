@@ -31,6 +31,7 @@ import org.topicquests.support.api.IResult;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.UUID;
 
 /**
  * @author park
@@ -84,6 +85,7 @@ public class UserModel implements IUserModel {
 	 */
 	@Override
 	public IResult authenticate(String email, String password) {
+		System.out.println("GET THIS: "+email);
 		Connection con = null;
 		IResult r = getMapConnection();
 		if (r.hasError())
@@ -132,21 +134,26 @@ public class UserModel implements IUserModel {
 	 */
 	@Override
 	public IResult insertUser(String email, String userHandle, String userId, String password, String userFullName, String avatar, String role, String homepage, String geolocation, boolean addTopic) {
+		environment.logDebug("UserModel.insertUser "+userHandle+" "+userId);
+		System.out.println("SIGNING "+userId);
 		Connection con = null;
 		IResult r = getMapConnection();
 		if (r.hasError())
 			return r;
 		con = (Connection) r.getResultObject();
 		IResult result = new ResultPojo();
+		String uid = userId;
+		if (uid == null)
+			uid = UUID.randomUUID().toString();
 		if (addTopic) {
 			String s = userFullName;
 			if (s.equals(""))
 				s = userHandle;
-			ISubjectProxy n = nodeModel.newInstanceNode(userId, ITQCoreOntology.USER_TYPE, s, "", "en",
+			ISubjectProxy n = nodeModel.newInstanceNode(uid, ITQCoreOntology.USER_TYPE, s, "", "en",
 					ITQCoreOntology.SYSTEM_USER, ICoreIcons.PERSON_ICON_SM, ICoreIcons.PERSON_ICON, false);
 			result = topicMap.putNode(n);
 		}
-		IResult x = database.insertUser(con, email, userHandle, userId, password, userFullName, avatar, role, homepage, geolocation);
+		IResult x = database.insertUser(con, email, userHandle, uid, password, userFullName, avatar, role, homepage, geolocation);
 		if (x.hasError())
 			result.addErrorString(x.getErrorString());
 		result.setResultObject(x.getResultObject());
@@ -175,8 +182,7 @@ public class UserModel implements IUserModel {
 		if (r.hasError())
 			return r;
 		con = (Connection) r.getResultObject();
-
-		return database.insertUserData(con, userId, propertyType, propertyValue);
+		return database.updateUserData(con, userId, propertyType, propertyValue);
 	}
 
 	@Override
@@ -348,6 +354,12 @@ public class UserModel implements IUserModel {
 	@Override
 	public void shutDown() {
 		closeLocalConnection();
+	}
+
+	@Override
+	public IResult migrateUserId(String oldUserId, String newUserId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

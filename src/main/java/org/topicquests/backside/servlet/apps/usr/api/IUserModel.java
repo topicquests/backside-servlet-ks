@@ -136,6 +136,20 @@ public interface IUserModel {
 	 */
 	IResult listUsers(int start, int count);
 
+	/**
+	 * <p>This is for one-time migration of userId values when a user database is updated
+	 * and you don't want to replace the topic map.</p>
+	 * <p>This will not scale; can only be used with a few users in a new system.</p>
+	 * <p>To use, force ElasticSearch to run in a different index (change the name in the yml file)
+	 * then boot the new system into that index. Then ask <em>all</em>present users to sign up
+	 * again. Then, use the Admin Migrate function to change each user's identity from the new one
+	 * to the old one. Then reboot back into the topic map.</p>
+	 * @param oldUserId  old replaces new
+	 * @param newUserId
+	 * @return
+	 */
+	IResult migrateUserId(String oldUserId, String newUserId);
+
 
 	void shutDown();
 }

@@ -71,6 +71,8 @@ public interface IUserSchema {
 	public static final String updateUserProperty =
 			"UPDATE userprops  SET val=? WHERE prop=? AND userId=?";
 
+	public static final String getUserPropertyValue = 
+			"SELECT val fFROM userprops where userId=? AND prop=?";
 	/**
 	 * Intended for key-value pairs which occupy multiple rows, e.g. roles
 	 */

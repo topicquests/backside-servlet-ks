@@ -193,5 +193,11 @@ public class AdminModel implements IAdminModel {
 		closeLocalConnection();
 	}
 
+	@Override
+	public IResult migrateUserId(String oldUserId, String newUserId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

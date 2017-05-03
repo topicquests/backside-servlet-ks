@@ -5,7 +5,7 @@
 
 <properties>
 	<parameter name="MyDatabaseUser" value = "nexistw" /> <!-- CHANGEME -->
-	<parameter name="MyDatabasePwd"  value = "foo" />		  <!-- CHANGEME -->
+	<parameter name="MyDatabasePwd"  value = "foo!" />		  <!-- CHANGEME -->
 	<parameter name="UserDatabase" value="backsideusers" /> <!-- CHANGEME -->
 	<parameter name="UserDatabasePath" value="./data/backside" /> <!-- CHANGEME -->
 	<parameter name="InviteDatabase" value="backsideinvites" /> <!-- CHANGEME -->

@@ -33,3 +33,6 @@ buildNumber.properties
 SameLabels.json
 .project
 .classpath
+/bin/
+.settings
+*.bak

@@ -68,7 +68,7 @@ public class UserModel implements IUserModel {
 	private void validateDefaultAdmin() {
 		//from config-props.xml
 
-		String id = environment.getStringProperty("DefaultAdminId");
+		String id = null;
 		String email = environment.getStringProperty("DefaultAdminEmail");
 		String name = environment.getStringProperty("DefaultAdminName");
 		String pwd = environment.getStringProperty("DefaultAdminPwd");
@@ -358,8 +358,12 @@ public class UserModel implements IUserModel {
 
 	@Override
 	public IResult migrateUserId(String oldUserId, String newUserId) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection con = null;
+		IResult r = getMapConnection();
+		if (r.hasError())
+			return r;
+		con = (Connection) r.getResultObject();
+		return database.migrateUserId(con, oldUserId, newUserId);
 	}
 
 

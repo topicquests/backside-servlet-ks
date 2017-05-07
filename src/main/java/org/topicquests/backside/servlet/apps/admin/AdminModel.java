@@ -195,8 +195,8 @@ public class AdminModel implements IAdminModel {
 
 	@Override
 	public IResult migrateUserId(String oldUserId, String newUserId) {
-		// TODO Auto-generated method stub
-		return null;
+		System.out.println("MIGRATING "+oldUserId+" | "+newUserId);
+		return userModel.migrateUserId(oldUserId, newUserId);
 	}
 
 

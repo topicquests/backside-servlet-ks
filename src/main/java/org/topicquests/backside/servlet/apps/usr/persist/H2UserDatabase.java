@@ -584,8 +584,21 @@ public class H2UserDatabase extends H2DatabaseDriver implements IUserPersist, IR
 
 	@Override
 	public IResult migrateUserId(Connection con, String oldUserId, String newUserId) {
-		// TODO Auto-generated method stub
-		return null;
+		IResult result = new ResultPojo();
+
+			PreparedStatement s = null;
+			try {
+				s = con.prepareStatement(IUserSchema.migrateUserId);
+				s.setString(1, newUserId);
+				s.setString(2, oldUserId);
+				boolean x = s.execute();
+			} catch (Exception e) {
+				environment.logError(e.getMessage(), e);
+				result.addErrorString(e.getMessage());
+			} finally {
+				closePreparedStatement(s, result);
+			}
+		return result;
 	}
 
 }

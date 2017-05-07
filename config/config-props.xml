@@ -16,7 +16,6 @@
 	<!-- Server needs a default Administrator
 		These values should be changed.
 		Once an Admin logs in, should change the password again -->
-	<parameter name="DefaultAdminId" value="ef4da398-7440-4b23-b5a0-1331cc333141" /> <!-- CHANGEME -->
 	<parameter name="DefaultAdminEmail" value="default@example.com" /> <!-- CHANGEME -->
 	<parameter name="DefaultAdminName" value="therealdefaultadmin" /> <!-- CHANGEME -->
 	<parameter name="DefaultAdminPwd" value="antiquing" /> <!-- CHANGEME -->

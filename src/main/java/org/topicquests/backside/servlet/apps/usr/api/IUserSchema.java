@@ -61,6 +61,9 @@ public interface IUserSchema {
 			"DELETE FROM users WHERE name=?";
 	public static final String updateUserPwd =
 			"UPDATE users  SET pwd=? WHERE name=?";
+	
+	public static final String migrateUserId =
+			"UPDATE users SET id=? where id=?";
 
 	public static final String updateUserEmail =
 			"UPDATE users  SET email=? WHERE name=?";

@@ -52,6 +52,7 @@ test:
   override:
     - docker-compose run web mvn clean test -Dgpg.skip=true
     - docker-compose run web mvn clean verify -Dgpg.skip=true
+    - docker-compose run -e VERSIONEYE_API_KEY web mvn clean versioneye:securityAndLicenseCheck
 
 deployment:
   staging:

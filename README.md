@@ -1,4 +1,5 @@
-[![CircleCI](https://circleci.com/gh/topicquests/backside-servlet-ks/tree/master.svg?style=svg)](https://circleci.com/gh/topicquests/backside-servlet-ks/tree/master)
+[![CircleCI](https://circleci.com/gh/topicquests/backside-servlet-ks/tree/master.svg?style=shield)](https://circleci.com/gh/topicquests/backside-servlet-ks/tree/master)
+[![VersionEye](https://www.versioneye.com/user/projects/589912711e07ae0046f590d2/badge.svg?style=shield)](https://www.versioneye.com/user/projects/589912711e07ae0046f590d2/)
 # backside-servlet-ks
 BacksideServlet for the new TQElasticKnowledgeSystem, replaces BacksideServlet
 

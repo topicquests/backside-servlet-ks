@@ -273,6 +273,15 @@
                     <locales>en</locales>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.versioneye</groupId>
+                <artifactId>versioneye-maven-plugin</artifactId>
+                <version>3.11.1</version>
+                <configuration>
+                    <projectId>589912711e07ae0046f590d2</projectId>
+                    <organisation>topicquests</organisation>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <reporting>

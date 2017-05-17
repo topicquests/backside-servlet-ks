@@ -58,6 +58,7 @@ public class ServletEnvironment {
 		properties = p.getProperties();
 		System.out.println("PROPS "+properties);
 		cache = new CredentialCache(this);
+		System.out.println("EVENTHANDLERPORT "+getStringProperty("EventHandlerPort"));
 		tmEnvironment = new SystemEnvironment();
 		queryDSL = new ElasticQueryDSL(this);
 		stats = tmEnvironment.getStats();
@@ -70,7 +71,7 @@ public class ServletEnvironment {
 		isShutDown = false;
 		System.out.println("ServletEnvironment+");
 		instance = this;
-		logDebug("ServletEnvironment+");
+		logDebug("ServletEnvironment+ ");
 	}
 
 	public static ServletEnvironment getInstance() {

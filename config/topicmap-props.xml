@@ -84,6 +84,8 @@
 		used in AgentEnvironment
 	 -->
 	<parameter name="TuplespaceServer" value="localhost" /> <!-- CHANGE ME -->
+	<parameter name="EventHandlerPort" value="2931" />
+	<parameter name="EventHandlerServer" value="localhost" />
 
 
 </properties>

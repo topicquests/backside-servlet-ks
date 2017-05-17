@@ -15,16 +15,12 @@
  */
 package org.topicquests.backside.servlet.apps;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URLDecoder;
 import java.util.*;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -212,7 +208,7 @@ public abstract class BaseHandler {
      */
     public String getPath(HttpServletRequest request) throws ServletException {
     	String path = notNullString(request.getPathInfo()).trim();
-//    	System.out.println("FOO "+path);
+    	System.out.println("FOO "+path.length()+" "+path);
 //    	System.out.println("QUERY "+this.getQueryString(request));
 //    	System.out.println("DATA "+request.getParameter("data"));
 //    	System.out.println("LENGTH "+request.getContentLength());
@@ -238,13 +234,16 @@ public abstract class BaseHandler {
     			while ((c = ins.read()) > -1)
     				buf.append((char)c);
         		System.out.println(buf.toString());
+        		if (buf.length() > 0)
+        			path += buf.toString();
     			
     		}
     	} catch (Exception x) {
     		System.out.println("BaseHandler.getPath booboo "+x.getMessage());
     	}
     	if (path.startsWith("/"))
-    		path = path.substring(1);
+    		path = path.substring(1).trim();
+    	System.out.println("BAR "+path);
     	if (path.endsWith("/"))
     		path = path.substring(0,path.length()-1);
     	try {
@@ -254,7 +253,7 @@ public abstract class BaseHandler {
     	}
     	if (path != null && path.startsWith("/"))
     		path = path.substring(1);
-    	System.out.println(path);
+    	System.out.println("MYPPATH "+path);
     	return path;
     }
 

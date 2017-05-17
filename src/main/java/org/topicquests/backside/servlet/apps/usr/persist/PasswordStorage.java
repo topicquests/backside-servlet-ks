@@ -82,7 +82,7 @@ public class PasswordStorage {
 					"Fields are missing from the password hash."
 			);
 		}
-
+		System.out.println("AUTH-2");
 		if (!params[HASH_ALGORITHM_INDEX].equals("sha1")) {
 			throw new CannotPerformOperationException("Unsupported hash type.");
 		}
@@ -97,11 +97,13 @@ public class PasswordStorage {
 		if (iterations < 1) {
 			throw new InvalidHashException("Invalid number of iterations. Must be >= 1.");
 		}
+		System.out.println("AUTH-3");
 
 
 		byte[] salt = null;
 		try {
 			salt = fromBase64(params[SALT_INDEX]);
+			System.out.println("AUTH-4 ");
 		} catch (IllegalArgumentException ex) {
 			throw new InvalidHashException("Base64 decoding of salt failed.", ex);
 		}
@@ -109,6 +111,7 @@ public class PasswordStorage {
 		byte[] hash = null;
 		try {
 			hash = fromBase64(params[PBKDF2_INDEX]);
+			System.out.println("AUTH-5");
 		} catch (IllegalArgumentException ex) {
 			throw new InvalidHashException("Base64 decoding of pbkdf2 output failed.", ex);
 		}
@@ -117,9 +120,11 @@ public class PasswordStorage {
 		int storedHashSize = 0;
 		try {
 			storedHashSize = Integer.parseInt(params[HASH_SIZE_INDEX]);
+			System.out.println("AUTH-6 "+storedHashSize);
 		} catch (NumberFormatException ex) {
 			throw new InvalidHashException("Could not parse the hash size as an integer.", ex);
 		}
+		System.out.println("AUTH-7 "+hash.length);
 
 		if (storedHashSize != hash.length) {
 			throw new InvalidHashException("Hash length doesn't match stored hash length.");
@@ -137,6 +142,8 @@ public class PasswordStorage {
 		int diff = a.length ^ b.length;
 		for (int i = 0; i < a.length && i < b.length; i++)
 			diff |= a[i] ^ b[i];
+		System.out.println("AUTH-8 "+diff);
+
 		return diff == 0;
 	}
 

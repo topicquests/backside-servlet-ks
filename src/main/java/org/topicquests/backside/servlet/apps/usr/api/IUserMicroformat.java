@@ -35,6 +35,8 @@ public interface IUserMicroformat extends ICredentialsMicroformat {
 	public static final String USER_GEOLOC = "uGeoloc";
 	public static final String USER_HOMEPAGE = "uHomepage";
 	public static final String USER_FULLNAME = "uFullName";
+	public static final String OLD_ID	 = "oldId";
+	public static final String NEW_ID	 = "newId";
 
 	/**
 	 * starts a list of USER_PROPERTY objects
@@ -50,6 +52,7 @@ public interface IUserMicroformat extends ICredentialsMicroformat {
 	public static final String GET_USER_BY_EMAIL = "GetUser";  //GET
 	public static final String GET_USER_BY_ID = "GetUsrId";
 	public static final String GET_USER_BY_HANDLE = "GetUsrHndl";
+	public static final String MIGRATE_USER_ID	= "MigrateUsrId";
 
 
 }

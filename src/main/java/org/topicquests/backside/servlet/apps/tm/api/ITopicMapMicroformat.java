@@ -68,7 +68,8 @@ public interface ITopicMapMicroformat extends ICredentialsMicroformat {
 		FIND_OR_CREATE_BOOKMARK	= "FindProcessBookmark", //post
 		// blog-specific
 		LIST_ALL_BLOG_POSTS		= "ListAllBlogs",
-		LIST_BLOGS_BY_USER		= "ListUserBlogs";
+		LIST_BLOGS_BY_USER		= "ListUserBlogs",
+		LIST_BY_TEXT_QUERY		= "ListByTextQuery"; // full text search
 		
 		
 		
@@ -100,5 +101,6 @@ public interface ITopicMapMicroformat extends ICredentialsMicroformat {
 		//FEATURES creates a space for additional key/value pairs
 		FEATURES			= "Features",
 		TREE_ROOT_LOCATOR	= "TreeRootLocator",
-		MAX_TREE_DEPTH		= "MaxTreeDepth";
+		MAX_TREE_DEPTH		= "MaxTreeDepth",
+		QUERY_STRING		= "QueryString";
 }

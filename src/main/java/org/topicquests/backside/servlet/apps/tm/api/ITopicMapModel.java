@@ -73,7 +73,7 @@ public interface ITopicMapModel {
 	
 	IResult removeTopic(String topicLocator, ITicket credentials);
 	
-	IResult query(JSONObject query, int start, int count, ITicket credentials);
+	IResult query(JSONObject query, int start, int count, String sortBy, String sortDir, ITicket credentials);
 	
 	/**
 	 * <p>Note: a case could be made for 'listTopicsByURL' except that
@@ -83,26 +83,44 @@ public interface ITopicMapModel {
 	 * <p>There are, in fact, cases where this will return a list of proxies</p>
 	 *
 	 * @param url
+	 * @param start TODO
+	 * @param count TODO
+	 * @param sortBy TODO
+	 * @param sortDir TODO
 	 * @param credentials
 	 * @return
 	 */
-	IResult listTopicsByURL(String url, ITicket credentials);
+	IResult listTopicsByURL(String url, int start, int count, String sortBy, String sortDir, ITicket credentials);
 	
 	////////////////
 	// Specialized TopicMap handlers
 	////////////////
 	
-	IResult listSubclassTopics(String superClassLocator, int start, int count, ITicket credentials);
+	IResult listSubclassTopics(String superClassLocator, int start, int count, String sortBy, String sortDir, ITicket credentials);
 	
-	IResult listInstanceTopics(String typeLocator, int start, int count, ITicket credentials);
+	IResult listInstanceTopics(String typeLocator, int start, int count, String sortBy, String sortDir, ITicket credentials);
 	
-	IResult listTopicsByKeyValue(String propertyKey, String value, int start, int count, ITicket credentials);
+	IResult listTopicsByKeyValue(String propertyKey, String value, int start, int count, String sortBy, String sortDir, ITicket credentials);
 	
 	//IResult listAllBlogPosts(int start, int count, ITicket credentials);
 	
 	//IResult listBlogPostsByUser(String userId, int start, int count, ITicket credentials);
 	
 	IResult getBookmarkByURL(String url, ITicket credentials);
+	
+	/**
+	 * <p>Full text search.</p>
+	 * <p>Searches in both label and description fields</p>
+	 * @param queryString
+	 * @param language
+	 * @param start
+	 * @param count
+	 * @param sortBy can be <code>null</code>
+	 * @param sortDir can be <code>null</code>
+	 * @param credentials
+	 * @return
+	 */
+	IResult listByFullTextQuery(String queryString, String language, int start, int count, String sortBy, String sortDir, ITicket credentials);
 	
 	/**
 	 * <p>Performs a <em>MultiGet</em> on a list of tree child nodes contained by the topic
@@ -202,21 +220,26 @@ public interface ITopicMapModel {
      * List users in the TopicMap
      * @param start
      * @param count
+     * @param sortBy TODO
+     * @param sortDir TODO
      * @param credentials
      * @return
      */
-    IResult listUserTopics(int start, int count, ITicket credentials);
+    IResult listUserTopics(int start, int count, String sortBy, String sortDir, ITicket credentials);
 
     /**
      * Returns a tree rooted in <code>rootLocator</code>
+     * 
      * @param rootLocator
      * @param maxDepth
      * @param start
      * @param count
+     * @param sortBy TODO
+     * @param sortDir TODO
      * @param credentials
      * @return
      */
-    IResult getNodeTree(String rootLocator, int maxDepth, int start, int count, ITicket credentials);
+    IResult getNodeTree(String rootLocator, int maxDepth, int start, int count, String sortBy, String sortDir, ITicket credentials);
     
 	void shutDown();
 }

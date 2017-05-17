@@ -193,5 +193,11 @@ public class AdminModel implements IAdminModel {
 		closeLocalConnection();
 	}
 
+	@Override
+	public IResult migrateUserId(String oldUserId, String newUserId) {
+		System.out.println("MIGRATING "+oldUserId+" | "+newUserId);
+		return userModel.migrateUserId(oldUserId, newUserId);
+	}
+
 
 }

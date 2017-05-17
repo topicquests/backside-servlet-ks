@@ -172,6 +172,15 @@ public class AdminHandler extends BaseHandler {
 		String userid, userrole, useremail;
 		if (verb.equals(IAdminMicroformat.REMOVE_USER)) {
 			//TODO
+		} else if (verb.equals(IUserMicroformat.MIGRATE_USER_ID)) {
+			//TODO: really, this belongs to User app, not admin
+			String oldId = jsonObject.getAsString(IUserMicroformat.OLD_ID);
+			String newId = jsonObject.getAsString(IUserMicroformat.NEW_ID);
+			r = model.migrateUserId(oldId, newId);
+			if (!r.hasError()) {
+				code = BaseHandler.RESPONSE_OK;
+				message = "ok";
+			}
 		} else if (verb.equals(IAdminMicroformat.UPDATE_USER_EMAIL)) {
 			//TODO: really, this belongs to User app, not admin
 			userid = getUserId(jsonObject);

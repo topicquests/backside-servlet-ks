@@ -43,7 +43,7 @@ public class QueryTest1 {
 		mustterms.add(queryUtil.term(ITQCoreOntology.INSTANCE_OF_PROPERTY_TYPE, INodeTypes.BOOKMARK_TYPE));
 		result.put("query", queryUtil.bool(queryUtil.must(mustterms)));
 		System.out.println("A "+result.toJSONString());
-		IResult r = tmEnvironment.getDatabase().runQuery(result.toJSONString(), 0, -1, credentials);
+		IResult r = tmEnvironment.getDatabase().runQuery(result.toJSONString(), 0, -1, null, null,  credentials);
 		System.out.println("B "+r.getErrorString()+" | "+r.getResultObject());
 		
 	}

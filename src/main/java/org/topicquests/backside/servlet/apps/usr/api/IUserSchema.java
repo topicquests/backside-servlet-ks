@@ -60,7 +60,10 @@ public interface IUserSchema {
 	public static final String removeUser =
 			"DELETE FROM users WHERE name=?";
 	public static final String updateUserPwd =
-			"UPDATE users  SET pwd=? WHERE name=?";
+			"UPDATE users  SET pwd=? WHERE id=?";
+	
+	public static final String migrateUserId =
+			"UPDATE users SET id=? where email=?";
 
 	public static final String updateUserEmail =
 			"UPDATE users  SET email=? WHERE name=?";
@@ -71,6 +74,8 @@ public interface IUserSchema {
 	public static final String updateUserProperty =
 			"UPDATE userprops  SET val=? WHERE prop=? AND userId=?";
 
+	public static final String getUserPropertyValue = 
+			"SELECT val fFROM userprops where userId=? AND prop=?";
 	/**
 	 * Intended for key-value pairs which occupy multiple rows, e.g. roles
 	 */

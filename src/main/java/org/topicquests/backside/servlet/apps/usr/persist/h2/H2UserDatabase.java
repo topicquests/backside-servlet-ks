@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions
  * and limitations under the License.
  */
-package org.topicquests.backside.servlet.apps.usr.persist;
+package org.topicquests.backside.servlet.apps.usr.persist.h2;
 
 import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.api.IRDBMSDatabase;
 import org.topicquests.backside.servlet.apps.usr.api.IUserMicroformat;
 import org.topicquests.backside.servlet.apps.usr.api.IUserPersist;
 import org.topicquests.backside.servlet.apps.usr.api.IUserSchema;
+import org.topicquests.backside.servlet.apps.usr.persist.PasswordStorage;
 import org.topicquests.backside.servlet.persist.rdbms.H2DatabaseDriver;
 import org.topicquests.ks.TicketPojo;
 import org.topicquests.ks.api.ITicket;
@@ -71,6 +72,8 @@ public class H2UserDatabase extends H2DatabaseDriver implements IUserPersist, IR
 	 */
 	@Override
 	public IResult authenticate(Connection con, String identifier, String password) {
+		System.out.println("AUTH-0 "+identifier);
+
 		IResult result = new ResultPojo();
 		if (identifier == null || password == null) {
 			result.addErrorString("Missing handle/email or password");
@@ -86,7 +89,10 @@ public class H2UserDatabase extends H2DatabaseDriver implements IUserPersist, IR
 
 			if (rs.next()) {
 				String hash = rs.getString(IUserSchema.USER_PASSWORD);
+				System.out.println("AUTH-2 "+hash);
 				boolean verified = PasswordStorage.verifyPassword(password, hash);
+				System.out.println("AUTH-9 "+verified);
+
 				if (verified) {
 					String id = rs.getString(IUserSchema.USER_ID);
 					result = this.getTicketById(con, id);
@@ -154,6 +160,7 @@ public class H2UserDatabase extends H2DatabaseDriver implements IUserPersist, IR
 
 	@Override
 	public IResult getTicketById(Connection con, String userId) {
+		System.out.println("GETTICKET "+userId);
 		IResult result = new ResultPojo();
 		PreparedStatement s = null;
 		PreparedStatement s2 = null;
@@ -321,25 +328,58 @@ public class H2UserDatabase extends H2DatabaseDriver implements IUserPersist, IR
 		}
 		return result;
 	}
-
+	
+	//////////////////////////////////
+	// AN ISSUE
+	// If we try to insert a value that's already there, at risk of having two copies.
+	// If we try to update a value that's not there, have to insert instead.
+	// So, we choose Update and test to see if it's updatable
+	/////////////////////////////////
+	
+	IResult getUserDataValue(Connection con, String userId, String propertyType) {
+		IResult result = new ResultPojo();
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		try {
+			s = con.prepareStatement(IUserSchema.getUserPropertyValue);
+			s.setString(1, userId);
+			s.setString(2, propertyType);
+			rs = s.executeQuery();
+			if (rs.next())
+				result.setResultObject(rs.getString("val"));
+		} catch (Exception e) {
+			environment.logError(e.getMessage(), e);
+			result.addErrorString(e.getMessage());
+		} finally {
+			closePreparedStatement(s, result);
+		}
+		return result;
+	}
 	/* (non-Javadoc)
 	 * @see org.topicquests.backside.servlet.api.IUserPersist#updateUserData(java.sql.Connection, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
 	public IResult updateUserData(Connection con, String userId, String propertyType, String newValue) {
 		IResult result = new ResultPojo();
-		PreparedStatement s = null;
-		try {
-			s = con.prepareStatement(IUserSchema.updateUserProperty);
-			s.setString(1, newValue);
-			s.setString(2, propertyType);
-			s.setString(3, userId);
-			boolean x = s.execute();
-		} catch (Exception e) {
-			environment.logError(e.getMessage(), e);
-			result.addErrorString(e.getMessage());
-		} finally {
-			closePreparedStatement(s, result);
+		IResult r = getUserDataValue(con, userId, propertyType);
+		if (r.hasError())
+			result.addErrorString(r.getErrorString());
+		if (r.getResultObject() == null) {
+			this.insertUserData(con, userId, propertyType, newValue);
+		} else {
+			PreparedStatement s = null;
+			try {
+				s = con.prepareStatement(IUserSchema.updateUserProperty);
+				s.setString(1, newValue);
+				s.setString(2, propertyType);
+				s.setString(3, userId);
+				boolean x = s.execute();
+			} catch (Exception e) {
+				environment.logError(e.getMessage(), e);
+				result.addErrorString(e.getMessage());
+			} finally {
+				closePreparedStatement(s, result);
+			}
 		}
 		return result;
 	}
@@ -533,6 +573,7 @@ public class H2UserDatabase extends H2DatabaseDriver implements IUserPersist, IR
 			Statement s = con.createStatement();
 			for (int i = 0; i < len; i++) {
 				environment.logDebug(sql[i]);
+				System.out.println("EXPORTING "+sql[i]);
 				s.execute(sql[i]);
 			}
 			s.close();
@@ -540,6 +581,26 @@ public class H2UserDatabase extends H2DatabaseDriver implements IUserPersist, IR
 		} catch (SQLException e) {
 			throw new Exception(e);
 		}
+	}
+
+	@Override
+	public IResult migrateUserId(Connection con, String oldUserId, String newUserId) {
+		IResult result = new ResultPojo();
+			
+			PreparedStatement s = null;
+			try {
+				s = con.prepareStatement(IUserSchema.migrateUserId);
+				s.setString(1, newUserId);
+				s.setString(2, oldUserId);
+				boolean x = s.execute();
+				System.out.println("H2UserDatabase.migrating "+x+" "+oldUserId+" "+newUserId);
+			} catch (Exception e) {
+				environment.logError(e.getMessage(), e);
+				result.addErrorString(e.getMessage());
+			} finally {
+				closePreparedStatement(s, result);
+			}
+		return result;
 	}
 
 }

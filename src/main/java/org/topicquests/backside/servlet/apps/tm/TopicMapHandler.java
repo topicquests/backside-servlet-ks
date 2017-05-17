@@ -29,6 +29,7 @@ import net.minidev.json.JSONObject;
 import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.api.ICredentialsMicroformat;
 import org.topicquests.backside.servlet.api.IErrorMessages;
+import org.topicquests.backside.servlet.api.IQueryMicroformat;
 import org.topicquests.backside.servlet.apps.BaseHandler;
 import org.topicquests.backside.servlet.apps.admin.api.IAdminMicroformat;
 import org.topicquests.backside.servlet.apps.tm.api.IStructuredConversationModel;
@@ -78,6 +79,8 @@ public class TopicMapHandler  extends BaseHandler {
 		if (verb.equals(IUserMicroformat.LIST_USERS)) {
 			String startS = notNullString(jsonObject.getAsString(ICredentialsMicroformat.ITEM_FROM));
 			String countS = notNullString(jsonObject.getAsString(ICredentialsMicroformat.ITEM_COUNT));
+			String sortBy = jsonObject.getAsString(IQueryMicroformat.SORT_BY);
+			String sortDir = jsonObject.getAsString(IQueryMicroformat.SORT_DIR);
 			int start = 0, count = -1;
 			if (!startS.equals("")) {
 				try {
@@ -92,7 +95,7 @@ public class TopicMapHandler  extends BaseHandler {
 			//TODO: note: we are ignoring any SORT modifiers
 			//This really returns some live cargo in the form of a list of user objects in JSON format
 			// We are restricting this to: name, email, avatar, homepage, geolocation, role
-			r = model.listUserTopics(start, count, credentials);
+			r = model.listUserTopics(start, count, sortBy, sortDir, credentials);
 			if (r.hasError()) {
 				code = BaseHandler.RESPONSE_INTERNAL_SERVER_ERROR;
 				message = r.getErrorString();
@@ -132,6 +135,8 @@ public class TopicMapHandler  extends BaseHandler {
 			String startS = getItemFrom(jsonObject);
 			String countS = getItemCount(jsonObject);
 			String typeLocator = notNullString(jsonObject.getAsString(ITQCoreOntology.INSTANCE_OF_PROPERTY_TYPE));
+			String sortBy = jsonObject.getAsString(IQueryMicroformat.SORT_BY);
+			String sortDir = jsonObject.getAsString(IQueryMicroformat.SORT_DIR);
 			environment.logDebug("TopicMapHandler.listInstanceTopics "+typeLocator);
 			int start = 0, count = -1;
 			if (!startS.equals("")) {
@@ -144,10 +149,11 @@ public class TopicMapHandler  extends BaseHandler {
 					count = Integer.valueOf(countS);
 				} catch (Exception e2) {}
 			}
+			System.out.println("LISTING "+typeLocator+" "+sortBy+" "+sortDir);
 			//TODO: note: we are ignoring any SORT modifiers
 			//This really returns some live cargo in the form of a list of user objects in JSON format
 			// We are restricting this to: name, email, avatar, homepage, geolocation, role
-			r = model.listInstanceTopics(typeLocator, start, count, credentials);
+			r = model.listInstanceTopics(typeLocator, start, count, sortBy, sortDir, credentials);
 			if (r.hasError()) {
 				code = BaseHandler.RESPONSE_INTERNAL_SERVER_ERROR;
 				message = r.getErrorString();
@@ -212,6 +218,8 @@ public class TopicMapHandler  extends BaseHandler {
 			String startS = getItemFrom(jsonObject);
 			String countS = getItemCount(jsonObject);
 			String superClassLocator = notNullString(jsonObject.getAsString(ITQCoreOntology.SUBCLASS_OF_PROPERTY_TYPE));
+			String sortBy = jsonObject.getAsString(IQueryMicroformat.SORT_BY);
+			String sortDir = jsonObject.getAsString(IQueryMicroformat.SORT_DIR);
 			environment.logDebug("TopicMapHandler.listSubClasses "+superClassLocator);
 			int start = 0, count = -1;
 			if (!startS.equals("")) {
@@ -227,7 +235,47 @@ public class TopicMapHandler  extends BaseHandler {
 			//TODO: note: we are ignoring any SORT modifiers
 			//This really returns some live cargo in the form of a list of user objects in JSON format
 			// We are restricting this to: name, email, avatar, homepage, geolocation, role
-			r = model.listSubclassTopics(superClassLocator, start, count, credentials);
+			r = model.listSubclassTopics(superClassLocator, start, count, sortBy, sortDir, credentials);
+			if (r.hasError()) {
+				code = BaseHandler.RESPONSE_INTERNAL_SERVER_ERROR;
+				message = r.getErrorString();
+			} else {
+				//Time to take that list apart
+				if (r.getResultObject() != null) {
+					List<ISubjectProxy> usrs = (List<ISubjectProxy>)r.getResultObject();
+					Iterator<ISubjectProxy>itr = usrs.iterator();
+					List<JSONObject>jsonUsers = new ArrayList<JSONObject>();
+					while (itr.hasNext()) {
+						jsonUsers.add((JSONObject)itr.next().getData());
+					}
+					returnMessage.put(ICredentialsMicroformat.CARGO, jsonUsers);
+					code = BaseHandler.RESPONSE_OK;
+					message = "ok";
+				} else {
+					message = "Not found";
+					code = BaseHandler.RESPONSE_OK;
+				}
+			}
+		} else if (verb.equals(ITopicMapMicroformat.LIST_BY_TEXT_QUERY)) { 
+			String startS = getItemFrom(jsonObject);
+			String countS = getItemCount(jsonObject);
+			String queryString = notNullString(jsonObject.getAsString(ITopicMapMicroformat.QUERY_STRING));
+			String sortBy = jsonObject.getAsString(IQueryMicroformat.SORT_BY);
+			String sortDir = jsonObject.getAsString(IQueryMicroformat.SORT_DIR);
+			String language = jsonObject.getAsString("Lang");
+			environment.logDebug("TopicMapHandler.TextQuery "+queryString);
+			int start = 0, count = -1;
+			if (!startS.equals("")) {
+				try {
+					start = Integer.valueOf(startS);
+				} catch (Exception e1) {}
+			}
+			if (!countS.equals("")) {
+				try {
+					count = Integer.valueOf(countS);
+				} catch (Exception e2) {}
+			}
+			r = model.listByFullTextQuery(queryString, language, start, count, sortBy, sortDir, credentials);
 			if (r.hasError()) {
 				code = BaseHandler.RESPONSE_INTERNAL_SERVER_ERROR;
 				message = r.getErrorString();
@@ -253,6 +301,8 @@ public class TopicMapHandler  extends BaseHandler {
 			String maxDepth = notNullString(jsonObject.getAsString(ITopicMapMicroformat.MAX_TREE_DEPTH));
 			String startS = getItemFrom(jsonObject);
 			String countS = getItemCount(jsonObject);
+			String sortBy = jsonObject.getAsString(IQueryMicroformat.SORT_BY);
+			String sortDir = jsonObject.getAsString(IQueryMicroformat.SORT_DIR);
 			int start = 0, count = -1, depth = -1;
 			if (!startS.equals("")) {
 				try {
@@ -269,7 +319,7 @@ public class TopicMapHandler  extends BaseHandler {
 					depth = Integer.valueOf(maxDepth);
 				} catch (Exception e3) {}
 			}
-			r = model.getNodeTree(rootLocator, depth, start, count, credentials);
+			r = model.getNodeTree(rootLocator, depth, start, count, sortBy, sortDir, credentials);
 			//Treat the result just as if it's a SubjectProxy, which it is
 			if (r.getResultObject() != null) {
 				ISubjectProxy n = (ISubjectProxy)r.getResultObject();
@@ -299,6 +349,8 @@ public class TopicMapHandler  extends BaseHandler {
 		} else if (verb.equals(ITopicMapMicroformat.COLLECT_CONVERSATION_TREE)) {
 			String locator = notNullString(jsonObject.getAsString(ITopicMapMicroformat.TOPIC_LOCATOR));
 			String context = notNullString(jsonObject.getAsString(ITopicMapMicroformat.CONTEXT_LOCATOR));
+			String sortBy = jsonObject.getAsString(IQueryMicroformat.SORT_BY);
+			String sortDir = jsonObject.getAsString(IQueryMicroformat.SORT_DIR);
 			r = model.collectParentChildTree(locator, context, credentials);
 			System.out.println("COLLECT_TREE "+r.getResultObject());
 			if (r.getResultObject() != null) {
@@ -314,7 +366,7 @@ public class TopicMapHandler  extends BaseHandler {
 		} else if (verb.equals(ITopicMapMicroformat.GET_TOPIC_BY_URL)) {
 			String url = jsonObject.getAsString(ITQCoreOntology.RESOURCE_URL_PROPERTY);
 			if (url != null) {
-				r = model.listTopicsByURL(url, credentials);
+				r = model.listTopicsByURL(url, 0, -1, null, null, credentials);
 				if (r.getResultObject() != null) {
 					ISubjectProxy n = (ISubjectProxy)r.getResultObject();
 					System.out.println("GETTOPICBYURL "+n);

@@ -93,6 +93,9 @@ public interface IUserSchema {
 
 	public static final String listUserNames =
 			"SELECT name FROM users";
+	
+	public static final String listUserLocators = 
+			"SELECT id FROM users";
 
 	public final String listUsers =
 			"SELECT * FROM users ";

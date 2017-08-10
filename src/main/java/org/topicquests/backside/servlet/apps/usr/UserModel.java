@@ -16,14 +16,18 @@
 package org.topicquests.backside.servlet.apps.usr;
 
 import org.topicquests.backside.servlet.ServletEnvironment;
+import org.topicquests.backside.servlet.api.IBacksideOntology;
 import org.topicquests.backside.servlet.api.ISecurity;
+import org.topicquests.backside.servlet.apps.usr.api.IUserMicroformat;
 import org.topicquests.backside.servlet.apps.usr.api.IUserModel;
 import org.topicquests.backside.servlet.apps.usr.api.IUserPersist;
 import org.topicquests.backside.servlet.apps.usr.persist.h2.H2UserDatabase;
 import org.topicquests.ks.SystemEnvironment;
+import org.topicquests.ks.TicketPojo;
 import org.topicquests.ks.api.ICoreIcons;
 import org.topicquests.ks.api.ITQCoreOntology;
 import org.topicquests.ks.api.ITQDataProvider;
+import org.topicquests.ks.api.ITicket;
 import org.topicquests.ks.tm.api.ISubjectProxy;
 import org.topicquests.ks.tm.api.ISubjectProxyModel;
 import org.topicquests.support.ResultPojo;
@@ -41,6 +45,7 @@ public class UserModel implements IUserModel {
 	private IUserPersist database;
 	private ITQDataProvider topicMap;
 	private ISubjectProxyModel nodeModel;
+	private ITicket credentials;
 	/**
 	 * Pools Connections for each local thread
 	 * Must be closed when the thread terminates
@@ -62,6 +67,7 @@ public class UserModel implements IUserModel {
 		System.out.println("FOO " + tmenv);
 		topicMap = tmenv.getDatabase();
 		nodeModel = topicMap.getSubjectProxyModel();
+		credentials = new TicketPojo(ITQCoreOntology.SYSTEM_USER);
 		validateDefaultAdmin();
 	}
 
@@ -151,6 +157,9 @@ public class UserModel implements IUserModel {
 				s = userHandle;
 			ISubjectProxy n = nodeModel.newInstanceNode(uid, ITQCoreOntology.USER_TYPE, s, "", "en",
 					ITQCoreOntology.SYSTEM_USER, ICoreIcons.PERSON_ICON_SM, ICoreIcons.PERSON_ICON, false);
+			n.setProperty(IBacksideOntology.HANDLE_KEY, userHandle);
+			if (homepage != null && !homepage.equals(""))
+				n.setProperty(IBacksideOntology.HOMEPAGE_KEY, homepage);
 			result = topicMap.putNode(n);
 		}
 		IResult x = database.insertUser(con, email, userHandle, uid, password, userFullName, avatar, role, homepage, geolocation);
@@ -175,13 +184,19 @@ public class UserModel implements IUserModel {
 	 * @see org.topicquests.backside.servlet.apps.usr.api.IUserModel#insertUserData(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public IResult insertUserData(String userId, String propertyType,
+	public IResult updateUserData(String userId, String propertyType,
 								  String propertyValue) {
+		System.out.println("userModel.updateUserData "+userId+" "+propertyType+" "+propertyValue);
 		Connection con = null;
 		IResult r = getMapConnection();
 		if (r.hasError())
 			return r;
 		con = (Connection) r.getResultObject();
+		if (propertyType.equals(IUserMicroformat.USER_HOMEPAGE)) {
+			r = topicMap.getNode(userId, credentials);
+			ISubjectProxy p = (ISubjectProxy)r.getResultObject();
+			p.setProperty(IBacksideOntology.HOMEPAGE_KEY, propertyValue);
+		}
 		return database.updateUserData(con, userId, propertyType, propertyValue);
 	}
 

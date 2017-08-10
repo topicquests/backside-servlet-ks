@@ -31,6 +31,16 @@
                 "type": "string",
                 "store": true
             },
+            "homepage": {
+                "index": "not_analyzed",
+                "type": "string",
+                "store": true
+            },
+            "handle": {
+                "index": "not_analyzed",
+                "type": "string",
+                "store": true
+            },
             "isPrv": {
                 "index": "not_analyzed",
                 "type": "boolean",

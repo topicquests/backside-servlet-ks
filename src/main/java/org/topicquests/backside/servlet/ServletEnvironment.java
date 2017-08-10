@@ -17,16 +17,21 @@ package org.topicquests.backside.servlet;
 
 import java.util.*;
 
+import org.topicquests.support.api.IResult;
 import org.topicquests.support.config.ConfigPullParser;
+import org.topicquests.backside.servlet.api.IBacksideOntology;
 import org.topicquests.backside.servlet.api.IStoppable;
 import org.topicquests.backside.servlet.apps.CredentialCache;
 import org.topicquests.backside.servlet.apps.tm.StructuredConversationModel;
 import org.topicquests.backside.servlet.apps.tm.api.IStructuredConversationModel;
 import org.topicquests.backside.servlet.apps.usr.UserModel;
 import org.topicquests.backside.servlet.apps.usr.api.IUserModel;
+import org.topicquests.backside.servlet.apps.usr.api.IUserSchema;
 import org.topicquests.backside.servlet.apps.util.ElasticQueryDSL;
 import org.topicquests.ks.StatisticsUtility;
 import org.topicquests.ks.SystemEnvironment;
+import org.topicquests.ks.api.ITicket;
+import org.topicquests.ks.tm.api.ISubjectProxy;
 import org.topicquests.support.util.LoggingPlatform;
 
 /**
@@ -69,6 +74,7 @@ public class ServletEnvironment {
 		//int port = Integer.valueOf(getStringProperty("ServerPort")).intValue();
 		conversationModel = new StructuredConversationModel(this);
 		isShutDown = false;
+		updateUserTopics();
 		System.out.println("ServletEnvironment+");
 		instance = this;
 		logDebug("ServletEnvironment+ ");
@@ -136,4 +142,31 @@ public class ServletEnvironment {
 		log.logError(msg, e);
 	}
 
+	//////////////////////////////////////
+	// Odd stuff
+	
+	void updateUserTopics() {
+		String tx = getStringProperty("FixUserTopics");
+		if (tx != null && tx.equals("T")) {
+			System.out.println("UPDATING USERS");
+			 IResult r = userModel.listUserLocators();
+			 List<String> userLocs = (List<String>)r.getResultObject();
+			 Iterator<String>itr = userLocs.iterator();
+			 String loc;
+			 ITicket t = null;
+			 ISubjectProxy p;
+			 while (itr.hasNext()) {
+				 loc = itr.next();
+				 r = userModel.getTicketById(loc);
+				 t = (ITicket)r.getResultObject();
+				 r = tmEnvironment.getDatabase().getNode(loc, t);
+				 System.out.println("UX "+loc+" | "+r.getErrorString()+" | "+r.getResultObject());
+				 p = (ISubjectProxy)r.getResultObject();
+				 if (p != null) {
+					p.setProperty(IBacksideOntology.HANDLE_KEY, t.getProperty(IUserSchema.USER_NAME));
+					r = tmEnvironment.getDatabase().putNode(p);
+				 }
+			 }
+		}
+	}
 }

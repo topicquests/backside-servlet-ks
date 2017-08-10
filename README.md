@@ -21,5 +21,5 @@ docker-compose build --no-cache && docker-compose run web mvn clean test -Dgpg.s
 # Building without Docker
 Automatically download dependencies and build this project.
 ```
-mvn clean install -DskipTests
+mvn clean install -Dgpg.skip=true -DskipTests
 ```

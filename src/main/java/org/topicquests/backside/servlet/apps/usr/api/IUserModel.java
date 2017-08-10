@@ -68,7 +68,7 @@ public interface IUserModel {
 					   String userFullName, String avatar, String role,
 					   String homepage, String geolocation, boolean addTopic);
 
-	IResult insertUserData(String userId, String propertyType, String propertyValue);
+	IResult updateUserData(String userId, String propertyType, String propertyValue);
 
 	IResult removeUserData(String userId, String propertyType, String propertyValue);
 

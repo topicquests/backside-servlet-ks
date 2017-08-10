@@ -219,7 +219,7 @@ public class UserHandler extends BaseHandler {
 			String userId = getUserId(jsonObject);
 			String key = jsonObject.getAsString(IUserMicroformat.PROP_KEY);
 			String val = jsonObject.getAsString(IUserMicroformat.PROP_VAL);
-			r = model.insertUserData(userId, key, val);
+			r = model.updateUserData(userId, key, val);
 			if (r.hasError()) {
 				code = BaseHandler.RESPONSE_OK;
 				message = r.getErrorString();

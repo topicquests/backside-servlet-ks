@@ -28,5 +28,10 @@
 <!--  		<parameter name="<some url fragment>" value="<servlet classpath" /> -->
 	</list>
 
+	<!-- A oneshot deal: allows to update user topics to include handle
+		"T" to do the job -->
+	<parameter name="FixUserTopics" value="N" />
+
+
 </properties>
 

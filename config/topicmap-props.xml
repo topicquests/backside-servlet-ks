@@ -87,6 +87,16 @@
 	<parameter name="EventHandlerPort" value="2931" />
 	<parameter name="EventHandlerServer" value="localhost" />
 
+	<!-- There are the IMergeAgent classes used by IMergeEngine 
+		Ordering of these agents can be important in terms of complexity:
+		easiest first
+	-->
+	<list name="MergeAgents">org.topicquests.solr.agents.merge.agents
+		<parameter name="UrlAgent" value="org.topicquests.ks.tm.merge.agents.SameUrlMergeAgent" />
+		<parameter name="PsiAgent" value="org.topicquests.ks.tm.merge.agents.SamePsiMergeAgent" />
+		<parameter name="SameLabelAgent" value="org.topicquests.ks.tm.merge.agents.SameLabelMergeAgent" />
+	</list>	
+
 
 </properties>
 

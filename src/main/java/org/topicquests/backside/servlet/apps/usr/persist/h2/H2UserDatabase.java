@@ -499,9 +499,9 @@ public class H2UserDatabase extends H2DatabaseDriver implements IUserPersist, IR
 			List<String> users = new ArrayList<String>();
 			result.setResultObject(users);
 			s = con.createStatement();
-			rs = s.executeQuery(IUserSchema.listUserNames);
+			rs = s.executeQuery(IUserSchema.listUserLocators);
 			while (rs.next()) {
-				users.add(rs.getString("name"));
+				users.add(rs.getString("id"));
 			}
 		} catch (Exception e) {
 			environment.logError(e.getMessage(), e);

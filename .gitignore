@@ -33,3 +33,4 @@ buildNumber.properties
 SameLabels.json
 .project
 .classpath
+.settings

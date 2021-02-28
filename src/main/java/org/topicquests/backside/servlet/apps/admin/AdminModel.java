@@ -15,17 +15,17 @@
  */
 package org.topicquests.backside.servlet.apps.admin;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import org.topicquests.backside.servlet.ServletEnvironment;
+import org.topicquests.backside.servlet.apps.usr.api.IUserMicroformat;
 import org.topicquests.backside.servlet.apps.admin.api.IAdminModel;
 import org.topicquests.backside.servlet.apps.admin.api.IInviteDatabase;
 import org.topicquests.backside.servlet.apps.admin.persist.H2InviteDatabase;
 import org.topicquests.backside.servlet.apps.usr.api.IUserModel;
-import org.topicquests.backside.servlet.apps.usr.api.IUserSchema;
 import org.topicquests.support.ResultPojo;
 import org.topicquests.support.api.IResult;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * @author park
@@ -125,7 +125,7 @@ public class AdminModel implements IAdminModel {
 	@Override
 	public IResult removeUserRole(String userId, String oldRole) {
 		System.out.println("RemoveUserRole " + userId + " " + oldRole);
-		return userModel.removeUserData(userId, IUserSchema.USER_ROLE, oldRole);
+		return userModel.removeUserData(userId, IUserMicroformat.USER_ROLE, oldRole);
 	}
 
 

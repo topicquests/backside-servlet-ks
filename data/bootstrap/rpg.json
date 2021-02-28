@@ -1,0 +1,7 @@
+{"nodes":[
+{"lox":"GuildMemberList","sbOf":"PropertyType","label":"GuildMemberList","details":"RPG Guild Member List property type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
+{"lox":"GuildCurrentQuest","sbOf":"PropertyType","label":"GuildCurrentQuest","details":"RPG Guild current Quest identity property type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
+{"lox":"GuildCurrentRootNode","sbOf":"PropertyType","label":"GuildCurrentRootNode","details":"RPG Guild current game move root node identity property type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]}
+
+
+]}

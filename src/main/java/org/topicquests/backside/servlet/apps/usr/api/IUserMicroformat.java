@@ -16,7 +16,6 @@
 package org.topicquests.backside.servlet.apps.usr.api;
 
 import org.topicquests.backside.servlet.api.ICredentialsMicroformat;
-import org.topicquests.backside.servlet.apps.admin.api.IAdminMicroformat;
 
 /**
  * @author park

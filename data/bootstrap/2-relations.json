@@ -22,7 +22,7 @@
   {"lox":"ImprovesOnRelationType","sbOf":"RelationType","label":"Improves On","details":"Topic Map upper ImprovesOn relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
   {"lox":"AddressesRelationType","sbOf":"RelationType","label":"Addresses","details":"Topic Map upper Addresses relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
   {"lox":"SolvesRelationType","sbOf":"RelationType","label":"Solves","details":"Topic Map upper Solves relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
-  {"lox":"IsPrerequisiteForRelationType","sbOf":"Is Prerequisite For","label":"Solves","details":"Topic Map upper IsPrerequisiteFor relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
+  {"lox":"IsPrerequisiteForRelationType","sbOf":"RelationType","label":"Is Prerequisite For","details":"Topic Map upper IsPrerequisiteFor relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
   {"lox":"ImpairsRelationType","sbOf":"RelationType","label":"Impairs","details":"Topic Map upper Impairs relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
   {"lox":"PreventsRelationType","sbOf":"RelationType","label":"Prevents","details":"Topic Map upper Prevents relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
   {"lox":"ProvesRelationType","sbOf":"RelationType","label":"Proves","details":"Topic Map upper Proves relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
@@ -33,7 +33,7 @@
   {"lox":"IsInconsistentWithRelationType","sbOf":"RelationType","label":"Is Inconsistent With","details":"Topic Map upper IsInconsistentWith relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
   {"lox":"IsExampleRelationType","sbOf":"RelationType","label":"Is Example Of","details":"Topic Map upper IsExample relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
   {"lox":"PredictsRelationType","sbOf":"RelationType","label":"Predicts","details":"Topic Map upper Predicts relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
-  {"lox":"EnvisagesRelationRelationType","sbOf":"RelationType","label":"Envisages","details":"Topic Map upper Envisages relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
+  {"lox":"EnvisagesRelationType","sbOf":"RelationType","label":"Envisages","details":"Topic Map upper Envisages relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
   {"lox":"UnlikelyToAffectRelationType","sbOf":"RelationType","label":"Is Unlikely To Affect","details":"Topic Map upper UnlikelyToAffect relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
   {"lox":"RespondsToRelationType","sbOf":"RelationType","label":"Responds To","details":"Topic Map upper RespondsTo relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
   {"comment":"Adapted from OBO Ontologies and elsewhere"},
@@ -56,8 +56,7 @@
 
   {"lox":"TagBookmarkRelationType","sbOf":"RelationType","label":"Tag Bookmark Relation Type","details":"ISocialBookmarkLegend extension Tag Bookmark relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
   {"lox":"TagUserRelationType","sbOf":"RelationType","label":"Tag User Relation Type","details":"ISocialBookmarkLegend extension Tag User relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]},
-  {"lox":"UserBookmarkRelationType","sbOf":"RelationType","label":"User Bookmark Relation Type","details":"ISocialBookmarkLegend extension User Bookmark relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]}
-  {"lox":"AnnotationBookmarkRelationType","sbOf":"RelationType","label":"Annotation Bookmark Relation Type","details":"ISocialBookmarkLegend extension Annotation Bookmark relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]}
+  {"lox":"BookmarkUserRelationType","sbOf":"RelationType","label":"Bookmark User Relation Type","details":"ISocialBookmarkLegend extension Bookmark User  relation type","sIco":"/images/snowflake_sm.png","lIco":"/images/snowflake.png","trCl":["TypeType"]}
 
-  
+
 ]}

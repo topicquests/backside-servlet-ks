@@ -24,7 +24,7 @@
 	<!-- Index must be lowercase
 	     name is the index; value is which mappings file to use -->
 	<list name="IndexNames">
-		<parameter name="topics" value = "backside_mappings.json" />
+		<parameter name="topics" value = "mappings.json" />
 	</list>
 
 </properties>

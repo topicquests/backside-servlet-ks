@@ -15,8 +15,15 @@
  */
 package org.topicquests.backside.servlet.apps.usr;
 
-import com.google.common.io.BaseEncoding;
-import net.minidev.json.JSONObject;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.api.ICredentialsMicroformat;
 import org.topicquests.backside.servlet.api.IErrorMessages;
@@ -28,13 +35,9 @@ import org.topicquests.backside.servlet.apps.usr.api.IUserModel;
 import org.topicquests.ks.api.ITicket;
 import org.topicquests.support.api.IResult;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import com.google.common.io.BaseEncoding;
+
+import net.minidev.json.JSONObject;
 
 /**
  * @author park
@@ -80,7 +83,6 @@ public class UserHandler extends BaseHandler {
 				} catch (Exception e2) {
 				}
 			}
-			//TODO: note: we are ignoring any SORT modifiers
 			//This really returns some live cargo in the form of a list of user objects in JSON format
 			// We are restricting this to: name, email, avatar, homepage, geolocation, role
 			r = model.listUsers(start, count);

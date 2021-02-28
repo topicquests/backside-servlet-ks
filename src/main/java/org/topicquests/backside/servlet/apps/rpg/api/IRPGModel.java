@@ -30,5 +30,33 @@ public interface IRPGModel {
 
 	IResult removeMemberFromGuild(String guildLocator, String memberId, ITicket credentials);
 
+	/**
+	 * If <code>questLocator</code> == <code>null</code> this effectively
+	 * exits a given quest
+	 * @param guildLocator
+	 * @param questLocator can be <code>null</code> or ""
+	 * @param credentials
+	 * @return
+	 */
+	IResult setCurrentQuestId(String guildLocator, String questLocator, ITicket credentials);
+	
+	/**
+	 * 
+	 * @param guildLocator
+	 * @param rootNodeLocator can be <code>null</code> or ""
+	 * @param credentials
+	 * @return
+	 */
+	IResult setCurrentRootNodeId(String guildLocator, String rootNodeLocator, ITicket credentials);
+	
+	/**
+	 * 
+	 * @param guildLocator
+	 * @param questLocator cannot be <code>null</code>
+	 * @param credentials
+	 * @return
+	 */
+	IResult joinQuest(String guildLocator, String questLocator, ITicket credentials);
+	
 	void shutDown();
 }

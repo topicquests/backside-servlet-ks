@@ -80,7 +80,6 @@ public class AdminHandler extends BaseHandler {
 				} catch (Exception e2) {
 				}
 			}
-			//TODO: note: we are ignoring any SORT modifiers
 			//This really returns some live cargo in the form of a list of user objects in JSON format
 			// We are restricting this to: name, email, avatar, homepage, geolocation, role
 			r = model.listUsers(start, count);

@@ -112,7 +112,7 @@ public class Main {
         context.addServlet(new ServletHolder(new UserServlet(environment, basePath)),"/user/*");
         context.addServlet(new ServletHolder(new TopicMapServlet(environment, basePath)), "/tm/*");
         context.addServlet(new ServletHolder(new StaticFileServlet(environment, basePath)),"/static/*");
-
+ 
         context.addServlet(new ServletHolder(new UploadServlet(environment, basePath)),"/upload/*");
         context.addServlet(new ServletHolder(new GUIServlet(environment, basePath)),"/gui/*");
         

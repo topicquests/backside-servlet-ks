@@ -40,7 +40,7 @@ import org.topicquests.support.api.IResult;
 import org.topicquests.ks.api.ICoreIcons;
 import org.topicquests.ks.api.ITQCoreOntology;
 import org.topicquests.ks.api.ITicket;
-import org.topicquests.ks.tm.api.ISubjectProxy;
+import org.topicquests.ks.tm.api.IProxy;
 
 /**
  * @author park
@@ -75,7 +75,7 @@ public class TopicMapHandler  extends BaseHandler {
 		String verb = getVerb(jsonObject);
 		int code = 0;
 		IResult r;
-		System.out.println("TopicMapHandler.handleGet "+verb);
+		System.out.println("TimelineHandler.handleGet "+verb);
 		if (verb.equals(IUserMicroformat.LIST_USERS)) {
 			String startS = notNullString(jsonObject.getAsString(ICredentialsMicroformat.ITEM_FROM));
 			String countS = notNullString(jsonObject.getAsString(ICredentialsMicroformat.ITEM_COUNT));
@@ -95,15 +95,15 @@ public class TopicMapHandler  extends BaseHandler {
 			//TODO: note: we are ignoring any SORT modifiers
 			//This really returns some live cargo in the form of a list of user objects in JSON format
 			// We are restricting this to: name, email, avatar, homepage, geolocation, role
-			r = model.listUserTopics(start, count, sortBy, sortDir, credentials);
+			r = model.listUserTopics(start, count, credentials);
 			if (r.hasError()) {
 				code = BaseHandler.RESPONSE_INTERNAL_SERVER_ERROR;
 				message = r.getErrorString();
 			} else {
 				//Time to take that list apart
 				if (r.getResultObject() != null) {
-					List<ISubjectProxy> usrs = (List<ISubjectProxy>)r.getResultObject();
-					Iterator<ISubjectProxy>itr = usrs.iterator();
+					List<IProxy> usrs = (List<IProxy>)r.getResultObject();
+					Iterator<IProxy>itr = usrs.iterator();
 					List<JSONObject>jsonUsers = new ArrayList<JSONObject>();
 					while (itr.hasNext()) {
 						jsonUsers.add((JSONObject)itr.next().getData());
@@ -122,7 +122,7 @@ public class TopicMapHandler  extends BaseHandler {
 			r = model.getTopic(locator, credentials);
 			System.out.println("GETTOPIC "+r.getResultObject());
 			if (r.getResultObject() != null) {
-				ISubjectProxy n = (ISubjectProxy)r.getResultObject();
+				IProxy n = (IProxy)r.getResultObject();
 				System.out.println("GETTOPIC "+n);
 				returnMessage.put(ICredentialsMicroformat.CARGO, (JSONObject)n.getData());
 				code = BaseHandler.RESPONSE_OK;
@@ -137,7 +137,7 @@ public class TopicMapHandler  extends BaseHandler {
 			String typeLocator = notNullString(jsonObject.getAsString(ITQCoreOntology.INSTANCE_OF_PROPERTY_TYPE));
 			String sortBy = jsonObject.getAsString(IQueryMicroformat.SORT_BY);
 			String sortDir = jsonObject.getAsString(IQueryMicroformat.SORT_DIR);
-			environment.logDebug("TopicMapHandler.listInstanceTopics "+typeLocator);
+			environment.logDebug("TimelineHandler.listInstanceTopics "+typeLocator);
 			int start = 0, count = -1;
 			if (!startS.equals("")) {
 				try {
@@ -153,15 +153,15 @@ public class TopicMapHandler  extends BaseHandler {
 			//TODO: note: we are ignoring any SORT modifiers
 			//This really returns some live cargo in the form of a list of user objects in JSON format
 			// We are restricting this to: name, email, avatar, homepage, geolocation, role
-			r = model.listInstanceTopics(typeLocator, start, count, sortBy, sortDir, credentials);
+			r = model.listInstanceTopics(typeLocator, start, count, credentials);
 			if (r.hasError()) {
 				code = BaseHandler.RESPONSE_INTERNAL_SERVER_ERROR;
 				message = r.getErrorString();
 			} else {
 				//Time to take that list apart
 				if (r.getResultObject() != null) {
-					List<ISubjectProxy> usrs = (List<ISubjectProxy>)r.getResultObject();
-					Iterator<ISubjectProxy>itr = usrs.iterator();
+					List<IProxy> usrs = (List<IProxy>)r.getResultObject();
+					Iterator<IProxy>itr = usrs.iterator();
 					List<JSONObject>jsonUsers = new ArrayList<JSONObject>();
 					while (itr.hasNext()) {
 						jsonUsers.add((JSONObject)itr.next().getData());
@@ -199,8 +199,8 @@ public class TopicMapHandler  extends BaseHandler {
 			} else {
 				//Time to take that list apart
 				if (r.getResultObject() != null) {
-					List<ISubjectProxy> usrs = (List<ISubjectProxy>)r.getResultObject();
-					Iterator<ISubjectProxy>itr = usrs.iterator();
+					List<IProxy> usrs = (List<IProxy>)r.getResultObject();
+					Iterator<IProxy>itr = usrs.iterator();
 					List<JSONObject>jsonUsers = new ArrayList<JSONObject>();
 					while (itr.hasNext()) {
 						jsonUsers.add((JSONObject)itr.next().getData());
@@ -220,7 +220,7 @@ public class TopicMapHandler  extends BaseHandler {
 			String superClassLocator = notNullString(jsonObject.getAsString(ITQCoreOntology.SUBCLASS_OF_PROPERTY_TYPE));
 			String sortBy = jsonObject.getAsString(IQueryMicroformat.SORT_BY);
 			String sortDir = jsonObject.getAsString(IQueryMicroformat.SORT_DIR);
-			environment.logDebug("TopicMapHandler.listSubClasses "+superClassLocator);
+			environment.logDebug("TimelineHandler.listSubClasses "+superClassLocator);
 			int start = 0, count = -1;
 			if (!startS.equals("")) {
 				try {
@@ -235,15 +235,15 @@ public class TopicMapHandler  extends BaseHandler {
 			//TODO: note: we are ignoring any SORT modifiers
 			//This really returns some live cargo in the form of a list of user objects in JSON format
 			// We are restricting this to: name, email, avatar, homepage, geolocation, role
-			r = model.listSubclassTopics(superClassLocator, start, count, sortBy, sortDir, credentials);
+			r = model.listSubclassTopics(superClassLocator, start, count, credentials);
 			if (r.hasError()) {
 				code = BaseHandler.RESPONSE_INTERNAL_SERVER_ERROR;
 				message = r.getErrorString();
 			} else {
 				//Time to take that list apart
 				if (r.getResultObject() != null) {
-					List<ISubjectProxy> usrs = (List<ISubjectProxy>)r.getResultObject();
-					Iterator<ISubjectProxy>itr = usrs.iterator();
+					List<IProxy> usrs = (List<IProxy>)r.getResultObject();
+					Iterator<IProxy>itr = usrs.iterator();
 					List<JSONObject>jsonUsers = new ArrayList<JSONObject>();
 					while (itr.hasNext()) {
 						jsonUsers.add((JSONObject)itr.next().getData());
@@ -263,7 +263,7 @@ public class TopicMapHandler  extends BaseHandler {
 			String sortBy = jsonObject.getAsString(IQueryMicroformat.SORT_BY);
 			String sortDir = jsonObject.getAsString(IQueryMicroformat.SORT_DIR);
 			String language = jsonObject.getAsString("Lang");
-			environment.logDebug("TopicMapHandler.TextQuery "+queryString);
+			environment.logDebug("TimelineHandler.TextQuery "+queryString);
 			int start = 0, count = -1;
 			if (!startS.equals("")) {
 				try {
@@ -282,8 +282,8 @@ public class TopicMapHandler  extends BaseHandler {
 			} else {
 				//Time to take that list apart
 				if (r.getResultObject() != null) {
-					List<ISubjectProxy> usrs = (List<ISubjectProxy>)r.getResultObject();
-					Iterator<ISubjectProxy>itr = usrs.iterator();
+					List<IProxy> usrs = (List<IProxy>)r.getResultObject();
+					Iterator<IProxy>itr = usrs.iterator();
 					List<JSONObject>jsonUsers = new ArrayList<JSONObject>();
 					while (itr.hasNext()) {
 						jsonUsers.add((JSONObject)itr.next().getData());
@@ -319,10 +319,10 @@ public class TopicMapHandler  extends BaseHandler {
 					depth = Integer.valueOf(maxDepth);
 				} catch (Exception e3) {}
 			}
-			r = model.getNodeTree(rootLocator, depth, start, count, sortBy, sortDir, credentials);
+			r = model.getNodeTree(rootLocator, depth, start, count, credentials);
 			//Treat the result just as if it's a SubjectProxy, which it is
 			if (r.getResultObject() != null) {
-				ISubjectProxy n = (ISubjectProxy)r.getResultObject();
+				IProxy n = (IProxy)r.getResultObject();
 				System.out.println("LOADTREE "+n);
 				returnMessage.put(ICredentialsMicroformat.CARGO, (JSONObject)n.getData());
 				code = BaseHandler.RESPONSE_OK;
@@ -366,9 +366,9 @@ public class TopicMapHandler  extends BaseHandler {
 		} else if (verb.equals(ITopicMapMicroformat.GET_TOPIC_BY_URL)) {
 			String url = jsonObject.getAsString(ITQCoreOntology.RESOURCE_URL_PROPERTY);
 			if (url != null) {
-				r = model.listTopicsByURL(url, 0, -1, null, null, credentials);
+				r = model.getNodeByURL(url, credentials);
 				if (r.getResultObject() != null) {
-					ISubjectProxy n = (ISubjectProxy)r.getResultObject();
+					IProxy n = (IProxy)r.getResultObject();
 					System.out.println("GETTOPICBYURL "+n);
 					returnMessage.put(ICredentialsMicroformat.CARGO, (JSONObject)n.getData());
 					code = BaseHandler.RESPONSE_OK;
@@ -398,11 +398,11 @@ public class TopicMapHandler  extends BaseHandler {
 		String verb = getVerb(jsonObject);
 		int code = 0;
 		IResult r;
-		System.out.println("TopicMapHandler.handlePost "+verb);
-		if (verb.equals(ITopicMapMicroformat.PUT_TOPIC)) {
+		System.out.println("TimelineHandler.handlePost "+verb);
+		/*if (verb.equals(ITopicMapMicroformat.PUT_TOPIC)) {
 			if (cargo != null) {
-				r = model.putTopic(cargo);
-				returnMessage.put(ICredentialsMicroformat.CARGO, ((ISubjectProxy)r.getResultObject()).getData());
+				//r = model.putTopic(cargo); //TODO
+				returnMessage.put(ICredentialsMicroformat.CARGO, ((IProxy)r.getResultObject()).getData());
 				code = BaseHandler.RESPONSE_OK;
 				message = "ok";
 			} else {
@@ -413,7 +413,7 @@ public class TopicMapHandler  extends BaseHandler {
 		} else if (verb.equals(ITopicMapMicroformat.UPDATE_TOPIC)) {
 			if (cargo != null) {
 				r = model.updateTopic(cargo, true);
-				returnMessage.put(ICredentialsMicroformat.CARGO, ((ISubjectProxy)r.getResultObject()).getData());
+				returnMessage.put(ICredentialsMicroformat.CARGO, ((IProxy)r.getResultObject()).getData());
 				code = BaseHandler.RESPONSE_OK;
 				message = "ok";
 			} else {
@@ -421,7 +421,7 @@ public class TopicMapHandler  extends BaseHandler {
 				environment.logError(x, null);
 				throw new ServletException(x);
 			}
-		} else if (verb.equals(ITopicMapMicroformat.UPDATE_TOPIC_TEXT_FIELDS)) {
+		} else*/ if (verb.equals(ITopicMapMicroformat.UPDATE_TOPIC_TEXT_FIELDS)) {
 			if (cargo != null) {
 				String lox = cargo.getAsString("locator");
 				String label = cargo.getAsString("title");
@@ -441,7 +441,7 @@ public class TopicMapHandler  extends BaseHandler {
 			if (cargo != null) {
 				System.out.println("CARGO "+cargo.toJSONString());
 				r = model.newInstanceNode(cargo, credentials);
-				returnMessage.put(ICredentialsMicroformat.CARGO, ((ISubjectProxy)r.getResultObject()).getData());
+				returnMessage.put(ICredentialsMicroformat.CARGO, ((IProxy)r.getResultObject()).getData());
 				code = BaseHandler.RESPONSE_OK;
 				message = "ok";
 			} else {
@@ -452,7 +452,7 @@ public class TopicMapHandler  extends BaseHandler {
 		} else if (verb.equals(ITopicMapMicroformat.NEW_SUBCLASS_TOPIC)) {
 			if (cargo != null) {
 				r = model.newSubclassNode(cargo, credentials);
-				returnMessage.put(ICredentialsMicroformat.CARGO, ((ISubjectProxy)r.getResultObject()).getData());
+				returnMessage.put(ICredentialsMicroformat.CARGO, ((IProxy)r.getResultObject()).getData());
 				code = BaseHandler.RESPONSE_OK;
 				message = "ok";
 			} else {
@@ -472,6 +472,7 @@ public class TopicMapHandler  extends BaseHandler {
 				String details = cargo.getAsString("details");
 				String language = cargo.getAsString("Lang");
 				String url = cargo.getAsString("url");
+				String provenanceLocator = cargo.getAsString(ITopicMapMicroformat.PROVENANCE_LOCATOR);
 				boolean isPrivate = false;
 				if (pvt.equalsIgnoreCase("T"))
 					isPrivate = true;
@@ -481,9 +482,9 @@ public class TopicMapHandler  extends BaseHandler {
 				String lox = null;
 				if (locator != null && !locator.equals(""))
 					lox = locator;
-				r = conModel.newConversationNode(nodeType, parentLoc, contextLoc, lox, label, det, language, url, userId, isPrivate);
+				r = conModel.newConversationNode(nodeType, parentLoc, contextLoc, lox, label, det, language, url, userId, provenanceLocator, isPrivate);
 				if (r.getResultObject() != null) {
-					ISubjectProxy n = (ISubjectProxy)r.getResultObject();
+					IProxy n = (IProxy)r.getResultObject();
 					System.out.println("GETTOPICBYURL "+n);
 					returnMessage.put(ICredentialsMicroformat.CARGO, n.getData());
 					code = BaseHandler.RESPONSE_OK;
@@ -505,11 +506,12 @@ public class TopicMapHandler  extends BaseHandler {
 				String targetLoc = cargo.getAsString(ITopicMapMicroformat.REL_TRG_LOCATOR);
 				String smallIcon = ICoreIcons.RELATION_ICON_SM;
 				String largeIcon = ICoreIcons.RELATION_ICON;
+				String provenanceLocator = cargo.getAsString(ITopicMapMicroformat.PROVENANCE_LOCATOR);
 				System.out.println("THM.add "+sourceLoc+" | "+targetLoc+" | "+relTypeLoc);
 				if (relTypeLoc == null) {
 					throw new ServletException(cargo.toJSONString());
 				}
-				r = model.addRelation(sourceLoc, targetLoc, relTypeLoc, smallIcon, largeIcon, false, false, credentials);
+				r = model.addRelation(sourceLoc, targetLoc, relTypeLoc, smallIcon, largeIcon, provenanceLocator, false, false, credentials);
 				returnMessage.put(ICredentialsMicroformat.CARGO, "Relation Done");
 				code = BaseHandler.RESPONSE_OK;
 				message = "ok";
@@ -536,8 +538,9 @@ public class TopicMapHandler  extends BaseHandler {
 			String details = notNullString(jsonObject.getAsString("details"));
 			String language  = notNullString(jsonObject.getAsString(ITopicMapMicroformat.LANGUAGE));
 			String userId  = notNullString(jsonObject.getAsString(ICredentialsMicroformat.USER_ID));
+			String provenanceLocator = cargo.getAsString(ITopicMapMicroformat.PROVENANCE_LOCATOR);
 			JSONObject tagLabels = (JSONObject)jsonObject.get(ITopicMapMicroformat.LIST_PROPERTY);
-			r = model.findOrCreateBookmark(url, title, details, language, userId, tagLabels, credentials);
+			r = model.findOrCreateBookmark(url, title, details, language, userId, provenanceLocator, tagLabels, credentials);
 			environment.logDebug("CondoHandler.FindOrCreateBookmark "+r.getErrorString()+" | "+r.getResultObject());
 			if (!r.hasError()) {
 				code = BaseHandler.RESPONSE_OK;
@@ -551,7 +554,8 @@ public class TopicMapHandler  extends BaseHandler {
 			String bookmarkLocator = notNullString(jsonObject.getAsString(ITQCoreOntology.LOCATOR_PROPERTY));
 			List<String> tagLabels = ((List<String>)jsonObject.get(ITopicMapMicroformat.LIST_PROPERTY));
 			String language  = notNullString(jsonObject.getAsString(ITopicMapMicroformat.LANGUAGE));
-			r = model.findOrProcessTags(bookmarkLocator, tagLabels, language, credentials);
+			String provenanceLocator = jsonObject.getAsString(ITopicMapMicroformat.PROVENANCE_LOCATOR);
+			r = model.findOrProcessTags(bookmarkLocator, tagLabels, language, provenanceLocator, credentials);
 			environment.logDebug("CondoHandler.FindOrProcessTag "+r.getErrorString()+" | "+r.getResultObject());
 			if (r.hasError()) {
 				message = r.getErrorString();

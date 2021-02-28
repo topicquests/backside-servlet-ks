@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.topicquests.support.api.IResult;
 import org.topicquests.ks.api.ITicket;
-import org.topicquests.ks.tm.api.ISubjectProxy;
+import org.topicquests.ks.tm.api.IProxy;
 
 /**
  * @author park
@@ -32,8 +32,9 @@ public interface ITagModel {
 	 * create or reuse tags and add them to the node.
 	 * @param node
 	 * @param tagNames
+	 * @param provenanceLocator TODO
 	 * @param credentials
 	 * @return
 	 */
-	IResult addTagsToNode(ISubjectProxy node, List<String> tagNames, ITicket credentials);
+	IResult addTagsToNode(IProxy node, List<String> tagNames, String provenanceLocator, ITicket credentials);
 }

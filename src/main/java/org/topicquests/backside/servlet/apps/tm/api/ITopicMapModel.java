@@ -46,15 +46,15 @@ public interface ITopicMapModel {
 	 * @param topic
 	 * @return
 	 */
-	IResult putTopic(JSONObject topic);
+	//IResult putTopic(JSONObject topic);
 	
 	/**
-	 * <code>topic</code> must be a full ISubjectProxy object
+	 * <code>topic</code> must be a full IProxy object
 	 * @param topic
 	 * @param checkVersion
 	 * @return
 	 */
-	IResult updateTopic(JSONObject topic, boolean checkVersion);
+	//IResult updateTopic(JSONObject topic, boolean checkVersion);
 	
 	/**
 	 * Simple way to update a topic's text fields
@@ -73,34 +73,31 @@ public interface ITopicMapModel {
 	
 	IResult removeTopic(String topicLocator, ITicket credentials);
 	
-	IResult query(JSONObject query, int start, int count, String sortBy, String sortDir, ITicket credentials);
-	
 	/**
-	 * <p>Note: a case could be made for 'listTopicsByURL' except that
-	 * URL in this case refers to a lone PropertyType; the assumption
-	 * is that, as a TopicMap, there can be one and only one topic
-	 * with that identity property.<p>
-	 * <p>There are, in fact, cases where this will return a list of proxies</p>
-	 *
-	 * @param url
-	 * @param start TODO
-	 * @param count TODO
-	 * @param sortBy TODO
-	 * @param sortDir TODO
+	 * Query must include start, count, sortBy, sortDir
+	 * @param query
 	 * @param credentials
 	 * @return
 	 */
-	IResult listTopicsByURL(String url, int start, int count, String sortBy, String sortDir, ITicket credentials);
+	IResult query(JSONObject query, ITicket credentials);
+	
+	/**
+	 *
+	 * @param url
+	 * @param credentials
+	 * @return
+	 */
+	IResult getNodeByURL(String url, ITicket credentials);
 	
 	////////////////
 	// Specialized TopicMap handlers
 	////////////////
 	
-	IResult listSubclassTopics(String superClassLocator, int start, int count, String sortBy, String sortDir, ITicket credentials);
+	IResult listSubclassTopics(String superClassLocator, int start, int count, ITicket credentials);
 	
-	IResult listInstanceTopics(String typeLocator, int start, int count, String sortBy, String sortDir, ITicket credentials);
+	IResult listInstanceTopics(String typeLocator, int start, int count, ITicket credentials);
 	
-	IResult listTopicsByKeyValue(String propertyKey, String value, int start, int count, String sortBy, String sortDir, ITicket credentials);
+	IResult listTopicsByKeyValue(String propertyKey, String value, int start, int count, ITicket credentials);
 	
 	//IResult listAllBlogPosts(int start, int count, ITicket credentials);
 	
@@ -184,11 +181,11 @@ public interface ITopicMapModel {
 	 */
 	IResult addFeaturesToNode(JSONObject cargo, ITicket credentials);
 	
-	IResult addPivot(String topicLocator, String pivotLocator, String pivotRelationType,
-					 String smallImagePath, String largeImagePath, boolean isTransclude, boolean isPrivate, ITicket credentials);
+	//IResult addPivot(String topicLocator, String pivotLocator, String pivotRelationType,
+	//				 String smallImagePath, String largeImagePath, boolean isTransclude, boolean isPrivate, ITicket credentials);
 
 	IResult addRelation(String sourceLocator, String targetLocator, String relationTypeLocator,
-			 String smallImagePath, String largeImagePath, boolean isTransclude, boolean isPrivate, ITicket credentials);
+			 String smallImagePath, String largeImagePath, String provenanceLocator, boolean isTransclude, boolean isPrivate, ITicket credentials);
 
 	/**
 	 * <p>For a given <code>tabLabel</code><br/>
@@ -198,10 +195,11 @@ public interface ITopicMapModel {
 	 * @param bookmarkLocator
 	 * @param tagLabels
 	 * @param language 
+	 * @param provenanceLocator TODO
 	 * @param credentials
 	 * @return
 	 */
-	IResult findOrProcessTags(String bookmarkLocator, List<String> tagLabels, String language, ITicket credentials);
+	IResult findOrProcessTags(String bookmarkLocator, List<String> tagLabels, String language, String provenanceLocator, ITicket credentials);
 	
 	/**
 	 * Find bookmark node for <code>url</code> or otherwise make it and pivot to <code>userId</code>
@@ -210,22 +208,21 @@ public interface ITopicMapModel {
 	 * @param details TODO
 	 * @param language 
 	 * @param userId
+	 * @param provenanceLocator TODO
 	 * @param tagLabels can be <code>null</code>
 	 * @param credentials
 	 * @return
 	 */
-	IResult findOrCreateBookmark(String url, String title, String details, String language, String userId, JSONObject tagLabels, ITicket credentials);
+	IResult findOrCreateBookmark(String url, String title, String details, String language, String userId, String provenanceLocator, JSONObject tagLabels, ITicket credentials);
 	
     /**
      * List users in the TopicMap
      * @param start
      * @param count
-     * @param sortBy TODO
-     * @param sortDir TODO
      * @param credentials
      * @return
      */
-    IResult listUserTopics(int start, int count, String sortBy, String sortDir, ITicket credentials);
+    IResult listUserTopics(int start, int count, ITicket credentials);
 
     /**
      * Returns a tree rooted in <code>rootLocator</code>
@@ -234,12 +231,10 @@ public interface ITopicMapModel {
      * @param maxDepth
      * @param start
      * @param count
-     * @param sortBy TODO
-     * @param sortDir TODO
      * @param credentials
      * @return
      */
-    IResult getNodeTree(String rootLocator, int maxDepth, int start, int count, String sortBy, String sortDir, ITicket credentials);
+    IResult getNodeTree(String rootLocator, int maxDepth, int start, int count, ITicket credentials);
     
 	void shutDown();
 }

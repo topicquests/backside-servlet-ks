@@ -5,7 +5,7 @@
 	<groupId>org.topicquests.backside.servlet</groupId>
 	<artifactId>backside-servlet-ks</artifactId>
 	<packaging>jar</packaging>
-	<version>0.11.0-SNAPSHOT</version>
+	<version>0.13.0-SNAPSHOT</version>
 	<name>backside-servlet-ks</name>
 	<url>https://github.com/topicquests/backside-servlet-ks</url>
 	<developers>
@@ -21,12 +21,7 @@
 			<url>https://github.com/markszpak</url>
 			<id>markszpak</id>
 		</developer>
-		<developer>
-			<email>alec@wenzowski.com</email>
-			<name>Alec Wenzowski</name>
-			<url>https://github.com/wenzowski</url>
-			<id>wenzowski</id>
-		</developer>
+		
 	</developers>
 	<organization>
 		<name>TopicQuests Foundation</name>
@@ -58,11 +53,6 @@
 			<version>1.3.2</version>
 		</dependency>
 		<dependency>
-			<groupId>org.elasticsearch</groupId>
-			<artifactId>elasticsearch</artifactId>
-			<version>2.4.1</version>
-		</dependency>
-		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<version>1.3.160</version>
@@ -83,22 +73,7 @@
 			<version>2.2.1</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.topicquests</groupId>
-			<artifactId>tq-elastic-ks</artifactId>
-			<version>0.6.0-SNAPSHOT</version>
-		</dependency>
 
-		<dependency>
-			<groupId>org.topicquests</groupId>
-			<artifactId>tq-elastic-node-provider</artifactId>
-			<version>0.4.3-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.topicquests</groupId>
-			<artifactId>tq-support</artifactId>
-			<version>1.5-SNAPSHOT</version>
-		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -106,10 +81,37 @@
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+			<version>6.1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.topicquests</groupId>
+			<artifactId>tqks-common</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.topicquests</groupId>
+			<artifactId>tqks-statistics</artifactId>
+			<version>1.1.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.topicquests</groupId>
+			<artifactId>tqks-topic-bootstrap</artifactId>
+			<version>0.1.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
+		<dependency>
+		    <groupId>javax.xml.bind</groupId>
+		    <artifactId>jaxb-api</artifactId>
+		    <version>2.1</version>
+		</dependency>
+		
 	</dependencies>
 	<build>
 		<plugins>
-			<plugin>
+		<!--	<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.0.2</version>
@@ -123,7 +125,7 @@
 						</manifest>
 					</archive>
 				</configuration>
-			</plugin>
+			</plugin> -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
@@ -171,20 +173,6 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.6</version>
-				<executions>
-					<execution>
-						<id>sign-artifacts</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>com.github.github</groupId>
 				<artifactId>site-maven-plugin</artifactId>
 				<version>0.12</version>
@@ -214,6 +202,16 @@
 				<version>3.4</version>
 				<configuration>
 					<reportPlugins>
+									<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>${settings.localRepository}</classpathPrefix>
+							<classpathLayoutType>repository</classpathLayoutType>
+							<mainClass>org.topicquests.backside.servlet.Main</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-surefire-report-plugin</artifactId>
@@ -315,6 +313,7 @@
 				</reportSets>
 			</plugin>
 		</plugins>
+		
 	</reporting>
 	<inceptionYear>2015</inceptionYear>
 	<licenses>

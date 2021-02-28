@@ -41,13 +41,13 @@ public class TestHarness1 {
 			System.exit(1);
 		}
 		//new InviteTest(environment, adminModel);
-		new UserTest(environment);
-		new DecodeTest();
-		new ConversationTest1(environment);
-		new FullTextSearchTest1(environment);
-		new FullTextSearchTest2(environment);
-		new QueryTest1(environment);
-		new ConTreeTest(environment);
+	//	new UserTest(environment);
+	//	new DecodeTest();
+	//	new ConversationTest1(environment);
+	//	new FullTextSearchTest1(environment);
+	//	new FullTextSearchTest2(environment);
+	//	new QueryTest1(environment);
+	//	new ConTreeTest(environment);
 		System.out.println("TestHarness Did");
 		environment.shutDown();
 	}

@@ -17,7 +17,7 @@ package org.topicquests.backside.servlet.apps.tm.api;
 
 import org.topicquests.support.api.IResult;
 import org.topicquests.ks.api.ITicket;
-import org.topicquests.ks.tm.api.INodeTypes;
+import org.topicquests.ks.api.INodeTypes;
 
 /**
  * @author jackpark
@@ -36,11 +36,12 @@ public interface IStructuredConversationModel {
 	 * @param language
 	 * @param url
 	 * @param userId
+	 * @param provenanceLocator TODO
 	 * @param isPrivate
 	 * @return can return an error message "BadNodeType"
 	 */
 	IResult newConversationNode(String nodeType, String parentLocator, String contextLocator, String locator,
-			String label, String details, String language, String url, String userId, boolean isPrivate);
+			String label, String details, String language, String url, String userId, String provenanceLocator, boolean isPrivate);
 
 	/**
 	 * Add a <em>transcluded</em> child to a parent in a particular context

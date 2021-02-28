@@ -38,19 +38,19 @@ import org.topicquests.backside.servlet.apps.tm.api.ITopicMapMicroformat;
 import org.topicquests.backside.servlet.apps.tm.api.ITopicMapModel;
 import org.topicquests.support.ResultPojo;
 import org.topicquests.support.api.IResult;
-import org.topicquests.es.util.JSONQueryUtil;
+//import org.topicquests.es.util.JSONQueryUtil;
 import org.topicquests.ks.SystemEnvironment;
 import org.topicquests.ks.TicketPojo;
 import org.topicquests.ks.api.ICoreIcons;
 import org.topicquests.ks.api.ITQCoreOntology;
-import org.topicquests.ks.api.ITQDataProvider;
+import org.topicquests.ks.tm.api.IDataProvider;
 import org.topicquests.ks.api.ITicket;
-import org.topicquests.ks.tm.SubjectProxy;
+import org.topicquests.ks.tm.Proxy;
 import org.topicquests.ks.tm.api.IChildStruct;
-import org.topicquests.ks.tm.api.INodeTypes;
+import org.topicquests.ks.api.INodeTypes;
 import org.topicquests.ks.tm.api.IParentChildContainer;
-import org.topicquests.ks.tm.api.ISubjectProxy;
-import org.topicquests.ks.tm.api.ISubjectProxyModel;
+import org.topicquests.ks.tm.api.IProxy;
+import org.topicquests.ks.tm.api.IProxyModel;
 
 /**
  * @author park
@@ -59,7 +59,7 @@ import org.topicquests.ks.tm.api.ISubjectProxyModel;
 public class TopicMapModel extends BaseModel implements ITopicMapModel {
 	private ITagModel tagModel;
 	private ITicket systemCredentials;
-	private JSONQueryUtil queryUtil;
+//	private JSONQueryUtil queryUtil;
 
 	/**
 	 * 
@@ -68,24 +68,25 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 		super(env);
 		tagModel = new TagModel(environment);
 		systemCredentials = new TicketPojo(ITQCoreOntology.SYSTEM_USER);
-		queryUtil = new JSONQueryUtil();
+//		queryUtil = new JSONQueryUtil();
 	}
+	
 
 	/* (non-Javadoc)
 	 * @see org.topicquests.backside.servlet.apps.tm.api.ITopicMapModel#putTopic(net.minidev.json.JSONObject, org.topicquests.model.api.ITicket)
-	 */
+	 * /
 	@Override
 	public IResult putTopic(JSONObject topic) {
-		ISubjectProxy n = new SubjectProxy(topic);
+		IProxy n = new Proxy(topic);
 		IResult result = topicMap.putNode(n);
 		return result;
 	}
 
-	@Override
+/*	@Override
 	public IResult updateTopic(JSONObject topic, boolean checkVersion) {
 		System.out.println("TopicMapModel.updateTopic "+topic.toJSONString());
 		return topicMap.updateProxyFromJSON(topic, checkVersion);
-	}
+	}*/
 
 	/* (non-Javadoc)
 	 * @see org.topicquests.backside.servlet.apps.tm.api.ITopicMapModel#getTopic(java.lang.String, org.topicquests.model.api.ITicket)
@@ -107,8 +108,8 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 	 * @see org.topicquests.backside.servlet.apps.tm.api.ITopicMapModel#query(net.minidev.json.JSONObject, org.topicquests.model.api.ITicket)
 	 */
 	@Override
-	public IResult query(JSONObject query, int start, int count, String sortBy, String sortDir, ITicket credentials) {
-		IResult result = topicMap.runQuery(query.toJSONString(), start, count, sortBy, sortDir, credentials);
+	public IResult query(JSONObject query, ITicket credentials) {
+		IResult result = topicMap.runTextQuery(query.toJSONString(), credentials);
 		return result;
 	}
 
@@ -120,8 +121,8 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 
 	@Override
 	public IResult listSubclassTopics(String superClassLocator,
-			int start, int count, String sortBy, String sortDir, ITicket credentials) {
-		IResult result = topicMap.listSubclassNodes(superClassLocator, start, count, sortBy, sortDir, credentials);
+			int start, int count, ITicket credentials) {
+		IResult result = topicMap.listSubclassNodes(superClassLocator, start, count, credentials);
 		return result;
 	}
 /***
@@ -141,7 +142,7 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 		IResult result = topicMap.runQuery(q, start, count, credentials);
 		System.out.println("LISTALLBLOGPOSTS "+q);
 		environment.logDebug("TopicMapModel.listBlogPostsByUser+ "+result.getErrorString()+" | "+result.getResultObject());
-		//TopicMapModel.getTopicByURL+  | [org.topicquests.ks.tm.SubjectProxy@6aab361d, org.topicquests.ks.tm.SubjectProxy@1098da46]
+		//TopicMapModel.getTopicByURL+  | [org.topicquests.ks.tm.Proxy@6aab361d, org.topicquests.ks.tm.SubjectProxy@1098da46]
 		List<Object> lx = (List<Object>)result.getResultObject();
 		if (lx != null) {
 			if (lx.size() > 0) {
@@ -182,22 +183,20 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 	}
 **/
 	@Override
-	public IResult listInstanceTopics(String typeLocator, int start, int count, String sortBy, String sortDir, ITicket credentials) {
-		IResult result = topicMap.listInstanceNodes(typeLocator, start, count, sortBy, sortDir, credentials);
+	public IResult listInstanceTopics(String typeLocator, int start, int count, ITicket credentials) {
+		IResult result = topicMap.listInstanceNodes(typeLocator, start, count, credentials);
 		return result;
 	}
 
 	@Override
 	public IResult listTopicsByKeyValue(String propertyKey, String value,
-			int start, int count, String sortBy, String sortDir, ITicket credentials) {
-		IResult result = new ResultPojo(); //
-		//TODO
-		return result;
+			int start, int count, ITicket credentials) {
+		return  topicMap.listNodesByKeyValuePair(propertyKey, value, start, count, null, null, credentials);
 	}
 
 	@Override
-	public IResult listUserTopics(int start, int count, String sortBy, String sortDir, ITicket credentials) {
-		IResult result = topicMap.listInstanceNodes(ITQCoreOntology.USER_TYPE, start, count, sortBy, sortDir, credentials);
+	public IResult listUserTopics(int start, int count, ITicket credentials) {
+		IResult result = topicMap.listInstanceNodes(ITQCoreOntology.USER_TYPE, start, count, credentials);
 		return result;
 	}
 
@@ -205,7 +204,7 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 	public IResult listTreeChildNodesJSON(String rootNodeLocator,
 			String contextLocator, ITicket credentials) {
 		IResult r = topicMap.getNode(rootNodeLocator, credentials);
-		ISubjectProxy root = (ISubjectProxy)r.getResultObject();
+		IProxy root = (IProxy)r.getResultObject();
 		IResult result = _listTreeChildNodesJSON(root, contextLocator, credentials);
 		if (r.hasError())
 			result.addErrorString(r.getErrorString());
@@ -219,38 +218,11 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 	 * @param credentials
 	 * @return
 	 */
-	private IResult _listTreeChildNodesJSON(ISubjectProxy root, String contextLocator, ITicket credentials) {
+	private IResult _listTreeChildNodesJSON(IProxy root, String contextLocator, ITicket credentials) {
 		System.out.println("_list "+root.toJSONString());
 		IResult result = new ResultPojo();
-		JSONObject map = new JSONObject();
-		result.setResultObject(map);
-		List<JSONObject> kids = root.listChildNodes(contextLocator);
-		IResult r;
-		if (kids != null) {
-			System.out.println("_list-1 "+kids);			
-			List<String> l = new ArrayList<String>();
-			Iterator<JSONObject>itr = kids.iterator();
-			JSONObject jo;
-			while (itr.hasNext()) {
-				jo = itr.next();
-				l.add(jo.getAsString(IChildStruct.LOCATOR));
-			}
-			System.out.println("_list-2 "+l);
-
-			r = topicMap.multiGetNodes(l, credentials);
-			System.out.println("_list-3 "+r);
-			if (r.hasError())
-				result.addErrorString(r.getErrorString());
-			List<JSONObject> snappers = (List<JSONObject>)r.getResultObject();
-			if (snappers != null && snappers.size() > 0) {
-				int len = snappers.size();
-			
-				for (int i=0;i<len;i++) {
-					jo = snappers.get(i);
-					map.put(jo.getAsString("lox"), jo);
-				}
-			}
-		}
+		List<IProxy> kids = ((IParentChildContainer)root).listChildNodes(contextLocator, credentials);
+		result.setResultObject(kids);
 		return result;
 	}
 
@@ -262,26 +234,27 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 	 * @param credentials
 	 * @return
 	 */
-	private IResult _collectParentChildTree(IConversationTreeStruct parent, ISubjectProxy root, String contextLocator, ITicket credentials) {
+	private IResult _collectParentChildTree(IConversationTreeStruct parent, IProxy root, String contextLocator, ITicket credentials) {
 		IResult result = new ResultPojo();
 		IResult r = _listTreeChildNodesJSON(root, contextLocator, credentials);
 		if (r.hasError())
 			result.addErrorString(r.getErrorString());
-		JSONObject snappers = (JSONObject)r.getResultObject();
+		List<IProxy> snappers = (List<IProxy>)r.getResultObject();
 		//For each kid:
 		// create a ChildNodeStruct
 		// recurse to fill that kid's tree branches
 		// add that ChildNodeStruct to parent
-		if (snappers != null && snappers.size() > 0) {
-			Iterator<String> itr = snappers.keySet().iterator();
+		if (snappers != null && !snappers.isEmpty()) {
+			Iterator<IProxy> itr = snappers.iterator();
 			JSONObject jo;
+			IProxy p;
 			String key;
 			IConversationTreeStruct snapper;
 			while (itr.hasNext()) {
-				key = itr.next();
-				jo = (JSONObject)snappers.get(key);
+				p = itr.next();
+				jo = p.getData();
 				snapper = new ConTreeStruct(jo);
-				r = _collectParentChildTree(snapper, new SubjectProxy(jo), contextLocator, credentials);
+				r = _collectParentChildTree(snapper, p, contextLocator, credentials);
 				parent.addChild(snapper.getData());
 				if (r.hasError())
 					result.addErrorString(r.getErrorString());
@@ -293,7 +266,7 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 	@Override 
 	public IResult collectParentChildTree(String rootNodeLocator, String contextLocator, ITicket credentials) {
 		IResult r = topicMap.getNode(rootNodeLocator, credentials);
-		ISubjectProxy root = (ISubjectProxy)r.getResultObject();
+		IProxy root = (IProxy)r.getResultObject();
 		System.out.println("COLPARCHILTR "+contextLocator+" "+root.toJSONString());
 		IConversationTreeStruct p = new ConTreeStruct(root.getData());
 		//the following call recursively populates p
@@ -304,17 +277,13 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 
 	@Override
 	public IResult newInstanceNode(JSONObject theTopicShell, ITicket credentials) {
-	//	System.out.println("CARGO2 "+theTopicShell.toJSONStringString());
-	//	System.out.println("LOX "+theTopicShell.get("lox"));
 		IResult result  = new ResultPojo();
 		environment.logDebug("TopicMapModel.newInstanceNode- "+theTopicShell.toJSONString());
-		//{"uName":"joe","isPrv":"F","sIco":"\/images\/bookmark_sm.png","Lang":"en",
-		//"label":"Tech Reports | Knowledge Media Institute | The Open University",
-		//"lIco":"\/images\/bookmark.png","inOf":"BookmarkNodeType","url":"http:\/\/kmi.open.ac.uk\/publications\/techreport\/kmi-10-01"}
-		
-		//{"crtr":"jackpark","sIco":"\/images\/publication_sm.png","isPrv":"F",
-		//"Lang":"en","details":"Modified TQElasticKnowledgeSystem","label":"Another try after fixes to the topic map",
-		//"lIco":"\/images\/publication.png","inOf":"BlogNodeType"}
+		//{"uId":"SystemUser",
+		//"lox":"28bc48f5-ebf7-43e2-b4da-7df44984ecbd","isPrv":"F",
+		//"Lang":"en",
+		//"details":"Made by devtests\/NodeBulder",
+		//"label":"Hello World","inOf":"ClassType"}
 		String locator = theTopicShell.getAsString(ITopicMapMicroformat.TOPIC_LOCATOR);
 		String typeLocator =  theTopicShell.getAsString(ITopicMapMicroformat.PARENT_LOCATOR);
 		String lang = theTopicShell.getAsString(ITopicMapMicroformat.LANGUAGE);
@@ -325,32 +294,50 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 		String largeImagePath = theTopicShell.getAsString(ITopicMapMicroformat.LARGE_IMAGE_PATH);
 		String isp = theTopicShell.getAsString(ITopicMapMicroformat.IS_PRIVATE);
 		String url = theTopicShell.getAsString(ITopicMapMicroformat.URL);
+		Object op = theTopicShell.get(ITQCoreOntology.SCOPE_LIST_PROPERTY_TYPE);
+		String provenanceLocator = null;
+		if (op != null) {
+			if (op instanceof String)
+				provenanceLocator = (String)op;
+			else
+				provenanceLocator = ((List<String>)op).get(0); //TODO that's a hack
+		}
+		environment.logDebug("TopicMapModel.newInstanceNode-x "+locator+" | "+typeLocator+" | "+
+				label+" | "+description+" | "+lang+" "+userId);
+
 		//Added feature
-		JSONObject extras = (JSONObject)theTopicShell.get(ITopicMapMicroformat.EXTRAS);
+		JSONObject extras = null;//(JSONObject)theTopicShell.get(ITopicMapMicroformat.EXTRAS);
 		if (extras != null)
 			System.out.println("NEWINSTANCE "+extras.toJSONString());
 		boolean isPrivate = false;
 		IResult r;
 		if (isp.equalsIgnoreCase("t"))
 			isPrivate = true;
-		ISubjectProxy n = null;
+		IProxy n = null;
 		environment.logDebug("TopicMapModel.newInstanceNode-1 "+locator);
 		if (locator != null) {
+			environment.logDebug("TopicMapModel.newInstanceNode-a ");
 			//First, see if this exists
 			r = topicMap.getNode(locator, systemCredentials);
+			environment.logDebug("TopicMapModel.newInstanceNode-b "+r.getErrorString()+" | "+r.getResultObject());
 			if (r.hasError())
 				result.addErrorString(r.getErrorString());
-			n = (ISubjectProxy)r.getResultObject();
-			result.setResultObject(n);
-			return result;
-			//if (r.getResultObject() != null)
-			//	return r;
-			//n = nodeModel.newInstanceNode(locator, typeLocator, label, description, lang, userId, smallImagePath, largeImagePath, isPrivate);
-		} else {
-			n = nodeModel.newInstanceNode(typeLocator, label, description, lang, userId, smallImagePath, largeImagePath, isPrivate);
-			if (url != null && !url.equals(""))
-				n.setURL(url);
-			if (extras != null) {
+			n = (IProxy)r.getResultObject();
+			environment.logDebug("TopicMapModel.newInstanceNode-c "+r.getErrorString()+" | "+r.getResultObject());
+			if (r.getResultObject() != null) {
+				result.setResultObject(n);
+				return result;
+			}
+			environment.logDebug("TopicMapModel.newInstanceNode-d "+locator+" | "+typeLocator+" | "+
+					label+" | "+description+" | "+lang+" "+userId);
+			n = nodeModel.newInstanceNode(locator, typeLocator, label, description, lang, userId, provenanceLocator, smallImagePath, largeImagePath, isPrivate);
+		} else 
+			n = nodeModel.newInstanceNode(typeLocator, label, description, lang, userId, provenanceLocator, smallImagePath, largeImagePath, isPrivate);
+		
+		environment.logDebug("TopicMapModel.newInstanceNode-2 "+n.toJSONString());
+		if (url != null && !url.equals(""))
+			n.setURL(url);
+	/*		if (extras != null) {
 				JSONObject jo = n.getData();
 				Iterator<String>itr = extras.keySet().iterator();
 				String key;
@@ -369,11 +356,11 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 						r = topicMap.getNode(parent, credentials);
 						if (r.hasError())
 							result.addErrorString(r.getErrorString());
-						ISubjectProxy pnt = (ISubjectProxy)r.getResultObject();
+						IProxy pnt = (IProxy)r.getResultObject();
 						icon = pnt.getSmallImage();
 						subject = pnt.getLabel(lang);
 						//Add a child to the parent
-						nodeModel.addChildNode(pnt,context, smallImagePath, n.getLocator(), label, transclude);
+						nodeModel.addChildNode(pnt,context, n.getLocator(), transclude);
 						//pnt.addChildNode(context, smallImagePath, n.getLocator(), label, transclude);
 						pnt.setLastEditDate(new Date());
 						r = topicMap.putNode(pnt);
@@ -381,7 +368,7 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 							result.addErrorString(r.getErrorString());
 						// add parent to new node
 						//nodeModel.addParentNode(n, context, icon, parent, subject);
-						((IParentChildContainer)n).addParentNode(context, kid.getAsString("sIco"), kid.getAsString("inOf"), subject);
+						((IParentChildContainer)n).addParentNode(context, kid.getAsString("node_type"));
 						
 						
 					} else {
@@ -392,18 +379,16 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 						jo.put(key, extras.get(key));
 					}
 				}
-			}
-			if (n.getLocator() == null) {
-				environment.logError("Missing lox for "+typeLocator+" | "+label, null);
-			}
-			r = topicMap.putNode(n);
-			if (r.hasError())
-				result.addErrorString(r.getErrorString());
-			environment.logDebug("TopicMapModel.newInstance-1 "+r.getErrorString()+" | "+n.toJSONString());
+			}*/
+		if (n.getLocator() == null) {
+			environment.logError("Missing lox for "+typeLocator+" | "+label, null);
 		}
+		r = topicMap.putNode(n);
+		if (r.hasError())
+			result.addErrorString(r.getErrorString());
+		environment.logDebug("TopicMapModel.newInstanceNode-3 "+r.getErrorString()+" | "+n.toJSONString());
 		
-		environment.logDebug("TopicMapModel.newInstance-2 "+n.toJSONString());
-		r = relateNodeToUser(n, userId, credentials);
+		r = relateNodeToUser(n, userId, provenanceLocator, credentials);
 		if (r.hasError())
 			result.addErrorString(r.getErrorString());
 		result.setResultObject(n);
@@ -424,23 +409,31 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 		String smallImagePath = theTopicShell.getAsString(ITopicMapMicroformat.SMALL_IMAGE_PATh);
 		String largeImagePath = theTopicShell.getAsString(ITopicMapMicroformat.LARGE_IMAGE_PATH);
 		String isp = theTopicShell.getAsString(ITopicMapMicroformat.IS_PRIVATE);
+		Object op = theTopicShell.get(ITQCoreOntology.SCOPE_LIST_PROPERTY_TYPE);
+		String provenanceLocator = null;
+		if (op != null) {
+			if (op instanceof String)
+				provenanceLocator = (String)op;
+			else
+				provenanceLocator = ((List<String>)op).get(0); //TODO that's a hack
+		}
 		boolean isPrivate = false;
 		IResult r;
 		if (isp.equalsIgnoreCase("t"))
 			isPrivate = true;
-		ISubjectProxy n = null;
+		IProxy n = null;
 		if (locator != null) {
 			//First, see if this exists
 			r = topicMap.getNode(locator, systemCredentials);
 			if (r.getResultObject() != null)
 				return r;
-			n = nodeModel.newSubclassNode(locator, superClassLocator, label, description, lang, userId, smallImagePath, largeImagePath, isPrivate);
+			n = nodeModel.newSubclassNode(locator, superClassLocator, label, description, lang, userId, provenanceLocator, smallImagePath, largeImagePath, isPrivate);
 		} else
-			n = nodeModel.newSubclassNode(superClassLocator, label, description, lang, userId, smallImagePath, largeImagePath, isPrivate);
+			n = nodeModel.newSubclassNode(superClassLocator, label, description, lang, userId, provenanceLocator, smallImagePath, largeImagePath, isPrivate);
 			
 		IResult result = topicMap.putNode(n);
 		result.setResultObject(n.getData());
-		r = relateNodeToUser(n, userId, credentials);
+		r = relateNodeToUser(n, userId, provenanceLocator, credentials);
 		if (r.hasError())
 			result.addErrorString(r.getErrorString());
 		return result;
@@ -454,7 +447,7 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 		IResult result = new ResultPojo();
 		if (r.hasError())
 			result.addErrorString(r.getErrorString());
-		ISubjectProxy n = (ISubjectProxy)r.getResultObject();
+		IProxy n = (IProxy)r.getResultObject();
 		boolean isChanged = false;
 		if (n != null) {
 			Iterator<String> itr = cargo.keySet().iterator();
@@ -470,7 +463,7 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 				}
 			}
 			n.doUpdate();
-			result = topicMap.updateNode(n, true);
+			//result = topicMap.updateNode(n, true);
 			//Pay attention to OptimisticLock
 			
 		} else {
@@ -481,32 +474,13 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 	}
 
 	@Override
-	public IResult getNodeTree(String rootLocator, int maxDepth, int start, int count, String sortBy, String sortDir, ITicket credentials) {
-		return ((ITQDataProvider)topicMap).loadTree(rootLocator, maxDepth, start, count, sortBy, sortDir, credentials);
+	public IResult getNodeTree(String rootLocator, int maxDepth, int start, int count, ITicket credentials) {
+		return ((IDataProvider)topicMap).loadTree(rootLocator, maxDepth, start, count, credentials);
 	}
 
 	@Override
-	public IResult listTopicsByURL(String url, int start, int count, String sortBy, String sortDir, ITicket credentials) {
-		QueryBuilder qb1 = QueryBuilders.termQuery(ITQCoreOntology.RESOURCE_URL_PROPERTY, url);
-		IResult result = topicMap.runQuery(qb1.toString(), 0, -1, sortBy, sortDir, credentials);
-		environment.logDebug("TopicMapModel.listTopicsByURL+ "+result.getErrorString()+" | "+result.getResultObject());
-		//TopicMapModel.getTopicByURL+  | [org.topicquests.ks.tm.SubjectProxy@6aab361d, org.topicquests.ks.tm.SubjectProxy@1098da46]
-		List<Object> lx = (List<Object>)result.getResultObject();
-		if (lx != null) {
-			if (lx.size() > 0) {
-				try {
-					ISubjectProxy n = (SubjectProxy)(lx.get(0));
-					result.setResultObject(n);
-				} catch (Exception ex) {
-					environment.logError(ex.getMessage(), ex);
-					result.addErrorString(ex.getMessage());
-					result.setResultObject(null);
-				}
-			} else
-				result.setResultObject(null);
-		}
-		System.out.println("LISTTOPICSBYURL+ "+result.getErrorString()+" | "+result.getResultObject());
-		return result;
+	public IResult getNodeByURL(String url, ITicket credentials) {		
+		return topicMap.getNodeByURL(url, credentials);
 	}
 	
 	@Override
@@ -516,14 +490,15 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 		final BoolQueryBuilder query = new BoolQueryBuilder();
 		query.must(t1);
 		query.must(t2);
-		IResult result = topicMap.runQuery(query.toString(), 0, -1, null, null, credentials);
+		//TODO add start, count etc to query
+		IResult result = topicMap.runTextQuery(query.toString(), credentials);
 		environment.logDebug("TopicMapModel.getBookmarkByURL+ "+result.getErrorString()+" | "+result.getResultObject());
-		//TopicMapModel.getTopicByURL+  | [org.topicquests.ks.tm.SubjectProxy@6aab361d, org.topicquests.ks.tm.SubjectProxy@1098da46]
+		//TopicMapModel.getTopicByURL+  | [org.topicquests.ks.tm.Proxy@6aab361d, org.topicquests.ks.tm.Proxy@1098da46]
 		List<Object> lx = (List<Object>)result.getResultObject();
 		if (lx != null) {
 			if (lx.size() > 0) {
 				try {
-					ISubjectProxy n = (SubjectProxy)(lx.get(0));
+					IProxy n = (Proxy)(lx.get(0));
 					result.setResultObject(n);
 				} catch (Exception ex) {
 					environment.logError(ex.getMessage(), ex);
@@ -537,30 +512,30 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 		return result;
 	}
 	
-	@Override
+	/*@Override
 	public IResult addPivot(String topicLocator, String pivotLocator,
 			String pivotRelationType, String smallImagePath,
 			String largeImagePath, boolean isTransclude, boolean isPrivate,
 			ITicket credentials) {
 		// TODO Auto-generated method stub
 		return null;
-	}
+	}*/
 
 	@Override
 	public IResult addRelation(String sourceLocator, String targetLocator,
 			String relationTypeLocator, String smallImagePath,
-			String largeImagePath, boolean isTransclude, boolean isPrivate,
-			ITicket credentials) {
+			String largeImagePath, String provenanceLocator, boolean isTransclude,
+			boolean isPrivate, ITicket credentials) {
 		IResult result = new ResultPojo();
 		IResult r = topicMap.getNode(sourceLocator, credentials);
 		if (r.hasError()) result.addErrorString(r.getErrorString());
-		ISubjectProxy source = (ISubjectProxy)r.getResultObject();
+		IProxy source = (IProxy)r.getResultObject();
 		r = topicMap.getNode(targetLocator, credentials);
 		if (r.hasError()) result.addErrorString(r.getErrorString());
-		ISubjectProxy target = (ISubjectProxy)r.getResultObject();
+		IProxy target = (IProxy)r.getResultObject();
 		environment.logDebug("RELATING-1 \n"+source.toJSONString()+"\n"+target.toJSONString());
 		r = nodeModel.relateExistingNodes(source, target, relationTypeLocator, 
-				smallImagePath, largeImagePath, credentials.getUserLocator(), isTransclude, isPrivate);
+				null, null, smallImagePath, largeImagePath, credentials.getUserLocator(), provenanceLocator, isTransclude, isPrivate);
 		if (r.hasError()) result.addErrorString(r.getErrorString());
 		result.setResultObject(r.getResultObject());
 		System.out.println("TMMODEL.addRel "+sourceLocator+" | "+targetLocator+" | "+relationTypeLocator+" "+r.getResultObject());
@@ -569,24 +544,24 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 
 	@Override
 	public IResult findOrProcessTags(String bookmarkLocator, List<String> tagLabels,
-			String language, ITicket credentials) {
+			String language, String provenanceLocator, ITicket credentials) {
 		//get the bookmark node
 		IResult r = topicMap.getNode(bookmarkLocator, credentials);
 		if (r.hasError() && r.getResultObject() == null)
 			return r;
 		//now, process tags
-		ISubjectProxy bkmk = (ISubjectProxy)r.getResultObject();
-		r = tagModel.addTagsToNode(bkmk, tagLabels, credentials);
+		IProxy bkmk = (IProxy)r.getResultObject();
+		r = tagModel.addTagsToNode(bkmk, tagLabels, provenanceLocator, credentials);
 		return r;
 	}
 
 	@Override
 	public IResult findOrCreateBookmark(String url, String title,
-			String details, String language, String userId, JSONObject tagLabels, ITicket credentials) {
+			String details, String language, String userId, String provenanceLocator, JSONObject tagLabels, ITicket credentials) {
 		environment.logDebug("TopicMapModel.findOrCreateBookmark- "+url+" | "+userId);
 		IResult result = this.getBookmarkByURL(url, credentials);
-		ISubjectProxy bkmk = (ISubjectProxy)result.getResultObject();
-		ISubjectProxy note = null;
+		IProxy bkmk = (IProxy)result.getResultObject();
+		IProxy note = null;
 		System.out.println("FindOrCreateBookmark-1 "+bkmk);
 		boolean isNew = false;
 		IResult r;
@@ -594,17 +569,22 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 			isNew = true;
 			//make a new one
 			bkmk = nodeModel.newInstanceNode(INodeTypes.BOOKMARK_TYPE, 
-					title, "", language, userId, ICoreIcons.BOOKMARK_SM, ICoreIcons.BOOKMARK, false);
+					title, "", language, userId, provenanceLocator, ICoreIcons.BOOKMARK_SM, ICoreIcons.BOOKMARK, false);
 			bkmk.setURL(url);
 			result = topicMap.putNode(bkmk);
 			result.setResultObject(bkmk);
-			r = relateNodeToUser(bkmk, userId, credentials);
+			r = relateNodeToUser(bkmk, userId, provenanceLocator, credentials);
 			if (r.hasError())
 				result.addErrorString(r.getErrorString());
 		}
 		if (!isNew) {
+			//TODO THIS IS A SPECIAL QUERY
+			String sql = ""; //TODO
+			Object [] vals = new Object[0]; //todo
+			r = topicMap.runSQLQuery(sql, vals, credentials);
+			//TODO
 			//It's an existing object; should we add this user to it?
-			List<JSONObject> pivs = bkmk.listPivotsByRelationType(ISocialBookmarkLegend.BOOKMARK_USER_RELATIONTYPE);
+	/*		List<JSONObject> pivs = topicMap.listRelationsByRelationType(ISocialBookmarkLegend.BOOKMARK_USER_RELATIONTYPE, 0, -1, credentials);
 			Iterator<JSONObject>itr = pivs.iterator();
 			JSONObject jo;
 			boolean isFound = false;
@@ -618,17 +598,17 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 				}
 			}
 			if(!isFound) {
-				r = this.relateNodeToUser(bkmk, userId, credentials);
+				r = this.relateNodeToUser(bkmk, userId, provenanceLocator, credentials);
 				if (r.hasError())
 					result.addErrorString(r.getErrorString());
-			}
+			} */
 		}
 		if (details != null && !details.equals("")) {
 			//add annotation and pivot
-			r = addAnnotation(bkmk, details, language, userId, credentials, result);
+			r = addAnnotation(bkmk, details, language, userId, provenanceLocator, credentials, result);
 			if (r.hasError())
 				result.addErrorString(r.getErrorString());
-			note = (ISubjectProxy)r.getResultObject();
+			note = (IProxy)r.getResultObject();
 		}
 		System.out.println("FindOrCreateBookmark-2 "+bkmk+" "+tagLabels);
 		if (bkmk != null && tagLabels != null && !tagLabels.isEmpty()) {
@@ -647,11 +627,11 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 				label = tagLabels.getAsString("tag4");
 				if (label != null && !label.equals(""))
 					tls.add(label);
-				r = this.findOrProcessTags(bkmk.getLocator(), tls, language, credentials);
+				r = this.findOrProcessTags(bkmk.getLocator(), tls, language, provenanceLocator, credentials);
 				if (r.hasError())
 					result.addErrorString(r.getErrorString());
 				if (note != null) {
-					r = this.findOrProcessTags(note.getLocator(), tls, language, credentials);					
+					r = this.findOrProcessTags(note.getLocator(), tls, language, provenanceLocator, credentials);					
 					if (r.hasError())
 						result.addErrorString(r.getErrorString());
 				}
@@ -667,33 +647,34 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 	 * @param details
 	 * @param language
 	 * @param userId
+	 * @param provenanceLocator TODO
 	 * @param result
 	 */
-	private IResult addAnnotation(ISubjectProxy bookmark, String details, String language, String userId, ITicket credentials, IResult result) {
+	private IResult addAnnotation(IProxy bookmark, String details, String language, String userId, String provenanceLocator, ITicket credentials, IResult result) {
 		int len = details.length();
 		String title = details;
 		if (len > 40) {
 			title = details.substring(0, 40)+"...";
 		}
 		//Make an annotation
-		ISubjectProxy note = nodeModel.newInstanceNode(INodeTypes.ANNOTATION_TYPE, title, details, language,
-				userId, ICoreIcons.NOTE_SM, ICoreIcons.NOTE, false);
+		IProxy note = nodeModel.newInstanceNode(INodeTypes.ANNOTATION_TYPE, title, details, language,
+				userId, provenanceLocator, ICoreIcons.NOTE_SM, ICoreIcons.NOTE, false);
 		//save it
 		IResult r = topicMap.putNode(note);
 		if (r.hasError())
 			result.addErrorString(r.getErrorString());
-		r = relateNodeToUser(note, userId, credentials);
+		r = relateNodeToUser(note, userId, provenanceLocator, credentials);
 		if (r.hasError())
 			result.addErrorString(r.getErrorString());
 
 		//pivot annotation-bookmark
 		environment.logDebug("RELATING-2 \n"+note.toJSONString()+"\n"+bookmark.toJSONString());
-		r = nodeModel.relateExistingNodesAsPivots(note, bookmark, ISocialBookmarkLegend.ANNOTATION_BOOKMARK_RELATION_TYPE,
-				userId, ICoreIcons.RELATION_ICON_SM, ICoreIcons.RELATION_ICON, false, false);
+		r = nodeModel.relateExistingNodes(note, bookmark, ISocialBookmarkLegend.ANNOTATION_BOOKMARK_RELATION_TYPE,
+				null, null, userId, provenanceLocator, ICoreIcons.RELATION_ICON_SM, ICoreIcons.RELATION_ICON, false, false);
 		if (r.hasError())
 			result.addErrorString(r.getErrorString());
 		//pivot annotation-user
-		r = relateNodeToUser(note, userId, credentials);
+		r = relateNodeToUser(note, userId, provenanceLocator, credentials);
 		if (r.hasError())
 			result.addErrorString(r.getErrorString());
 		r.setResultObject(note);
@@ -705,7 +686,7 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 			boolean checkVersion, ITicket credentials) {
 		System.out.println("UpdateTopicText- "+locator+" "+label+" "+description+" "+language);
 		IResult result = this.getTopic(locator, credentials);
-		ISubjectProxy t = (ISubjectProxy)result.getResultObject();
+		IProxy t = (IProxy)result.getResultObject();
 		boolean isChanged = false;
 		if (t != null) {
 			//Now must perform surgery on text fields.
@@ -723,7 +704,7 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 				}
 				
 			} */ //TODO disabled for now.
-			if (!description.equals("")) {
+			/*	if (!description.equals("")) {
 				f = t.makeField(ITQCoreOntology.DETAILS_PROPERTY, language);
 				l = (List<String>)t.getProperty(f);
 				System.out.println("UpdateTopicText1 "+l);
@@ -743,7 +724,7 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 			if (isChanged) {
 				result = this.updateTopic(t.getData(), checkVersion);
 				System.out.println("UpdateTopicText+ "+t.getData().toJSONString());
-			}
+			}*/
 		}
 		return result;
 	}
@@ -759,8 +740,9 @@ public class TopicMapModel extends BaseModel implements ITopicMapModel {
 		QueryBuilder qb2 = QueryBuilders.matchQuery(makeField(ITQCoreOntology.DETAILS_PROPERTY, lang), queryString);
 		qb.should(qb1);
 		qb.should(qb2);
+		//TODO put start,count,sort, etc in that query
 		System.out.println("FULLTEXTQUERY "+qb.toString());
-		IResult result = topicMap.runQuery(qb.toString(), start, count, sortBy, sortDir, credentials);
+		IResult result = topicMap.runTextQuery(qb.toString(), credentials);
 		return result;
 	}
 

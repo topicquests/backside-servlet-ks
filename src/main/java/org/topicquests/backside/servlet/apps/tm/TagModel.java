@@ -23,11 +23,11 @@ import org.topicquests.backside.servlet.apps.tm.api.ITagModel;
 import org.topicquests.support.ResultPojo;
 import org.topicquests.support.api.IResult;
 import org.topicquests.ks.api.ICoreIcons;
-import org.topicquests.ks.api.ITQDataProvider;
+import org.topicquests.ks.tm.api.IDataProvider;
 import org.topicquests.ks.api.ITicket;
-import org.topicquests.ks.tm.api.INodeTypes;
-import org.topicquests.ks.tm.api.ISubjectProxy;
-import org.topicquests.ks.tm.api.ISubjectProxyModel;
+import org.topicquests.ks.api.INodeTypes;
+import org.topicquests.ks.tm.api.IProxy;
+import org.topicquests.ks.tm.api.IProxyModel;
 
 /**
  * @author park
@@ -35,30 +35,30 @@ import org.topicquests.ks.tm.api.ISubjectProxyModel;
  */
 public class TagModel implements ITagModel {
 	private ServletEnvironment environment;
-	private ITQDataProvider topicMap;
-	private ISubjectProxyModel nodeModel;
+	private IDataProvider topicMap;
+	private IProxyModel nodeModel;
 
 	/**
 	 * 
 	 */
 	public TagModel(ServletEnvironment env) {
 		environment = env;
-		topicMap = environment.getTopicMapEnvironment().getDatabase();
-		nodeModel = topicMap.getSubjectProxyModel();
+		topicMap = environment.getTopicMapEnvironment().getDataProvider();
+		nodeModel = environment.getTopicMapEnvironment().getProxyModel();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.topicquests.backside.servlet.apps.tm.api.ITagModel#addTagsToNode(org.topicquests.model.api.node.ISubjectProxy, java.lang.String[], org.topicquests.model.api.ITicket)
+	 * @see org.topicquests.backside.servlet.apps.tm.api.ITagModel#addTagsToNode(org.topicquests.model.api.node.IProxy, java.lang.String[], org.topicquests.model.api.ITicket)
 	 */
 	@Override
-	public IResult addTagsToNode(ISubjectProxy node, List<String> tagNames,
-			ITicket credentials) {
+	public IResult addTagsToNode(IProxy node, List<String> tagNames,
+			String provenanceLocator, ITicket credentials) {
 		String userId = credentials.getUserLocator();
 		IResult result = new ResultPojo();
 		IResult r;
 		int len = tagNames.size();
 		String name,lox;
-		ISubjectProxy tag;
+		IProxy tag;
 		for (int i=0;i<len;i++) {
 			name = tagNames.get(i);
 			lox = tagNameToLocator(name);
@@ -66,7 +66,7 @@ public class TagModel implements ITagModel {
 			r = topicMap.getNode(lox, credentials);
 			if (r.hasError())
 				result.addErrorString(r.getErrorString());
-			tag = (ISubjectProxy)r.getResultObject();
+			tag = (IProxy)r.getResultObject();
 			if (tag == null) {
 				//create a tag
 				environment.logDebug("TagModel.addTagToNode-1 "+lox+" "+userId);
@@ -81,20 +81,20 @@ public class TagModel implements ITagModel {
 			r = topicMap.getNode(userId, credentials);
 			if (r.hasError())
 				result.addErrorString(r.getErrorString());
-			ISubjectProxy user = (ISubjectProxy)r.getResultObject();
+			IProxy user = (IProxy)r.getResultObject();
 			if (user != null) {
 				environment.logDebug("TagModel.addTagToNode-2 "+tag+" "+user);
 				System.out.println("TagModel.addTagToNode-2 "+tag+" "+user);
-				r = nodeModel.relateExistingNodesAsPivots(tag, user, ISocialBookmarkLegend.TAG_USER_RELATION_TYPE, userId, 
-						ICoreIcons.RELATION_ICON_SM, ICoreIcons.RELATION_ICON, false, false);
+				r = nodeModel.relateExistingNodes(tag, user, ISocialBookmarkLegend.TAG_USER_RELATION_TYPE, null, null,
+						userId, provenanceLocator, ICoreIcons.RELATION_ICON_SM, ICoreIcons.RELATION_ICON, false, false);
 				if (r.hasError())
 					result.addErrorString(r.getErrorString());
 			}
 			//relate the tag to the topic
 			environment.logDebug("TagModel.addTagToNode-3 "+tag+" "+node);
 			System.out.println("TagModel.addTagToNode-3 "+tag+" "+node);
-			r = nodeModel.relateExistingNodesAsPivots(tag, node, ISocialBookmarkLegend.TAG_BOOKMARK_RELATION_TYPE, userId, 
-					ICoreIcons.RELATION_ICON_SM, ICoreIcons.RELATION_ICON, false, false);
+			r = nodeModel.relateExistingNodes(tag, node, ISocialBookmarkLegend.TAG_BOOKMARK_RELATION_TYPE, null, null,
+					userId, provenanceLocator, ICoreIcons.RELATION_ICON_SM, ICoreIcons.RELATION_ICON, false, false);
 			if (r.hasError())
 				result.addErrorString(r.getErrorString());
 			//relating does all the puts

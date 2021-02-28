@@ -31,7 +31,7 @@ import org.topicquests.backside.servlet.apps.util.ElasticQueryDSL;
 import org.topicquests.ks.StatisticsUtility;
 import org.topicquests.ks.SystemEnvironment;
 import org.topicquests.ks.api.ITicket;
-import org.topicquests.ks.tm.api.ISubjectProxy;
+import org.topicquests.ks.tm.api.IProxy;
 import org.topicquests.support.util.LoggingPlatform;
 
 /**
@@ -154,17 +154,17 @@ public class ServletEnvironment {
 			 Iterator<String>itr = userLocs.iterator();
 			 String loc;
 			 ITicket t = null;
-			 ISubjectProxy p;
+			 IProxy p;
 			 while (itr.hasNext()) {
 				 loc = itr.next();
 				 r = userModel.getTicketById(loc);
 				 t = (ITicket)r.getResultObject();
-				 r = tmEnvironment.getDatabase().getNode(loc, t);
+				 r = tmEnvironment.getDataProvider().getNode(loc, t);
 				 System.out.println("UX "+loc+" | "+r.getErrorString()+" | "+r.getResultObject());
-				 p = (ISubjectProxy)r.getResultObject();
+				 p = (IProxy)r.getResultObject();
 				 if (p != null) {
 					p.setProperty(IBacksideOntology.HANDLE_KEY, t.getProperty(IUserSchema.USER_NAME));
-					r = tmEnvironment.getDatabase().putNode(p);
+					r = tmEnvironment.getDataProvider().putNode(p);
 				 }
 			 }
 		}

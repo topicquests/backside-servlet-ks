@@ -7,8 +7,10 @@ import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.apps.util.ElasticQueryDSL;
 import org.topicquests.support.api.IResult;
 import org.topicquests.ks.SystemEnvironment;
-import org.topicquests.node.provider.Client;
-import org.topicquests.node.provider.ProviderEnvironment;
+import org.topicquests.ks.TicketPojo;
+import org.topicquests.ks.api.ITQCoreOntology;
+import org.topicquests.ks.api.ITicket;
+import org.topicquests.ks.tm.api.IDataProvider;
 
 /**
  * @author park
@@ -17,8 +19,8 @@ import org.topicquests.node.provider.ProviderEnvironment;
 public class FullTextSearchTest2 {
 	private ServletEnvironment environment;
 	private SystemEnvironment tmEnvironment;
-	private ProviderEnvironment database;
-	private Client client;
+	private IDataProvider topicMap;
+	private ITicket credentials;
 	private ElasticQueryDSL queryDSL;
 	private final String
 		QUERY = "PositionNode type", //"\"PositionNode type\"",
@@ -32,9 +34,9 @@ public class FullTextSearchTest2 {
 	public FullTextSearchTest2(ServletEnvironment env) {
 		environment = env;
 		tmEnvironment = environment.getTopicMapEnvironment();
-		database = tmEnvironment.getProvider();
-		client = database.getClient();
+		topicMap = tmEnvironment.getDataProvider();
 		queryDSL = environment.getQueryDSL();
+		credentials = new TicketPojo(ITQCoreOntology.SYSTEM_USER);
 		runTest();
 	}
 	void runTest() {
@@ -43,7 +45,7 @@ public class FullTextSearchTest2 {
 		fields.add(FIELD2);
 		String theQuery = queryDSL.fullTextQueryMultipleFields(QUERY, true, fields, 0, 10);
 		System.out.println("AAA "+theQuery);
-		IResult r = client.listObjectsByQuery(theQuery, INDEX );
+		IResult r = topicMap.runTextQuery(theQuery, credentials);
 		System.out.println("BBB "+r.getErrorString()+" | "+r.getResultObject());
 		if (r.hasError()) System.exit(1);
 	}

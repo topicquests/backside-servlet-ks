@@ -30,7 +30,7 @@ import org.topicquests.backside.servlet.ServletEnvironment;
 import org.topicquests.backside.servlet.api.ICredentialsMicroformat;
 import org.topicquests.backside.servlet.api.IErrorMessages;
 import org.topicquests.backside.servlet.apps.BaseHandler;
-import org.topicquests.backside.servlet.apps.admin.api.IAdminMicroformat;
+//import org.topicquests.backside.servlet.apps.admin.api.IAdminMicroformat;
 import org.topicquests.backside.servlet.apps.rpg.api.IRPGMicroformat;
 import org.topicquests.backside.servlet.apps.rpg.api.IRPGModel;
 import org.topicquests.backside.servlet.apps.tm.StructuredConversationModel;
@@ -41,7 +41,7 @@ import org.topicquests.backside.servlet.apps.usr.api.IUserMicroformat;
 import org.topicquests.support.api.IResult;
 import org.topicquests.ks.api.ITQCoreOntology;
 import org.topicquests.ks.api.ITicket;
-import org.topicquests.ks.tm.api.ISubjectProxy;
+import org.topicquests.ks.tm.api.IProxy;
 
 /**
  * @author park
@@ -97,18 +97,39 @@ public class RPGHandler  extends BaseHandler {
 		JSONObject cargo = (JSONObject)jsonObject.get(ICredentialsMicroformat.CARGO);
 		String message = "", rtoken="";
 		String verb = getVerb(jsonObject);
+		String memberId = jsonObject.getAsString(IRPGMicroformat.MEMBER_ID);
+		String guildLoc = jsonObject.getAsString(IRPGMicroformat.GUILD_LOCATOR);
 		int code = 0;
 		IResult r;
 		System.out.println("CondoHandler.handlePost "+verb);
 		if (verb.equals(IRPGMicroformat.ADD_LEADER)) {
+			r = model.addLeaderToGuild(guildLoc, memberId, credentials);
 			//TODO
-	
 		} else if (verb.equals(IRPGMicroformat.ADD_MEMBER)) {
-
+			r = model.addMemberToGuild(guildLoc, memberId, credentials);
+			//TODO
 		} else if (verb.equals(IRPGMicroformat.REMOVE_LEADER)) {
-			
+			r = model.removeLeaderFromGuild(guildLoc, memberId, credentials);
+			//TODO
 		} else if (verb.equals(IRPGMicroformat.REMOVE_MEMBER)) {
-			
+			r = model.removeMemberFromGuild(guildLoc, memberId, credentials);
+			//TODO
+		} else if (verb.equals(IRPGMicroformat.SET_CURRENT_QUEST)) {
+			String qId = jsonObject.getAsString(IRPGMicroformat.CURRENT_QUEST_ID);
+			r = model.setCurrentQuestId(guildLoc, qId, credentials);
+			//TODO
+		} else if (verb.equals(IRPGMicroformat.SET_CURRENT_ROOT_ID)) {
+			String rId = jsonObject.getAsString(IRPGMicroformat.CURRENT_ROOT_NODE_ID);
+			r = model.setCurrentRootNodeId(guildLoc, rId, credentials);
+			//TODO
+		} else if (verb.equals(IRPGMicroformat.JOIN_QUEST)) {
+			String qLoc = jsonObject.getAsString(IRPGMicroformat.QUEST_LOCATOR);
+			if (qLoc != null && !qLoc.equals("")) {
+				r = model.joinQuest(guildLoc, qLoc, credentials);
+				//TODO
+			} else {
+				//TODO error
+			}
 		} else {
 			String x = IErrorMessages.BAD_VERB+"-RPGHandler-"+verb;
 			environment.logError(x, null);

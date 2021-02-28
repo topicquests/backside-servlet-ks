@@ -11,7 +11,7 @@
 	<parameter name="InviteDatabase" value="backsideinvites" /> <!-- CHANGEME -->
 	
 	<parameter name="ServerURL" value="localhost" />  <!--  ??? CHANGEME -->
-	<parameter name="ServerPort" value="8080" /> <!-- ??? CHANGEME -->
+	<parameter name="ServerPort" value="8888" /> <!-- ??? CHANGEME -->
 	
 	<!-- Server needs a default Administrator
 		These values should be changed.

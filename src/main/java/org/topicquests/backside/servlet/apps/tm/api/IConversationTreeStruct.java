@@ -18,7 +18,7 @@ package org.topicquests.backside.servlet.apps.tm.api;
 import java.util.List;
 
 import net.minidev.json.JSONObject;
-import org.topicquests.ks.tm.api.ISubjectProxy;
+import org.topicquests.ks.tm.api.IProxy;
 
 /**
  * @author jackpark
@@ -30,7 +30,7 @@ public interface IConversationTreeStruct {
 		CHILDNODES	= "kids";
 	
 	/**
-	 * Root is the {@link ISubjectProxy} as a {@link JSONObject}
+	 * Root is the {@link IProxy} as a {@link JSONObject}
 	 * @param root
 	 */
 	void setRoot(JSONObject root);
